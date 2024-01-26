@@ -1,0 +1,17 @@
+---Normal Tiles---
+0 = None [Hard coded]
+1 = Grass []
+2 = Stonefloor []
+3 = Woodfloor []
+4 = Lightwater [Synthesys]
+5 = Darkwater [Synthesys]
+
+---Overlay Tiles---
+0 = None [Hard coded]
+1 = Stonefloor (Up right corner) [Synthesys]
+2 = Stonefloor (Up left corner) [Synthesys]
+3 = Stonefloor (Down right corner) [Synthesys]
+4 = Stonefloor (Down left corner) [Synthesys]
+
+---Player overlay Tiles---
+0 = None [Hard coded]

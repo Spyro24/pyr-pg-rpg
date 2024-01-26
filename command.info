@@ -1,0 +1,7 @@
+Dialog command list
+available command are:
+  #reserve [command] (load a reserve obj from ./reserve)
+   commands are:
+     map [X] [Y] [version]
+
+  

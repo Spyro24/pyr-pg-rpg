@@ -1,0 +1,23 @@
+V 0.0
+-add
+ -pyr_pg [EXTERNAL]
+  -Map Script V1
+   -Load Map
+   -Blit Map
+   -Redraw Map [I have this function five times redesigned because ervery design had a bug]
+  -Dialog V1
+  -Dialog Script V1
+ -Map scroll
+ -Dialog
+ -game.rpg [This is file is not important for this version]
+ -"free" Movement
+ -map_tool [EXTERNAL]
+  -keybard
+  -Map scripts
+   -Load Map
+   -Draw Map
+
+-change
+ -pyr_pg [EXTERNAL]
+  -Control script (from pygame input to pygame raw input)
+

@@ -1,0 +1,6 @@
+name=Ultimate RPG
+version=0.0
+tilesize=16
+winsize=256,256
+icon=None
+scale=1
