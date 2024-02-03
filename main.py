@@ -5,11 +5,13 @@ import pyr_pg.kb as rpg_kb
 from pyr_pg.dialog import dialog_wrapper
 import time
 
+
 version_ = 0.1
 
 sleeeep = True #Set it to False  if the programm runs to slow
 
 game = p.display.set_mode((16*16,16*16))
+
 
 size = 16
 maxx, maxy = 16,16
@@ -41,7 +43,7 @@ run = 1
 while run:
     if sleeeep:
         time.sleep(0.1)
-
+    
     
     events_ = p.event.get()
     p.event.clear()
@@ -143,4 +145,4 @@ while run:
         if event.type == 256:
             run = 0
     
-    p.quit()
+p.quit()
