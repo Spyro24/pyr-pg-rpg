@@ -25,11 +25,7 @@ def map_load(x,y,w,h,leng):
     acthit = [] #IDK
     overdraw = [] #drawed over the character layer
     load_ = 1
-    try:
-        fil = open("./map/" + str(x) + "_" + str(y), "br")
-    except:
-        print("[Err: Map load failed]\n[Err: no such map " +str(x) + "_" + str(y) + " ]")
-        load_ = 0
+    fil = open("../map/" + str(x) + "_" + str(y), "br")
     
     if load_:
         for a in range(0,w):
@@ -44,8 +40,21 @@ def map_load(x,y,w,h,leng):
         for a in range(0,w):
             for b in range(0,h):
                 overlay.append(int.from_bytes(fil.read(leng), "big"))
+        
+        #load action map
+        for a in range(0,w):
+            for b in range(0,h):
+                act.append(int.from_bytes(fil.read(leng), "big"))
+                
+        for a in range(0,w):
+            for b in range(0,h):
+                acthit.append(int.from_bytes(fil.read(leng), "big"))
+                
+        for a in range(0,w):
+            for b in range(0,h):
+                overdraw.append(int.from_bytes(fil.read(leng), "big"))
             
-    return [show,hit,overlay,act,acthit,overdraw]
+    return show,hit,overlay,act,acthit,overdraw
 
 
         

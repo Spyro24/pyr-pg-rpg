@@ -55,6 +55,11 @@ def map_load(x,y,w,h,leng):
                     overlay.append(p.image.load("./tiles/overlay/" + str(testing) + ".png"))
                 else:
                     overlay.append(0)
+                    
+        #Load the action layer
+        for a in range(0,w):
+            for b in range(0,h):
+                act.append(int.from_bytes(fil.read(leng), "big"))
             
     return [show,hit,overlay,act,acthit,overdraw]
 
@@ -118,6 +123,23 @@ def map_hit(x,y,map_,w,h):
         if hitf == 1:
             hit = True
         return hit
+    
+    except: pass
+    
+def map_dia(x,y,map_,w,h):
+    hit = False
+    try:
+        hitm = map_[3]
+        pos = ((y * w) + (x + 1)) - 1
+        if pos >= w * h:
+            pos = (w * h) - 1
+        elif pos < 0:
+            pos = 0
+        hitf = hitm[pos]
+        
+        if hitf > 0:
+            hit = True
+        return [hit, hitf]
     
     except: pass
     

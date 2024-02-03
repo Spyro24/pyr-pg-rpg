@@ -83,23 +83,27 @@ def p_push_button2(x, y, tx, ty):
     return False
 def draw_x(win, pos, size, x_y): #This function load the X.png and draw it
     path = "./symbols/X.png"
-    img = p.image.load(path)
+    img = p.transform.scale(p.image.load(path),(size,size))
     win.blit(img,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
 
 def draw_tile(win, pos, ov, size, x_y, no):
+    size = int(size)
     if ov == False:
         if True:
             print("DEBUG: running draw_tile")
-            load_ = p.image.load("../tiles/" + str(no) + ".png")
+            load_ = p.transform.scale(p.image.load("../tiles/" + str(no) + ".png"),(size, size))
             win.blit(load_,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
         else:
             draw_rect(win,pos[0] + (x_y[0] * size), pos[1] + (x_y[1] * size), pos[0] + ((x_y[0] + 1) * size), pos[1] + ((x_y[1] + 1) * size), (0,0,0))
     else:
         if no != 0:
-            load_ = p.image.load("../tiles/overlay/" + str(no) + ".png")
+            load_ =p.transform.scale(p.image.load("../tiles/overlay/" + str(no) + ".png"),(size,size))
             win.blit(load_,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
         
-def draw_map(win, pos, size, map_, h_w, *opn):
+def draw_map(win, pos, scale, map_, h_w, *opn):
+    xp = int(pos[0])
+    yp = int(pos[1])
+    size = (int(scale), int(scale))
     iter_ = 0
     if opn == ():
         opn = ("","")
@@ -107,20 +111,20 @@ def draw_map(win, pos, size, map_, h_w, *opn):
         for h in range(0, int(h_w[0])):
             for w in range(0, int(h_w[0])):
                 if map_[iter_] != 0:
-                    img_ = p.image.load("./symbols/X.png")
-                    win.blit(img_,(pos[0] + (w * size), pos[1] + (h * size)))
+                    img_ = p.transform.scale(p.image.load("./symbols/X.png"),size)
+                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
                 iter_ += 1
     elif opn[0] == "ov":
         for h in range(0, int(h_w[0])):
             for w in range(0, int(h_w[0])):
                 if map_[iter_] != 0:
-                    img_ = p.image.load("../tiles/overlay/" + str(map_[iter_]) + ".png")
-                    win.blit(img_,(pos[0] + (w * size), pos[1] + (h * size)))
+                    img_ = p.transform.scale(p.image.load("../tiles/overlay/" + str(map_[iter_]) + ".png"),size)
+                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
                 iter_ += 1
     else:
         for h in range(0, int(h_w[0])):
             for w in range(0, int(h_w[0])):
                 if map_[iter_] != 0:
-                    img_ = p.image.load("../tiles/" + str(map_[iter_]) + ".png")
-                    win.blit(img_,(pos[0] + (w * size), pos[1] + (h * size)))
+                    img_ = p.transform.scale(p.image.load("../tiles/" + str(map_[iter_]) + ".png"),size)
+                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
                 iter_ += 1

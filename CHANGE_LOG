@@ -4,7 +4,7 @@ V 0.0
   -Map Script V1
    -Load Map
    -Blit Map
-   -Redraw Map [I have this function five times redesigned because ervery design had a bug]
+   -Redraw Map [I redesinged the function because every design had a bug]
   -Dialog V1
   -Dialog Script V1
  -Map scroll
@@ -21,3 +21,6 @@ V 0.0
  -pyr_pg [EXTERNAL]
   -Control script (from pygame input to pygame raw input)
 
+
+
+No Noties From Kem
