@@ -18,7 +18,9 @@
 import pygame as p
 import copy
 
-def map_load(x,y,w,h,leng):
+def map_load(x_y,w_h,leng):
+    x, y = x_y
+    w, h = w_h
     show = [] #ground layer
     hit  = [] #hitbox layer
     overlay = [] #Overdraw over the ground layer
@@ -64,19 +66,17 @@ def map_load(x,y,w,h,leng):
     return [show,hit,overlay,act,acthit,overdraw]
 
 def map_blit(win,w,h,map_,size):
-    try:
-        iter_ = 0
-        print(map_[2])
-        for y in range(0,w):
-            for x in range(0,h):
-                if map_[0][iter_] != 0:
-                    win.blit(map_[0][iter_],(x * size, y * size))
-                
-                if map_[2][iter_] != 0:
-                    win.blit(map_[2][iter_],(x * size, y * size))
-                
-                iter_ +=1
-    except: pass
+    iter_ = 0
+    print(map_[2])
+    for y in range(0,w):
+        for x in range(0,h):
+            if map_[0][iter_] != 0:
+                win.blit(map_[0][iter_],(x * size, y * size))
+            
+            if map_[2][iter_] != 0:
+                win.blit(map_[2][iter_],(x * size, y * size))
+            
+            iter_ +=1
             
 def red_area(win,x,y,rad,size,map_,w,h):
     #A simple redraw function to redraw a map area
@@ -93,38 +93,35 @@ def red_area(win,x,y,rad,size,map_,w,h):
         xr = 0
     if yr < 0:
         yr = 0
-    try:
-        if run_f:
-            leng = rad * 2 + 1
-            for x_f in range(0,leng):
-                bx = (xr * h) + (x_f * h)
-                for y_f in range(0,leng):
-                    by = yr + y_f
-                    draw = by + bx
-                    if draw >= h * w:
-                        draw = h * w - 1
-                    if map_[0][draw ] != 0:
-                        win.blit(map_[0][draw ],((yr + y_f) * size,(xr + x_f)  * size))
-                    if map_[2][draw ] != 0:
-                        win.blit(map_[2][draw ],((yr + y_f) * size,(xr + x_f)  * size))
-    except: pass
+        
+    if run_f:
+        leng = rad * 2 + 1
+        for x_f in range(0,leng):
+            bx = (xr * h) + (x_f * h)
+            for y_f in range(0,leng):
+                by = yr + y_f
+                draw = by + bx
+                if draw >= h * w:
+                    draw = h * w - 1
+                if map_[0][draw ] != 0:
+                    win.blit(map_[0][draw ],((yr + y_f) * size,(xr + x_f)  * size))
+                if map_[2][draw ] != 0:
+                    win.blit(map_[2][draw ],((yr + y_f) * size,(xr + x_f)  * size))
     
 def map_hit(x,y,map_,w,h):
-    try:
-        hitm = map_[1]
-        hit = False
-        pos = ((y * w) + (x + 1)) - 1
-        if pos >= w * h:
-            pos = (w * h) - 1
-        elif pos < 0:
-            pos = 0
-        hitf = hitm[pos]
-        
-        if hitf == 1:
-            hit = True
-        return hit
+    hitm = map_[1]
+    hit = False
+    pos = ((y * w) + (x + 1)) - 1
+    if pos >= w * h:
+        pos = (w * h) - 1
+    elif pos < 0:
+        pos = 0
+    hitf = hitm[pos]
     
-    except: pass
+    if hitf == 1:
+        hit = True
+    return hit
+    
     
 def map_dia(x,y,map_,w,h):
     hit = False

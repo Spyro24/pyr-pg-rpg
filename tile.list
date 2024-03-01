@@ -5,13 +5,6 @@
 3 = Woodfloor []
 4 = Lightwater [Synthesys]
 5 = Darkwater [Synthesys]
-6 = Sand [Synthesys]
-7 = Savepoint [Kem]
-8 = Pressure Plate (inactive) [Kem]
-9 = Pressure Plate (active) [Kem]
-10 = Warp Pad [Kem]
-11 = Warp {oneway} (IN) [Kem]
-12 = Warp {oneway} (OUT) [Kem]
 
 ---Overlay Tiles---
 0 = None [Hard coded]

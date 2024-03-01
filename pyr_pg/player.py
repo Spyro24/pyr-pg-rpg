@@ -53,4 +53,6 @@ def move(win,px,py,dir_,size,mt,player_inf,map_,mw,mh,sp):
             #time.sleep(mt)
             #print("exec")
         
-    
+def draw_player(win,x,y,step,dir_,img_raw,ww,wh):
+    #img raw is for a frame buffer obj(not a png)
+    pass

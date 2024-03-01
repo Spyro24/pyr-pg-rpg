@@ -4,7 +4,7 @@ V 0.0
   -Map Script V1
    -Load Map
    -Blit Map
-   -Redraw Map [I redesinged the function because every design had a bug]
+   -Redraw Map [I have this function five times redesigned because ervery design had a bug]
   -Dialog V1
   -Dialog Script V1
  -Map scroll
@@ -16,11 +16,31 @@ V 0.0
   -Map scripts
    -Load Map
    -Draw Map
+   
 
 -change
  -pyr_pg [EXTERNAL]
   -Control script (from pygame input to pygame raw input)
 
 
+V 0.1
+-add
+ -map_tool [EXTERNAL]
+  -Button Pad [For Android version]
+  -Autosave
+ -Dialog script [EXTERNAL]
+  -setpos
+  -setmap
+ -main_2.py
+  -get keyboard
+  -map load
+  -title screen
+ -pyr_pg [EXTERNAL]
+  -launch wrapper
+  -save game
+  -gift code
+  -Player move Animation
 
-No Noties From Kem
+-change
+ -main.py
+  -rewrite the entire script for multitasking (NPCs, weapons and more (NOT SYSTEM MULTITASKING))

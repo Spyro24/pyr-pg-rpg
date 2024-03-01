@@ -3,15 +3,10 @@ import pyr_pg.map_ as rpg_map
 import pyr_pg.player as rpg_player
 import pyr_pg.kb as rpg_kb
 from pyr_pg.dialog import dialog_wrapper
-import time
-
 
 version_ = 0.1
 
-sleeeep = True #Set it to False  if the programm runs to slow
-
 game = p.display.set_mode((16*16,16*16))
-
 
 size = 16
 maxx, maxy = 16,16
@@ -35,16 +30,12 @@ pls = 0
 
 update = 1
 
-x_pos, y_pos = 8,8
+x_pos, y_pos = 14,14
 last_xy = x_pos, y_pos
 
 run = 1
 
 while run:
-    if sleeeep:
-        time.sleep(0.1)
-    
-    
     events_ = p.event.get()
     p.event.clear()
     # Update script
@@ -144,5 +135,5 @@ while run:
     for event in events_:
         if event.type == 256:
             run = 0
-    
+
 p.quit()

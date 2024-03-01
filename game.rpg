@@ -1,6 +1,8 @@
 name=Ultimate RPG
-version=0.0
+version=0.1
 tilesize=16
-winsize=256,256
+winsize=16
 icon=None
 scale=1
+init_map=0,0
+init_pos=0,0

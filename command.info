@@ -3,5 +3,9 @@ available command are:
   #reserve [command] (load a reserve obj from ./reserve)
    commands are:
      map [X] [Y] [version]
+  
+  #jmp [line] (jump to [line(int)])
+
+  #setpos 
 
   
