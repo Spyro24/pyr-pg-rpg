@@ -35,12 +35,14 @@ V 0.1
   -get keyboard
   -map load
   -title screen
+  -reset savestate (This delete your entire save)
  -pyr_pg [EXTERNAL]
+  -cce (Custom Code Execution) [For making special modes to make your own rpg unique]
   -launch wrapper
   -save game
   -gift code
   -Player move Animation
 
 -change
- -main.py
+ -main.py -> main_2.py
   -rewrite the entire script for multitasking (NPCs, weapons and more (NOT SYSTEM MULTITASKING))

@@ -35,11 +35,12 @@ mpx, mpy = init_val[6]
 
 #internal vars(DO NOT CHANGE)
 run = True; update = False; counter = 0; cur_map = rpg_map.map_load(init_val[6],(16,16),2); load_map = False; next_map = None; blit_map = False
-title_screen = False; next_map = None; hit_on_map = False; game = True; choser = 0; block_time = 0.0; ar_key_time = None; p_moved = False
+title_screen = False; next_map = None; hit_on_map = False; game = True; choser = 0; block_time = 0.0; ar_key_time = 0; p_moved = False; reset_save = False
+
 
 #init commands
 p.init(); gw = p.display.set_mode((int(init_val[2]) * int(init_val[3]), int(init_val[2]) * int(init_val[3]))); p.display.set_caption(init_val[0])
-gww = int(init_val[2]) * int(init_val[3]); gwh = int(init_val[2]) * int(init_val[3])
+gww = int(init_val[2]) * int(init_val[3]); gwh = int(init_val[2]) * int(init_val[3]); tl_size = (init_val[2] * init_val[5])
 
 
 #main function
@@ -62,7 +63,14 @@ while run:
             
             #get the cur pressed keys
             key_ar = list(p.key.get_pressed())
-            
+            '''
+            #key test code
+            n = 0
+            for test in key_ar:
+                if test:
+                    print(n)
+                n += 1
+            '''
             if update:
                 gw.blit(background,(0,0))
                 pwn.draw_rect(gw, 0, (gwh / 8 * 4), gww, (gwh / 8 * 3), (0,127,255))
@@ -70,23 +78,34 @@ while run:
                 p.display.flip()
                 update = False
             
+            '''
             if (time_get() - ar_key_time) > speed_glob:
                 pass
+            '''
             
+            if (key_ar[3+19] or key_ar[3+23]) == False:
+                block_time = 0
+                
             if (time_get() - block_time) > 0.25:
-                if key_ar[81] == True:
+                if key_ar[3+19] == key_ar[3+23]:
+                    pass
+                
+                elif key_ar[3+19]:
                     if choser < 2:
                         choser += 1
                         update = True
                         block_time = time_get()
                         
                         
-                if key_ar[82] == True:
+                elif key_ar[3+23]:
                     if choser > 0:
                         choser -= 1
                         update = True
                         block_time = time_get()
             
+            if key_ar[44]:
+                if choser == 0:
+                    
         
             
     if game:
@@ -132,11 +151,13 @@ while run:
                 
             #show curent map
             if blit_map:
+                game.fill("black")
+                rpg_map.map_blit(game,mapx,mapy,cur_map,tl_size)
                 update = True
                 blit_map = False
                 
             if p_moved:
-                
+                pass
             
             #update the display
             if update:
@@ -147,6 +168,13 @@ while run:
             #update the programm counter
             counter += 1
     
+    if reset_save:
+        while reset_save:
+            if update:
+                p.display.flip()
+                update = False
+                
+            
 
 #on exit
 p.quit()
