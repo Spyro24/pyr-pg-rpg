@@ -5,6 +5,13 @@
 3 = Woodfloor []
 4 = Lightwater [Synthesys]
 5 = Darkwater [Synthesys]
+6 = Sand [Synthesys]
+7 = Orange structure beam []
+8 = Green structure beam [Synthesys]
+9 = Yellow structure beam [Synthesys]
+10 = Blue structure beam [Synthesys]
+11 = []
+
 
 ---Overlay Tiles---
 0 = None [Hard coded]
@@ -12,6 +19,7 @@
 2 = Stonefloor (Up left corner) [Synthesys]
 3 = Stonefloor (Down right corner) [Synthesys]
 4 = Stonefloor (Down left corner) [Synthesys]
+5 = roller (right) [Synthesys]
 
 ---Player overlay Tiles---
 0 = None [Hard coded]
