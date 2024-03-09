@@ -38,9 +38,21 @@ update = False; counter = 0; load_map = False; next_map = None; blit_map = False
 game = True; choser = 0; block_time = 0.0; ar_key_time = 0; p_moved = False; reset_save = False; wasd_act = True
 
 #init commands
-p.init(); gw = p.display.set_mode((int(init_val[2]) * int(init_val[3]), int(init_val[2]) * int(init_val[3]))); p.display.set_caption(init_val[0])
-gww = int(init_val[2]) * int(init_val[3]); gwh = int(init_val[2]) * int(init_val[3]); tl_size = (init_val[2] * init_val[5])
+p.init(); ; p.display.set_caption(init_val[0])
+tl_size = (init_val[2] * init_val[5])
 
+#game window
+game_win = p.display.set_mode((int(init_val[2]) * int(init_val[3]), int(init_val[2]) * int(init_val[3]))) #Game window
+game_w_w = int(init_val[2]) * int(init_val[3]) #Game window W
+game_w_h = int(init_val[2]) * int(init_val[3]) #Game window H
+
+#player vars
+player_p_x = 0 #Players X position
+player_p_y = 0 #Players Y position
+
+#map vars
+map_p_x = 0 #Map X position
+map_p_y = 0 #Map Y position
 
 #main function
 run = True
@@ -66,9 +78,9 @@ while run:
             
             key_ar = list(p.key.get_pressed()) #Aray with all keys
             if update: #Update the Display
-                gw.blit(background,(0,0))
-                pwn.draw_rect(gw, 0, (gwh / 8 * 4), gww, (gwh / 8 * 3), (0,127,255))
-                pwn.draw_rect(gw, 0, (gwh / 8 * (4 + int(choser))), gww, (gwh / 8 * 1), (255,42,0))
+                game_win.blit(background,(0,0))
+                pwn.draw_rect(game_win, 0, (game_w_h / 8 * 4), game_w_w, (game_w_h / 8 * 3), (0,127,255))
+                pwn.draw_rect(game_win, 0, (game_w_h / 8 * (4 + int(choser))), game_w_w, (game_w_h / 8 * 1), (255,42,0))
                 p.display.flip()
                 update = False
             
@@ -99,18 +111,13 @@ while run:
                 
     if game: #start Game loop
         while game:
-            
-            #we can call event.get() once in a run
-            for event in p.event.get():
+            for event in p.event.get(): #we can call event.get() once in a run
                 if event.type == p.QUIT:
                     game = False
-                    run = False
-                    
-            #get all pressed keys
-            key_ar = list(p.key.get_pressed())
+                    run = False                    
             
-            #WASD key Script
-            if wasd_act:
+            key_ar = list(p.key.get_pressed()) #get all pressed keys           
+            if wasd_act: #get if WASD keys active
                 direction = None
                 if key_ar[3+23] and key_ar[3+1]:
                     direction = "LUP"                    
