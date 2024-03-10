@@ -6,11 +6,17 @@
 4 = Lightwater [Synthesys]
 5 = Darkwater [Synthesys]
 6 = Sand [Synthesys]
-7 = Orange structure beam []
-8 = Green structure beam [Synthesys]
-9 = Yellow structure beam [Synthesys]
-10 = Blue structure beam [Synthesys]
-11 = []
+7 = Savepoint [Kem]
+8 = Pressure Plate (inactive) [Kem]
+9 = Pressure Plate (active) [Kem]
+10 = Warp Pad [Kem]
+11 = Warp {oneway} (IN) [Kem]
+12 = Warp {oneway} (OUT) [Kem]
+13 = Orange structure beam []
+14 = Green structure beam [Synthesys]
+15 = Yellow structure beam [Synthesys]
+16 = Blue structure beam [Synthesys]
+17 = []
 
 
 ---Overlay Tiles---

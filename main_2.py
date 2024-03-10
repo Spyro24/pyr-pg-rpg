@@ -51,6 +51,8 @@ player_p_x = 0 #Players X position
 player_p_y = 0 #Players Y position
 player_move = None #Players movement direction
 player_dir = "UP" #Players face direction
+player_p_c = 0 #Player position counter for move.(0 for curent field and tile_size + 1 for next field)
+player_m_t = 1 #Player movement speed in seconds tomove to the next field
 
 #map vars
 map_p_x = 0 #Map X position
