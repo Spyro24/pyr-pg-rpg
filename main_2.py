@@ -49,10 +49,16 @@ game_w_h = int(init_val[2]) * int(init_val[3]) #Game window H
 #player vars
 player_p_x = 0 #Players X position
 player_p_y = 0 #Players Y position
+player_move = None #Players movement direction
+player_dir = "UP" #Players face direction
 
 #map vars
 map_p_x = 0 #Map X position
 map_p_y = 0 #Map Y position
+map_load = False #if this is true the map are reloaded
+map_map = [] #contains the the map in raw format (with the loaded tiles)
+map_s_w = 16 #Wight of the map in Tiles
+map_s_h = 16 #Hight of the map in Tiles
 
 #main function
 run = True
@@ -118,25 +124,28 @@ while run:
             
             key_ar = list(p.key.get_pressed()) #get all pressed keys           
             if wasd_act: #get if WASD keys active
-                direction = None
+                player_move = None
                 if key_ar[3+23] and key_ar[3+1]:
-                    direction = "LUP"                    
+                    player_move = "LUP"                    
                 elif key_ar[3+23] and key_ar[3+4]:
-                    direction = "RUP"                    
+                    player_move = "RUP"                    
                 elif key_ar[3+1] and key_ar[3+19] :
-                    direction = "LWN"                    
+                    player_move = "LWN"                    
                 elif key_ar[3+4]  and key_ar[3+19]:
-                    direction = "RWN"                
+                    player_move = "RWN"                
                 elif key_ar[3+23]:
-                    direction = "UP"                    
+                    player_move = "UP"                    
                 elif key_ar[3+1]:
-                    direction = "LEFT"                    
+                    player_move = "LEFT"                    
                 elif key_ar[3+19]:
-                    direction = "DOWN"
+                    player_move = "DOWN"
                 elif key_ar[3+4]:
-                    direction = "RIGHT"
+                    player_move = "RIGHT"
+                
+                if player_move != None:
+                    player_dir = player_move #Set the players face direction to the movement direction
                     
-            if load_map: #load the map
+            if map_load: #load the map
                 if hit_on_map:
                     nex_map = rpg_map.map_load((x_m, y_m), (16,16), 2)
                 else:
@@ -145,7 +154,7 @@ while run:
                 
             if blit_map: #show curent map
                 game.fill("black")
-                rpg_map.map_blit(game,mapx,mapy,cur_map,tl_size)
+                rpg_map.map_blit(game,map_s_w, map_s_h, map_map,tl_size)
                 update = True
                 blit_map = False
                 

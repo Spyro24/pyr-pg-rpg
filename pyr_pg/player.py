@@ -56,3 +56,17 @@ def move(win,px,py,dir_,size,mt,player_inf,map_,mw,mh,sp):
 def draw_player(win,x,y,step,dir_,img_raw,ww,wh):
     #img raw is for a frame buffer obj(not a png)
     pass
+
+def cahnge_x_y(cur_x, cur_y, face, num):
+    rx = cur_x #set the return for x to curent x
+    ry = cur_y #set the return for y to curent y
+    fields = int(num) #The fields how long the player can move
+    
+    if face == "UP":
+        rx -= fields
+    elif face == "DOWN":
+        rx += fields
+    elif face == "LEFT":
+        ry -= fields
+    elif face == "RIGHT":
+        ry += fields

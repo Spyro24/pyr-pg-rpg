@@ -18,7 +18,7 @@ player_stats = []
 
 
 mapx,mapy = 0, 0
-map_ = rpg_map.map_load(0,0,16,16,2)
+map_ = rpg_map.map_load((0,0),(16,16),2)
 print(map_)
 print(map_[1])
 rpg_map.map_blit(game,16,16,map_,size)
@@ -121,7 +121,7 @@ while run:
             max_lim = 1
         if max_lim:
             game.fill("black")
-            map_ = rpg_map.map_load(mapx,mapy,16,16,2)
+            map_ = rpg_map.map_load((mapx,mapy),(16,16),2)
             rpg_map.map_blit(game,16,16,map_,size)
             rpg_player.move(game,x_pos,y_pos,dir_,size,0.001,["",0],map_,16,16,sp_)
             max_lim = 0
