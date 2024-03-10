@@ -18,9 +18,7 @@
 import pygame as p
 import copy
 
-def map_load(x_y,w_h,leng):
-    x, y = x_y
-    w, h = w_h
+def load(x, y, w, h, leng):
     show = [] #ground layer
     hit  = [] #hitbox layer
     overlay = [] #Overdraw over the ground layer
@@ -65,7 +63,7 @@ def map_load(x_y,w_h,leng):
             
     return [show,hit,overlay,act,acthit,overdraw]
 
-def map_blit(win,w,h,map_,size):
+def blit(win,w,h,map_,size):
     iter_ = 0
     print(map_[2])
     for y in range(0,w):

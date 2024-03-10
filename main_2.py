@@ -38,13 +38,14 @@ update = False; counter = 0; load_map = False; next_map = None; blit_map = False
 game = True; choser = 0; block_time = 0.0; ar_key_time = 0; p_moved = False; reset_save = False; wasd_act = True
 
 #init commands
-p.init(); ; p.display.set_caption(init_val[0])
+p.init(); p.display.set_caption(init_val[0])
 tl_size = (init_val[2] * init_val[5])
 
 #game window
 game_win = p.display.set_mode((int(init_val[2]) * int(init_val[3]), int(init_val[2]) * int(init_val[3]))) #Game window
 game_w_w = int(init_val[2]) * int(init_val[3]) #Game window W
 game_w_h = int(init_val[2]) * int(init_val[3]) #Game window H
+game_update = False # update the window of the game
 
 #player vars
 player_p_x = 0 #Players X position
@@ -52,7 +53,9 @@ player_p_y = 0 #Players Y position
 player_move = None #Players movement direction
 player_dir = "UP" #Players face direction
 player_p_c = 0 #Player position counter for move.(0 for curent field and tile_size + 1 for next field)
-player_m_t = 1 #Player movement speed in seconds tomove to the next field
+player_m_s = 1 #Player movement speed in seconds to move to the next field
+player_m_t = 0 #this var is the actual time whilethe player is moving
+player_m_state = False #this is True if the player move
 
 #map vars
 map_p_x = 0 #Map X position
@@ -61,6 +64,13 @@ map_load = False #if this is true the map are reloaded
 map_map = [] #contains the the map in raw format (with the loaded tiles)
 map_s_w = 16 #Wight of the map in Tiles
 map_s_h = 16 #Hight of the map in Tiles
+map_len = 2  #the length in bytes of a tile (numeric)
+
+#key vars
+
+#tiles var
+tile_size = 16 #The tiles size in pixel
+tile_zoom = 1 #the zoom of the tiles (DON NOT CHANGE) (this var is reserved for the internals)
 
 #main function
 run = True
@@ -85,7 +95,7 @@ while run:
                     title_screen = False
             
             key_ar = list(p.key.get_pressed()) #Aray with all keys
-            if update: #Update the Display
+            if game_update: #Update the Display
                 game_win.blit(background,(0,0))
                 pwn.draw_rect(game_win, 0, (game_w_h / 8 * 4), game_w_w, (game_w_h / 8 * 3), (0,127,255))
                 pwn.draw_rect(game_win, 0, (game_w_h / 8 * (4 + int(choser))), game_w_w, (game_w_h / 8 * 1), (255,42,0))
@@ -118,6 +128,9 @@ while run:
                     
                 
     if game: #start Game loop
+        map_map = rpg_map.load(map_p_x, map_p_y, map_s_w, map_s_h, map_len)
+        rpg_map.blit(game_win, map_s_w, map_s_h, map_map, tile_size * tile_zoom)
+        game_update = True
         while game:
             for event in p.event.get(): #we can call event.get() once in a run
                 if event.type == p.QUIT:
@@ -164,9 +177,9 @@ while run:
                 pass
             
             #update the display
-            if update:
+            if game_update:
                 p.display.flip()
-                update = False
+                game_update = False
             
             #update the programm counter
             counter += 1
