@@ -46,3 +46,5 @@ V 0.1
 -change
  -main.py -> main_2.py
   -rewrite the entire script for multitasking (NPCs, weapons and more (NOT SYSTEM MULTITASKING))
+ -player sprite loading
+  -load player sprites as a sprite aray to increase game speed

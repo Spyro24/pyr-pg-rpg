@@ -53,9 +53,12 @@ player_p_y = 0 #Players Y position
 player_move = None #Players movement direction
 player_dir = "UP" #Players face direction
 player_p_c = 0 #Player position counter for move.(0 for curent field and tile_size + 1 for next field)
-player_m_s = 1 #Player movement speed in seconds to move to the next field
+player_m_s = 0.15 #Player movement speed in seconds to move to the next field
 player_m_t = 0 #this var is the actual time whilethe player is moving
 player_m_state = False #this is True if the player move
+player_character = 0 #The player sprite as a number
+player_name = "" #The name of the player
+player_sprite = rpg_player.load_sprites(player_character) #allplayer sprites as a frame bud obj
 
 #map vars
 map_p_x = 0 #Map X position
@@ -67,6 +70,7 @@ map_s_h = 16 #Hight of the map in Tiles
 map_len = 2  #the length in bytes of a tile (numeric)
 
 #key vars
+key_wasd = True #Activate the WASD keys
 
 #tiles var
 tile_size = 16 #The tiles size in pixel
@@ -130,6 +134,7 @@ while run:
     if game: #start Game loop
         map_map = rpg_map.load(map_p_x, map_p_y, map_s_w, map_s_h, map_len)
         rpg_map.blit(game_win, map_s_w, map_s_h, map_map, tile_size * tile_zoom)
+        rpg_player.move_step(game_win, player_p_x, player_p_y, player_dir, player_sprite,((tile_size * tile_zoom) + 1) , (tile_size * tile_zoom))
         game_update = True
         while game:
             for event in p.event.get(): #we can call event.get() once in a run
@@ -138,7 +143,7 @@ while run:
                     run = False                    
             
             key_ar = list(p.key.get_pressed()) #get all pressed keys           
-            if wasd_act: #get if WASD keys active
+            if key_wasd: #get if WASD keys active
                 player_move = None
                 if key_ar[3+23] and key_ar[3+1]:
                     player_move = "LUP"                    
@@ -159,7 +164,28 @@ while run:
                 
                 if player_move != None:
                     player_dir = player_move #Set the players face direction to the movement direction
-                    
+                    rpg_player.move_step(game_win, player_p_x, player_p_y, player_dir, player_sprite,(tile_size * tile_zoom) , (tile_size * tile_zoom))
+                    hit_test = rpg_player.change_x_y(player_p_x, player_p_y, player_move, 1) #Change the player X and Y position to the new position for the hitbox test
+                    if rpg_map.hit(hit_test[1], hit_test[0], map_s_w, map_s_h, map_map) == False:
+                        player_p_x = hit_test[0]
+                        player_p_y = hit_test[1]
+                        player_m_state = True
+                        key_wasd = False
+                        
+                    game_update = True
+            
+            if player_m_state:
+                if time_get() > (player_m_t + (player_m_s / (tile_size * tile_zoom))):
+                    player_p_c += 1
+                    if player_p_c > (tile_size * tile_zoom):
+                        player_p_c = 0
+                        player_m_state = False
+                        key_wasd = True
+                    else:
+                        rpg_player.move_step(game_win, player_p_x, player_p_y, player_dir, player_sprite, player_p_c, (tile_size * tile_zoom), map_s_w, map_s_h, map_map, 2)
+                        game_update = True
+                        player_m_t = time_get()
+                
             if map_load: #load the map
                 if hit_on_map:
                     nex_map = rpg_map.map_load((x_m, y_m), (16,16), 2)
@@ -187,7 +213,7 @@ while run:
     
     if reset_save: #start reset loop to reset the save
         while reset_save:
-            if update:
+            if game_update:
                 p.display.flip()
                 update = False
                 

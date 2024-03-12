@@ -8,3 +8,7 @@
   -player movement speed
   -player position counter
   -player movement
+  -player hitbox dedector
+
+ -change
+  -player sprite loader

@@ -106,17 +106,11 @@ def red_area(win,x,y,rad,size,map_,w,h):
                 if map_[2][draw ] != 0:
                     win.blit(map_[2][draw ],((yr + y_f) * size,(xr + x_f)  * size))
     
-def map_hit(x,y,map_,w,h):
-    hitm = map_[1]
+def hit(y,x,w,h,map_):
+    hit_p_m = map_[1]
     hit = False
-    pos = ((y * w) + (x + 1)) - 1
-    if pos >= w * h:
-        pos = (w * h) - 1
-    elif pos < 0:
-        pos = 0
-    hitf = hitm[pos]
-    
-    if hitf == 1:
+    hit_pos = ((w * y) + x)
+    if hit_p_m[hit_pos] == 1:
         hit = True
     return hit
     
