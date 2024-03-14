@@ -60,6 +60,20 @@ def load(x, y, w, h, leng):
         for a in range(0,w):
             for b in range(0,h):
                 act.append(int.from_bytes(fil.read(leng), "big"))
+                
+        #Load the action hit layer
+        for a in range(0,w):
+            for b in range(0,h):
+                acthit.append(int.from_bytes(fil.read(leng), "big"))
+                
+        #Load the ground overlay layer
+        for a in range(0,w):
+            for b in range(0,h):
+                testing = int.from_bytes(fil.read(leng), "big")
+                if testing != 0:
+                    overdraw.append(p.image.load("./tiles/p_overlay/" + str(testing) + ".png"))
+                else:
+                    overdraw.append(0)
             
     return [show,hit,overlay,act,acthit,overdraw]
 
@@ -76,13 +90,14 @@ def blit(win,w,h,map_,size):
             
             iter_ +=1
             
-def red_area(win,x,y,rad,size,map_,w,h):
+def red_area(win,x,y,rad,size,map_,w,h,*opt):
     #A simple redraw function to redraw a map area
     #map_blit(win,w,h,map_,size)
-    run_f = 1
     if rad <= 0:
         print("[ERR: radius can't below 1]\n[ERR: radius < 1]")
-        run_f = 0
+        return None
+    
+    layer = 0
     
     xr = y - rad
     yr = x - rad
@@ -91,8 +106,13 @@ def red_area(win,x,y,rad,size,map_,w,h):
         xr = 0
     if yr < 0:
         yr = 0
-        
-    if run_f:
+     
+    if len(opt) > 0:
+        if opt[0] == 1:
+            layer = 2
+        elif opt[0] == 2:
+            layer = 5
+            
         leng = rad * 2 + 1
         for x_f in range(0,leng):
             bx = (xr * h) + (x_f * h)
@@ -101,10 +121,22 @@ def red_area(win,x,y,rad,size,map_,w,h):
                 draw = by + bx
                 if draw >= h * w:
                     draw = h * w - 1
-                if map_[0][draw ] != 0:
-                    win.blit(map_[0][draw ],((yr + y_f) * size,(xr + x_f)  * size))
-                if map_[2][draw ] != 0:
-                    win.blit(map_[2][draw ],((yr + y_f) * size,(xr + x_f)  * size))
+                if map_[layer][draw ] != 0:
+                    win.blit(map_[layer][draw ],((yr + y_f) * size,(xr + x_f)  * size))
+        return None
+        
+    leng = rad * 2 + 1
+    for x_f in range(0,leng):
+        bx = (xr * h) + (x_f * h)
+        for y_f in range(0,leng):
+            by = yr + y_f
+            draw = by + bx
+            if draw >= h * w:
+                draw = h * w - 1
+            if map_[0][draw ] != 0:
+                win.blit(map_[0][draw ],((yr + y_f) * size,(xr + x_f)  * size))
+            if map_[2][draw ] != 0:
+                win.blit(map_[2][draw ],((yr + y_f) * size,(xr + x_f)  * size))
     
 def hit(y,x,w,h,map_):
     hit_p_m = map_[1]

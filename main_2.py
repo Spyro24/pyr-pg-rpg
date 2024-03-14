@@ -134,7 +134,7 @@ while run:
     if game: #start Game loop
         map_map = rpg_map.load(map_p_x, map_p_y, map_s_w, map_s_h, map_len)
         rpg_map.blit(game_win, map_s_w, map_s_h, map_map, tile_size * tile_zoom)
-        rpg_player.move_step(game_win, player_p_x, player_p_y, player_dir, player_sprite,((tile_size * tile_zoom) + 1) , (tile_size * tile_zoom))
+        rpg_player.move_step(game_win, player_p_x, player_p_y, player_dir, player_sprite,(tile_size * tile_zoom) , (tile_size * tile_zoom))
         game_update = True
         while game:
             for event in p.event.get(): #we can call event.get() once in a run
@@ -144,23 +144,7 @@ while run:
             
             key_ar = list(p.key.get_pressed()) #get all pressed keys           
             if key_wasd: #get if WASD keys active
-                player_move = None
-                if key_ar[3+23] and key_ar[3+1]:
-                    player_move = "LUP"                    
-                elif key_ar[3+23] and key_ar[3+4]:
-                    player_move = "RUP"                    
-                elif key_ar[3+1] and key_ar[3+19] :
-                    player_move = "LWN"                    
-                elif key_ar[3+4]  and key_ar[3+19]:
-                    player_move = "RWN"                
-                elif key_ar[3+23]:
-                    player_move = "UP"                    
-                elif key_ar[3+1]:
-                    player_move = "LEFT"                    
-                elif key_ar[3+19]:
-                    player_move = "DOWN"
-                elif key_ar[3+4]:
-                    player_move = "RIGHT"
+                player_move = rpg_kb.key_wasd(key_ar)
                 
                 if player_move != None:
                     player_dir = player_move #Set the players face direction to the movement direction

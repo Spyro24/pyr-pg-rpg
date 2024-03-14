@@ -1,31 +1,20 @@
-import pygame as p
-
-def wasd_arrow_2d():
-    direction = None
-    pressed = False
-    key_ar = list(p.key.get_pressed())
-    
-    #This is the new control script
+def key_wasd(key_ar):
+    player_move = None
     if key_ar[3+23] and key_ar[3+1]:
-        direction = "LUP"
+        player_move = "LUP"                    
     elif key_ar[3+23] and key_ar[3+4]:
-        direction = "RUP"
+        player_move = "RUP"                    
     elif key_ar[3+1] and key_ar[3+19] :
-        direction = "LWN"
+        player_move = "LWN"                    
     elif key_ar[3+4]  and key_ar[3+19]:
-        direction = "RWN"
-    
-    #This was the Original control script
+        player_move = "RWN"                
     elif key_ar[3+23]:
-        direction = "UP"
+        player_move = "UP"                    
     elif key_ar[3+1]:
-        direction = "LEFT"
+        player_move = "LEFT"                    
     elif key_ar[3+19]:
-        direction = "DOWN"
+        player_move = "DOWN"
     elif key_ar[3+4]:
-        direction = "RIGHT"
+        player_move = "RIGHT"
         
-    if direction != None:
-        pressed = True
-    
-    return direction, pressed
+    return player_move
