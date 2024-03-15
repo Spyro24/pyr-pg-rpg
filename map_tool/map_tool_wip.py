@@ -67,11 +67,11 @@ while run:
         pw.draw_rect(toolw, (dis_h / 10) * 8, 0, dis_h / 10 * 2, dis_w / 10 , (125,125,125))
         pw.draw_rect(toolw, (dis_h / 10) * 8, dis_w / 10 * 1, dis_h, dis_w / 10, (100,100,100))
         pw.draw_rect(toolw, (dis_h / 10) * 8, dis_w / 10 * 2, dis_h, dis_w / 10, (125,125,125))
-        pw.draw_rect(toolw, (dis_h / 10) * 8, dis_w / 10 * 4, dis_h, dis_w / 10, (125,125,125))
+        #pw.draw_rect(toolw, (dis_h / 10) * 8, dis_w / 10 * 4, dis_h, dis_w / 10, (125,125,125))
         pw.draw_font(toolw, size, (dis_h / 10) * 8 + (dis_h / 40), dis_w / 40, "EXIT", (0,0,0))
-        pw.draw_font(toolw, size, (dis_h / 10) * 8 + (dis_h / 40), dis_w / 40 * 5, "SAVE", (0,0,0))
-        pw.draw_font(toolw, size, (dis_h / 10) * 8 + (dis_h / 40), dis_w / 40 * 9, "NEW", (0,0,0))
-        pw.draw_font(toolw, size, (dis_h / 10) * 8 + (dis_h / 40), dis_w / 40 * 17, "Tile", (0,0,0))
+        pw.draw_font(toolw, size, (dis_h / 10) * 8 + (dis_h / 40), dis_w / 40 * 5, "Clear", (0,0,0))
+        pw.draw_font(toolw, size, (dis_h / 10) * 8 + (dis_h / 40), dis_w / 40 * 9, "Tile", (0,0,0))
+        #pw.draw_font(toolw, size, (dis_h / 10) * 8 + (dis_h / 40), dis_w / 40 * 17, "Tile", (0,0,0))
         
         #Draw Edit mode Buttons
         pw.draw_rect(toolw, 0, dis_w / 10 * 8, dis_h / 10 * 2, dis_w / 10 , (125,125,125))

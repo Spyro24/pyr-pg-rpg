@@ -59,6 +59,7 @@ player_m_state = False #this is True if the player move
 player_character = 0 #The player sprite as a number
 player_name = "" #The name of the player
 player_sprite = rpg_player.load_sprites(player_character) #allplayer sprites as a frame bud obj
+player_f_exit = False #This ia a function var to get if the player outside the window
 
 #map vars
 map_p_x = 0 #Map X position
@@ -68,6 +69,7 @@ map_map = [] #contains the the map in raw format (with the loaded tiles)
 map_s_w = 16 #Wight of the map in Tiles
 map_s_h = 16 #Hight of the map in Tiles
 map_len = 2  #the length in bytes of a tile (numeric)
+map_blit = False #Show the curent map
 
 #key vars
 key_wasd = True #Activate the WASD keys
@@ -154,34 +156,55 @@ while run:
                         player_p_x = hit_test[0]
                         player_p_y = hit_test[1]
                         player_m_state = True
-                        key_wasd = False
                         
                     game_update = True
             
             if player_m_state:
+                key_wasd = False
                 if time_get() > (player_m_t + (player_m_s / (tile_size * tile_zoom))):
                     player_p_c += 1
                     if player_p_c > (tile_size * tile_zoom):
                         player_p_c = 0
                         player_m_state = False
                         key_wasd = True
+                        player_f_exit = True
                     else:
                         rpg_player.move_step(game_win, player_p_x, player_p_y, player_dir, player_sprite, player_p_c, (tile_size * tile_zoom), map_s_w, map_s_h, map_map, 2)
                         game_update = True
                         player_m_t = time_get()
+            
+            if player_f_exit:
+                map_load = True
+                player_m_state = True
+                if player_p_x > map_s_w - 1:
+                    player_p_x = 0
+                    map_p_x += 1 
+                elif player_p_x < 0:
+                    player_p_x = map_s_w - 1
+                    map_p_x -= 1
+                elif player_p_y > map_s_h - 1:
+                    player_p_y = 0
+                    map_p_y += 1
+                elif player_p_y < 0:
+                    player_p_y = map_s_h - 1
+                    map_p_y -= 1
+                else:
+                    map_load = False
+                    player_m_state = False
+                    
+                player_f_exit = False
                 
             if map_load: #load the map
-                if hit_on_map:
-                    nex_map = rpg_map.map_load((x_m, y_m), (16,16), 2)
-                else:
-                    cur_map = rpg_map.map_load((x_m, y_m), (16,16), 2)
-                load_map = False
+                map_map = rpg_map.load(map_p_x, map_p_y, map_s_w, map_s_h, map_len)
+                map_blit = True
+                map_load = False
+
                 
-            if blit_map: #show curent map
-                game.fill("black")
-                rpg_map.map_blit(game,map_s_w, map_s_h, map_map,tl_size)
+            if map_blit: #show curent map
+                game_win.fill("black")
+                rpg_map.blit(game_win,map_s_w, map_s_h, map_map,tl_size)
                 update = True
-                blit_map = False
+                map_blit = False
                 
             if p_moved: #get the move state of the player
                 pass
