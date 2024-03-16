@@ -1,17 +1,15 @@
 import pygame as p
 import pyr_pg.map_ as map_to 
 
-def dialog_wrapper(win,map_,script,var, *debug):
+def dialog_wrapper(win,map_,script, *debug):
     #init all vars
-    gmap = var[2]
-    w, h = var[3]
-    ppos = None
+    reba = []
     iter_ = 0
-    cpos = 0
-    run_ = True
+    cpos = 0 #The curent execute position for a script
+    run_ = True #if this false the code stops
     script = open("./dialog/" + str(map_[0]) + "_" + str(map_[1]) + "/" + str(script) + ".dialog")
     code = script.readlines()
-    empty3829 = len(code)
+    empty3829 = len(code) #this is for thw ma lenght of a script
     
     #run the dialog script file
     while cpos < int(empty3829) and run_:
@@ -30,7 +28,9 @@ def dialog_wrapper(win,map_,script,var, *debug):
         elif csp[0] == "#setpos":
             x = int(csp[1])
             y = int(csp[2])
-            ppos = (x,y)
+            reba.append("player_p_set")
+            reba.append(x)
+            reba.append(y)
             
         #jump to the chosen line
         elif csp[0] == "#jmp":
@@ -38,5 +38,4 @@ def dialog_wrapper(win,map_,script,var, *debug):
         
         cpos += 1
     
-    map_to.map_blit(win,w,h,gmap,16)
-    return [ppos, True]
+    return reba

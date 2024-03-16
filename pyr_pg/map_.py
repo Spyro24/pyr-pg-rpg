@@ -137,6 +137,8 @@ def red_area(win,x,y,rad,size,map_,w,h,*opt):
                 win.blit(map_[0][draw ],((yr + y_f) * size,(xr + x_f)  * size))
             if map_[2][draw ] != 0:
                 win.blit(map_[2][draw ],((yr + y_f) * size,(xr + x_f)  * size))
+            if map_[5][draw ] != 0:
+                win.blit(map_[5][draw ],((yr + y_f) * size,(xr + x_f)  * size))
     
 def hit(y,x,w,h,map_):
     if x < 0 or y < 0:
@@ -152,8 +154,12 @@ def hit(y,x,w,h,map_):
     return hit
     
     
-def map_dia(x,y,map_,w,h):
+def diascr(x,y,w,h,map_):
     hit = False
+    if x < 0 or y < 0:
+        return False, 0
+    if x > (w - 1) or y > (h - 1):
+        return False, 0
     try:
         hitm = map_[3]
         pos = ((y * w) + (x + 1)) - 1

@@ -78,3 +78,7 @@ def load_sprites(player):
     for face in faces:
         player_sprites.append(p.image.load("./players/" + str(player) + "/" + str(face) + ".png"))
     return player_sprites
+
+def hide(win, x, y, ts, *opt):
+    if len(opt) == 4:
+        m.red_area(win,x,y,int(opt[3]),ts,opt[2],opt[0],opt[1])
