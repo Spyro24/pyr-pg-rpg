@@ -38,7 +38,7 @@ def load(x, y, w, h, leng):
             for b in range(0,h):
                 testing = int.from_bytes(fil.read(leng), "big")
                 if testing != 0:
-                    show.append(p.image.load("./tiles/" + str(testing) + ".png"))
+                    show.append(p.image.load("./tiles/" + str(testing) + ".png").convert())
                 else:
                     show.append(0)
         
@@ -52,7 +52,7 @@ def load(x, y, w, h, leng):
             for b in range(0,h):
                 testing = int.from_bytes(fil.read(leng), "big")
                 if testing != 0:
-                    overlay.append(p.image.load("./tiles/overlay/" + str(testing) + ".png"))
+                    overlay.append(p.image.load("./tiles/overlay/" + str(testing) + ".png").convert())
                 else:
                     overlay.append(0)
                     
@@ -71,7 +71,7 @@ def load(x, y, w, h, leng):
             for b in range(0,h):
                 testing = int.from_bytes(fil.read(leng), "big")
                 if testing != 0:
-                    overdraw.append(p.image.load("./tiles/p_overlay/" + str(testing) + ".png"))
+                    overdraw.append(p.image.load("./tiles/p_overlay/" + str(testing) + ".png").convert())
                 else:
                     overdraw.append(0)
             

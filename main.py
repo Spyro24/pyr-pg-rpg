@@ -27,6 +27,7 @@ from pyr_pg.launch_wrapper import launch_wrapper
 import pyr_pg.pywin as pwn
 from time import sleep
 from time import time as time_get
+import start as rpg_start_game_on_init
 
 #settings
 init_val = launch_wrapper("./game.rpg"); x_m = 0; y_m = 0
@@ -92,6 +93,7 @@ title_screen = False #execute the titlescreen loop
 game = True #execute the game loop
 
 
+rpg_start_game_on_init.start(game_win)
 while run:
     if title_screen: #check for the title screen
         update = True #Refresh the screen
@@ -201,11 +203,11 @@ while run:
                 player_f_exit = False
                 
             if dialog_test:
-               dialog_run, dialog_num = rpg_map.diascr(player_p_x, player_p_y, map_s_w, map_s_h, map_map)
+               dialog_run, dialog_num = rpg_map.diascr(player_p_x, player_p_y, map_s_w, map_s_h, map_map,)
                dialog_test = False
                
             if dialog_run:
-                reba = dialog_wrapper(game_win,[map_p_x, map_p_y], dialog_num)
+                reba = dialog_wrapper(game_win,[map_p_x, map_p_y], dialog_num, (tile_size * tile_zoom),[],[])
                 for n in range(0,len(reba)):
                     test_str = reba[n]
                     if test_str == "player_p_set":
@@ -213,6 +215,10 @@ while run:
                         player_p_x = reba[n + 1]
                         player_p_y = reba[n + 2]
                         rpg_player.move_step(game_win, player_p_x, player_p_y, player_dir, player_sprite, (tile_size * tile_zoom), (tile_size * tile_zoom), map_s_w, map_s_h, map_map, 2)
+                    elif test_str == "map_p_set":
+                        map_p_x = reba[n + 1]
+                        map_p_y = reba[n + 2]
+                        map_load = True
                 
                 game_update = True
                 dialog_run = False
@@ -226,6 +232,7 @@ while run:
             if map_blit: #show curent map
                 game_win.fill("black")
                 rpg_map.blit(game_win,map_s_w, map_s_h, map_map,tl_size)
+                rpg_player.move_step(game_win, player_p_x, player_p_y, player_dir, player_sprite, (tile_size * tile_zoom), (tile_size * tile_zoom), map_s_w, map_s_h, map_map, 2)
                 update = True
                 map_blit = False
             

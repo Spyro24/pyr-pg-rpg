@@ -1,7 +1,7 @@
 import pygame as p
 import pyr_pg.map_ as map_to 
 
-def dialog_wrapper(win,map_,script, *debug):
+def dialog_wrapper(win,map_,script,ts,invar,var, *debug):
     #init all vars
     reba = []
     iter_ = 0
@@ -35,6 +35,21 @@ def dialog_wrapper(win,map_,script, *debug):
         #jump to the chosen line
         elif csp[0] == "#jmp":
             cpos = int(csp[1]) - 2
+        
+        #set map position
+        elif csp[0] == "#setmap":
+            mx = int(csp[1])
+            my = int(csp[2])
+            reba.append("map_p_set")
+            reba.append(mx)
+            reba.append(my)
+        
+        elif csp[0] == "#blit_tile":
+            tile = csp[1]
+            bpx = csp[2]
+            bpy = csp[3]
+            load = p.image.load("./tiles/" + str(tile) + ".png")
+            win.blit(load,(int(bpx) * ts, int(bpy) * ts))
         
         cpos += 1
     

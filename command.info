@@ -6,6 +6,11 @@ available command are:
   
   #jmp [line] (jump to [line(int)])
 
-  #setpos 
+  #setpos;posx;posy
+
+  #dialog;name;spriteset;sprite;text;spritepos
+    available integrated names are:
+      ??? - for a character thats not existing
+      player - for the player name
 
   

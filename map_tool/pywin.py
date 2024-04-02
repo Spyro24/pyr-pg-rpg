@@ -16,14 +16,20 @@ def waffle(win, fx, fy, size, x_rows, y_rows, col, *lst):
             else: p.draw.rect(win, col[iter_ + 1], rect_)
             iter_ += 1
 
-def icon_grid(win, fx, fy, size, x_rows, y_rows, icons):
+def icon_grid(win, fx, fy, size, x_rows, y_rows, icons, page, layer):
     iter_ = 0
-    for y in range(0, int(y_rows)):
-        for x in range(0, int(x_rows)):
-            icon_ = p.image.load(icons[iter_])
-            transform_ = p.transform.scale(icon_, (size - 4, size - 4))
-            win.blit(transform_, (fx + (size * x),fy + (size *y)))
-            iter_ += 1
+    try:
+        for y in range(0, int(y_rows)):
+            for x in range(0, int(x_rows)):
+                if icons[layer][iter_] == 0:
+                    iter_ += 1
+                else:
+                    icon_ = icons[layer][iter_]
+                    transform_ = p.transform.scale(icon_, (size - 4, size - 4))
+                    win.blit(transform_, (fx + (size * x),fy + (size *y)))
+                    iter_ += 1
+    except BaseException as err:
+        print(err)
             
 def button_grid(x,y,size,xrow,yrow):
     iter_ = 0
@@ -63,12 +69,11 @@ def draw_font(win, size, x, y, text, col):
     return font.size(text)
 
 def p_push_button(x, y, tx, ty):
-    p.event.get()
     mx, my = p.mouse.get_pos()
     left, void, void = p.mouse.get_pressed()
     if left == True:
         if mx >= x and my >= y:
-            if mx <= tx and my <= ty:
+            if mx <= x + tx and my <= y + ty:
                 return True
     return False
 
@@ -91,15 +96,19 @@ def draw_tile(win, pos, ov, size, x_y, no):
     if ov == False:
         if True:
             print("DEBUG: running draw_tile")
-            load_ = p.transform.scale(p.image.load("../tiles/" + str(no) + ".png"),(size, size))
-            win.blit(load_,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
+            if no != 0:
+                load_ = p.transform.scale(p.image.load("../tiles/" + str(no) + ".png"),(size, size))
+                win.blit(load_,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
+            else:
+                draw_rect(win,pos[0] + (x_y[0] * size),pos[1] + ( x_y[1] * size),size,size,(0,0,0))
         else:
             draw_rect(win,pos[0] + (x_y[0] * size), pos[1] + (x_y[1] * size), pos[0] + ((x_y[0] + 1) * size), pos[1] + ((x_y[1] + 1) * size), (0,0,0))
     else:
         if no != 0:
             load_ =p.transform.scale(p.image.load("../tiles/overlay/" + str(no) + ".png"),(size,size))
             win.blit(load_,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
-        
+
+#dev comment: remove this function before release
 def draw_map(win, pos, scale, map_, h_w, *opn):
     xp = int(pos[0])
     yp = int(pos[1])
@@ -128,3 +137,4 @@ def draw_map(win, pos, scale, map_, h_w, *opn):
                     img_ = p.transform.scale(p.image.load("../tiles/" + str(map_[iter_]) + ".png"),size)
                     win.blit(img_,(xp + w * size[0], yp + h * size[1]))
                 iter_ += 1
+                

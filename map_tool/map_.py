@@ -56,5 +56,31 @@ def map_load(x,y,w,h,leng):
             
     return show,hit,overlay,act,acthit,overdraw
 
-
-        
+def draw_map(win, pos, scale, map_, h_w, *opn):
+    xp = int(pos[0])
+    yp = int(pos[1])
+    size = (int(scale), int(scale))
+    iter_ = 0
+    if opn == ():
+        opn = ("","")
+    if opn[0] == "X":
+        for h in range(0, int(h_w[0])):
+            for w in range(0, int(h_w[0])):
+                if map_[iter_] != 0:
+                    img_ = p.transform.scale(p.image.load("./symbols/X.png"),size)
+                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
+                iter_ += 1
+    elif opn[0] == "ov":
+        for h in range(0, int(h_w[0])):
+            for w in range(0, int(h_w[0])):
+                if map_[iter_] != 0:
+                    img_ = p.transform.scale(p.image.load("../tiles/overlay/" + str(map_[iter_]) + ".png"),size)
+                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
+                iter_ += 1
+    else:
+        for h in range(0, int(h_w[0])):
+            for w in range(0, int(h_w[0])):
+                if map_[iter_] != 0:
+                    img_ = p.transform.scale(p.image.load("../tiles/" + str(map_[iter_]) + ".png"),size)
+                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
+                iter_ += 1
