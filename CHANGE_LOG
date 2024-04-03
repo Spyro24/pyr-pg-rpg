@@ -48,3 +48,7 @@ V 0.1
   -rewrite the entire script for multitasking (NPCs, weapons and more (NOT SYSTEM MULTITASKING))
  -player sprite loading
   -load player sprites as a sprite aray to increase game speed
+
+V0.2
+-remove
+  -CHANGE_LOG

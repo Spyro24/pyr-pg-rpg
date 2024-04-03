@@ -138,3 +138,11 @@ def draw_map(win, pos, scale, map_, h_w, *opn):
                     win.blit(img_,(xp + w * size[0], yp + h * size[1]))
                 iter_ += 1
                 
+def load_iconset(path, icons):
+    iconset = []
+    for element in icons:
+        iconset.append(p.image.load(path + "/" + str(element) + ".png"))
+    return iconset
+    
+def blit_icon(win, x, y, icon_frm_set, size):
+    win.blit(p.transform.scale(icon_frm_set, (size,size)),(x,y))

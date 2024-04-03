@@ -21,6 +21,7 @@ import pywin as pw
 import time
 import map_ as prm
 import tiles
+from time import sleep
 
 mapt_w_h, mapt_w_w = 500, 500  # the size of the window
 mapt_win = p.display.set_mode((mapt_w_w, mapt_w_h))
@@ -33,12 +34,13 @@ tile_map_int = []
 tile_map = []
 tile_list = tiles.load_tile_list()
 tile_png_list = tiles.load_images_from_lst("../tiles", tile_list)
-tile_e_page = 0
+tile_s_page = 0
 tile_sel = 0
+tile_cur = 0
 text_size = 20
 edit_layer = 0
-symbols_raw = ["close", "arrow_left", "arrow_right"]
-symbols_load =
+symbols_raw = ["close", "arrow_left", "arrow_right", "null"]
+symbols_load = pw.load_iconset("./symbols/task",symbols_raw)
 
 while mapt_run:
     if mapt_mode == "EDIT":
@@ -77,11 +79,10 @@ while mapt_run:
         while mapt_lock:
             
             if mapt_if_red:
-                pw.icon_grid(mapt_win, 0, 0, mapt_w_w / 10, 10, 9, tile_png_list, tile_e_page, edit_layer)
-                pw.draw_box((mapt_w_w / 10) * 8, (mapt_w_h / 10) * 9, mapt_w_w / 10 , mapt_w_h / 10 , 4,(100, 100, 100), mapt_win)
-                p.draw.line(mapt_win, (50,50,50),((mapt_w_w / 10) * 8, (mapt_w_h / 10) * 9),((mapt_w_w / 10) * 9, (mapt_w_h / 10) * 10),4)
-                p.draw.line(mapt_win, (50,50,50),((mapt_w_w / 10) * 9, (mapt_w_h / 10) * 9),((mapt_w_w / 10) * 8, (mapt_w_h / 10) * 10),4)
-                pw.draw_rect(mapt_win, (mapt_w_h / 10), (mapt_w_w/ 10) * 9, mapt_w_h / 10 * 7, mapt_w_w / 10 , (125,125,125))
+                pw.icon_grid(mapt_win, 0, 0, mapt_w_w / 10, 10, 9, tile_png_list, tile_s_page, edit_layer)
+                pw.blit_icon(mapt_win, (mapt_w_h / 10) * 8, (mapt_w_w/ 10) * 9, symbols_load[0], (mapt_w_h / 10))
+                pw.blit_icon(mapt_win, (mapt_w_h / 10) * 1, (mapt_w_w/ 10) * 9, symbols_load[1], (mapt_w_h / 10))
+                pw.blit_icon(mapt_win, (mapt_w_h / 10) * 1, (mapt_w_w/ 10) * 9, symbols_load[1], (mapt_w_h / 10))
                 mapt_if_red = False
                 mapt_w_update = True
                 
@@ -97,9 +98,18 @@ while mapt_run:
                     
             if pw.p_push_button((mapt_w_h / 10), (mapt_w_w/ 10) * 9, mapt_w_h / 10 * 8, mapt_w_w / 10):
                 if pw.p_push_button((mapt_w_w / 10) * 8, (mapt_w_h / 10) * 9, mapt_w_w / 10 , mapt_w_h / 10):
-                    print("pressed")
-                    print("Back to Editmode")
                     mapt_mode = "EDIT"
                     mapt_lock = False
+                    
+                elif pw.p_push_button((mapt_w_w / 10), (mapt_w_h / 10) * 9, mapt_w_w / 10 , mapt_w_h / 10):
+                    if tile_s_page > 0:
+                        tile_s_page -= 1
+                        sleep(0.1)
+                    
+            if pw.p_push_button(0, 0, mapt_w_h, mapt_w_w / 10 * 9):
+                void, set_tile = pw.button_grid(0,0,(mapt_w_h / 10),10,9)
+                print(set_tile)
+                
+            
 
 p.quit()
