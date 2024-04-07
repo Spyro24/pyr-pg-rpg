@@ -24,7 +24,7 @@ def icon_grid(win, fx, fy, size, x_rows, y_rows, icons, page, layer):
                 if icons[layer][iter_] == 0:
                     iter_ += 1
                 else:
-                    icon_ = icons[layer][iter_]
+                    icon_ = icons[layer][iter_ + (x_rows * y_rows * page)]
                     transform_ = p.transform.scale(icon_, (size - 4, size - 4))
                     win.blit(transform_, (fx + (size * x),fy + (size *y)))
                     iter_ += 1

@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import pygame as p
+import map_ as mp
 
 def map_load(x,y,w,h,leng):
     show = [] #ground layer
@@ -61,7 +62,7 @@ def draw_map(win, pos, scale, map_, h_w, *opn):
     yp = int(pos[1])
     size = (int(scale), int(scale))
     iter_ = 0
-    if opn == ():
+    if (opn == ()):
         opn = ("","")
     if opn[0] == "X":
         for h in range(0, int(h_w[0])):
@@ -84,3 +85,58 @@ def draw_map(win, pos, scale, map_, h_w, *opn):
                     img_ = p.transform.scale(p.image.load("../tiles/" + str(map_[iter_]) + ".png"),size)
                     win.blit(img_,(xp + w * size[0], yp + h * size[1]))
                 iter_ += 1
+                
+def map_border(mpx, mpy, mw, mh, bs):
+    map_border = []
+    try:
+        empty= []
+        iter_ = mw * mh - mw 
+        cur_x = mpx
+        cur_y = mpy - 1
+        map_cur = mp.map_load(cur_x, cur_y, mw, mh, bs)
+        for n in range(0, len(map_cur)):
+            empty.append([])
+            for i in range(iter_, mw * mh):
+                empty[n].append(map_cur[n][i])
+    except BaseException as err:
+        print(err)
+        print("Mapabove not exist")
+    map_border.append(empty)
+        
+    try:
+        empty2 = []
+        iter_ = 0 
+        cur_x = mpx
+        cur_y = mpy + 1
+        map_cur = mp.map_load(cur_x, cur_y, mw, mh, bs)
+        for n in range(0, len(map_cur)):
+            empty2.append([])
+            for i in range(iter_, mw):
+                empty2[n].append(map_cur[n][i])
+    except BaseException as err:
+        print(err)
+        print("Mapabove not exist")
+    map_border.append(empty2)
+    return map_border
+            
+def map_border_blit(win,mw,mh,pos,size,border, *opn):
+    black = p.transform.scale(p.image.load("./symbols/task/gray_out.png"),(size, size))
+    try:
+        for e in range(0, len(border[0][0])):
+            set_x = int(pos[0]) + (int(size) * e)
+            set_y = int(pos[1]) - size + 1
+            img_ = p.transform.scale(p.image.load("../tiles/" + str(border[0][0][e]) + ".png"),(size, size))
+            win.blit(img_,(int(set_x),int(set_y)))
+            win.blit(black,(int(set_x),int(set_y)))
+    except:
+        pass
+    
+    try:
+        for e in range(0, len(border[1][0])):
+            set_x = int(pos[0]) + (int(size) * e)
+            set_y = int(pos[1]) + int(size) * mh
+            img_ = p.transform.scale(p.image.load("../tiles/" + str(border[1][0][e]) + ".png"),(size, size))
+            win.blit(img_,(int(set_x),int(set_y)))
+            win.blit(black,(int(set_x),int(set_y)))
+    except:
+        pass
