@@ -117,6 +117,22 @@ def map_border(mpx, mpy, mw, mh, bs):
         print(err)
         print("Mapabove not exist")
     map_border.append(empty2)
+    
+    try:
+        empty3 = []
+        iter_ = 0 
+        cur_x = mpx + 1
+        cur_y = mpy
+        map_cur = mp.map_load(cur_x, cur_y, mw, mh, bs)
+        for n in range(0, len(map_cur)):
+            empty2.append([])
+            for i in range(iter_, mh):
+                print(i)
+                empty3[n].append(map_cur[n][((i + 1) * mw) - 1])
+    except BaseException as err:
+        print(err)
+        print("Map Left not exist")
+    map_border.append(empty2)
     return map_border
             
 def map_border_blit(win,mw,mh,pos,size,border, *opn):
@@ -135,6 +151,16 @@ def map_border_blit(win,mw,mh,pos,size,border, *opn):
         for e in range(0, len(border[1][0])):
             set_x = int(pos[0]) + (int(size) * e)
             set_y = int(pos[1]) + int(size) * mh
+            img_ = p.transform.scale(p.image.load("../tiles/" + str(border[1][0][e]) + ".png"),(size, size))
+            win.blit(img_,(int(set_x),int(set_y)))
+            win.blit(black,(int(set_x),int(set_y)))
+    except:
+        pass
+    
+    try:
+        for e in range(0, len(border[2][0])):
+            set_x = int(pos[0]) - int(size)
+            set_y = int(pos[1]) (int(size) * e)
             img_ = p.transform.scale(p.image.load("../tiles/" + str(border[1][0][e]) + ".png"),(size, size))
             win.blit(img_,(int(set_x),int(set_y)))
             win.blit(black,(int(set_x),int(set_y)))
