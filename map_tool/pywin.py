@@ -3,19 +3,6 @@ import random
 p.init()
 
 
-
-def waffle(win, fx, fy, size, x_rows, y_rows, col, *lst):
-    iter_ = 0
-    for y in range(0, int(y_rows)):
-        for x in range(0, int(x_rows)):
-            rect_ = p.Rect(fx + x * size, fy + y * size, size, size)
-            if len(lst) >= 1:
-                inp = lst[0]
-                inp2 = int(inp[iter_])
-                p.draw.rect(win, col[inp2], rect_)
-            else: p.draw.rect(win, col[iter_ + 1], rect_)
-            iter_ += 1
-
 def icon_grid(win, fx, fy, size, x_rows, y_rows, icons, page, layer):
     iter_ = 0
     try:
@@ -33,7 +20,6 @@ def icon_grid(win, fx, fy, size, x_rows, y_rows, icons, page, layer):
             
 def button_grid(x,y,size,xrow,yrow):
     iter_ = 0
-    p.event.get()
     m_x, m_y = p.mouse.get_pos()
     if p.mouse.get_pressed() == (1, 0, 0):
         for y_r in range(1, int(yrow) + 1):

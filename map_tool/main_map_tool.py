@@ -53,7 +53,7 @@ map_l_y = map_y
 map_draw = False
 map_cur = prm.map_load(map_x,map_y, map_w, map_h, map_tile_bytes)
 map_load = True
-map_e_mode = None
+map_e_mode = "GROUND"
 map_new = False
 map_save = False
 tile_size = int(((mapt_w_h / 10) * 8) / 18)
@@ -87,7 +87,10 @@ while mapt_run:
                 map_draw = True
                 
             if map_load:
-                map_cur = prm.map_load(map_x,map_y, map_w, map_h, map_tile_bytes)
+                try:
+                    map_cur = prm.map_load(map_x,map_y, map_w, map_h, map_tile_bytes)
+                except:
+                    map_new = True
                 map_load = False
                 map_draw = True
                 
@@ -95,24 +98,25 @@ while mapt_run:
                 show,hit,overlay,act,acthit,overdraw = [],[],[],[],[],[]
                 new_map = False
                 map_loaded = True
-                for h_ in range(0,int(x_s)):
-                    for w_ in range(0,int(y_s)):
+                for h_ in range(0,int(map_h)):
+                    for w_ in range(0,int(map_w)):
                         show.append(1)
                         hit.append(0)
                         overlay.append(0)
                         act.append(0)
                         acthit.append(0)
                         overdraw.append(0)
-                map_cur.clear()
                 map_cur = [show,hit,overlay,act,acthit,overdraw]
+                map_draw = True
+                map_new = False
             
             if map_save:
                 mapf = open("../map/" + str(map_l_x) + "_" + str(ma_l_y), "bw")
                 map_ar = [show,hit,overlay,act,acthit,overdraw]
                 print(show,hit,overlay,act,acthit,overdraw)
-                for m in range(0, len(map_ar)):
-                    for n in range(0, int(x_s) * int(y_s)):
-                        mapf.write(int.to_bytes(int(map_ar[m][n]), length=2, byteorder="big"))
+                for element in map_ar:
+                    for object in element:
+                        mapf.write(int.to_bytes(int(object), length=int(map_tile_bytes), byteorder="big"))
                 mapf.close()
                 map_l_x = map_x
                 map_l_y = map_y
@@ -151,15 +155,17 @@ while mapt_run:
                     mapt_mode = "TILE_SELECT"
                     mapt_lock = False
                     
-                elif pw.p_push_button((mapt_w_w / 10) * 9, (mapt_w_h / 10) * 1, mapt_w_w / 10 , mapt_w_h / 10): #left arrow button
-                    tile_cur -= 1
-                    tile_display = True
-                    sleep(0.1)
+                elif pw.p_push_button((mapt_w_w / 10) * 9, (mapt_w_h / 10) * 1, mapt_w_w / 10 , mapt_w_h / 10): #Right arrow button
+                    if tile_cur < len(tile_list):
+                        tile_cur += 1
+                        tile_display = True
+                        sleep(0.1)
                         
-                elif pw.p_push_button((mapt_w_w / 10) * 8, (mapt_w_h / 10) * 1, mapt_w_w / 10 , mapt_w_h / 10): #Right arrow button
-                    tile_cur += 1
-                    tile_display = True
-                    sleep(0.1)
+                elif pw.p_push_button((mapt_w_w / 10) * 8, (mapt_w_h / 10) * 1, mapt_w_w / 10 , mapt_w_h / 10): #Left arrow button
+                    if tile_cur > 0:
+                        tile_cur -= 1
+                        tile_display = True
+                        sleep(0.1)
             
             if pw.p_push_button(0,0,(mapt_w_h / 10) * 8,(mapt_w_h / 10) * 8): #MapInteraction
                 if pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) - tile_size,(mapt_w_h / 20) + tile_size* map_w,(mapt_w_h / 20)): #Go one map up
@@ -167,11 +173,20 @@ while mapt_run:
                     map_load = True
                     map_draw = True
                     
-                if pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) + (tile_size * (map_h)),(mapt_w_h / 20) + tile_size * map_w,(mapt_w_h / 20)):
+                if pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) + (tile_size * (map_h)),(mapt_w_h / 20) + tile_size * map_w,(mapt_w_h / 20)): #Go one map down
                     map_y += 1
                     map_load = True
                     map_draw = True
-            
+                    
+                void, set_t = pw.button_grid((mapt_w_h / 20),(mapt_w_h / 20),tile_size,map_w,map_h)
+                if set_t != None:
+                    if map_e_mode == "GROUND":
+                        pw.draw_tile(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), False, tile_size, void, tile_cur)
+                        map_cur[0].pop(set_t)
+                        map_cur[0].insert(set_t, tile_cur)
+                        
+                    mapt_w_update = True
+                    
                 
     if mapt_mode == "TILE_SELECT":
         mapt_lock = True
