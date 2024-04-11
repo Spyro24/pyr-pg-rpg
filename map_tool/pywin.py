@@ -77,13 +77,12 @@ def draw_x(win, pos, size, x_y): #This function load the X.png and draw it
     img = p.transform.scale(p.image.load(path),(size,size))
     win.blit(img,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
 
-def draw_tile(win, pos, ov, size, x_y, no):
+def draw_tile(win, pos, ov, size, x_y, tile_list, no):
     size = int(size)
     if ov == False:
         if True:
-            print("DEBUG: running draw_tile")
             if no != 0:
-                load_ = p.transform.scale(p.image.load("../tiles/" + str(no) + ".png"),(size, size))
+                load_ = p.transform.scale(tile_list[0][no - 1],(size, size))
                 win.blit(load_,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
             else:
                 draw_rect(win,pos[0] + (x_y[0] * size),pos[1] + ( x_y[1] * size),size,size,(0,0,0))
