@@ -58,6 +58,8 @@ map_new = False
 map_save = False
 tile_size = int(((mapt_w_h / 10) * 8) / 18)
 print(tile_size)
+map_goto = None
+map_layers = 6
 
 while mapt_run:
     if mapt_mode == "EDIT":
@@ -87,6 +89,7 @@ while mapt_run:
                 map_draw = True
             
             if map_save:
+                print("saved")
                 mapf = open("../map/" + str(map_l_x) + "_" + str(map_l_y), "bw")
                 map_ar = map_cur
                 for element in map_ar:
@@ -106,18 +109,15 @@ while mapt_run:
                 map_draw = True
                 
             if map_new:
-                show,hit,overlay,act,acthit,overdraw = [],[],[],[],[],[]
-                new_map = False
-                map_loaded = True
-                for h_ in range(0,int(map_h)):
-                    for w_ in range(0,int(map_w)):
-                        show.append(1)
-                        hit.append(0)
-                        overlay.append(0)
-                        act.append(0)
-                        acthit.append(0)
-                        overdraw.append(0)
-                map_cur = [show,hit,overlay,act,acthit,overdraw]
+                map_cur = []
+                for layer in range(0,int(map_layers)):
+                    map_cur.append([])
+                    for pos in range(0,int(map_h * map_w)):
+                        if layer == 0:
+                            map_cur[layer].append(1)
+                        else:
+                            map_cur[layer].append(0)
+                        
                 map_draw = True
                 map_new = False                
                 
@@ -169,26 +169,26 @@ while mapt_run:
             if pw.p_push_button(0,0,(mapt_w_h / 10) * 8,(mapt_w_h / 10) * 8): #MapInteraction
                 if pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) - tile_size,(mapt_w_h / 20) + tile_size* map_w,(mapt_w_h / 20)): #Go one map up
                     map_y -= 1
-                    nap_save = True
+                    map_save = True
                     map_load = True
                     map_draw = True
                     sleep(0.1)
                     
-                if pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) + (tile_size * (map_h)),(mapt_w_h / 20) + tile_size * map_h,(mapt_w_h / 20)): #Go one map down
+                elif pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) + (tile_size * (map_h)),(mapt_w_h / 20) + tile_size * map_h,(mapt_w_h / 20)): #Go one map down
                     map_y += 1
                     map_save = True
                     map_load = True
                     map_draw = True
                     sleep(0.1)
                     
-                if pw.p_push_button((mapt_w_w / 20) + (tile_size * (map_w)),(mapt_w_w / 20),(mapt_w_w / 20),(mapt_w_w / 20) + tile_size * map_w): #Go one map right
+                elif pw.p_push_button((mapt_w_w / 20) + (tile_size * (map_w)),(mapt_w_w / 20),(mapt_w_w / 20),(mapt_w_w / 20) + tile_size * map_w): #Go one map right
                     map_x += 1
                     map_save = True
                     map_load = True
                     map_draw = True
                     sleep(0.1)
                     
-                if pw.p_push_button((mapt_w_w / 20) - tile_size,(mapt_w_w / 20),(mapt_w_w / 20),(mapt_w_w / 20) + tile_size * map_w): #Go one map left
+                elif pw.p_push_button((mapt_w_w / 20) - tile_size,(mapt_w_w / 20),(mapt_w_w / 20),(mapt_w_w / 20) + tile_size * map_w): #Go one map left
                     map_x -= 1
                     map_save = True
                     map_load = True

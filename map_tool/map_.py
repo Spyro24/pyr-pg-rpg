@@ -100,7 +100,7 @@ def map_border(mpx, mpy, mw, mh, bs):
                 empty[n].append(map_cur[n][i])
     except BaseException as err:
         print(err)
-        print("Mapabove not exist")
+        print("Map above not exist")
     map_border.append(empty)
         
     try:
@@ -115,56 +115,86 @@ def map_border(mpx, mpy, mw, mh, bs):
                 empty2[n].append(map_cur[n][i])
     except BaseException as err:
         print(err)
-        print("Mapabove not exist")
+        print("Map below not exist")
         
     map_border.append(empty2)
     
     try:
         empty3 = []
         iter_ = 0 
-        cur_x = mpx + 1
+        cur_x = mpx - 1
         cur_y = mpy
         map_cur = mp.map_load(cur_x, cur_y, mw, mh, bs)
         print(map_cur)
         for n in range(0, len(map_cur)):
             empty3.append([])
             for i in range(0, mh):
-                empty3[n].append(map_cur[n][((i + 1) * mw)])
+                empty3[n].append(map_cur[n][((i + 1) * mw) - 1])
     except BaseException as err:
         print(err)
         print("Map Left not exist")
     
     map_border.append(empty3)
     
+    try:
+        empty4 = []
+        iter_ = 0 
+        cur_x = mpx + 1
+        cur_y = mpy
+        map_cur = mp.map_load(cur_x, cur_y, mw, mh, bs)
+        print(map_cur)
+        for n in range(0, len(map_cur)):
+            empty4.append([])
+            for i in range(0, mh):
+                empty4[n].append(map_cur[n][i * mw])
+    except BaseException as err:
+        print(err)
+        print("Map Right not exist")
+    
+    map_border.append(empty4)
+    
     return map_border
-            
+
+#dev comment: make function less expensive for the programm
 def map_border_blit(win,mw,mh,pos,size,border, *opn):
     black = p.transform.scale(p.image.load("./symbols/task/gray_out.png"),(size, size))
     try:
         for e in range(0, len(border[0][0])):
-            set_x = int(pos[0]) + (int(size) * e)
-            set_y = int(pos[1]) - size + 1
-            img_ = p.transform.scale(p.image.load("../tiles/" + str(border[0][0][e]) + ".png"),(size, size))
-            win.blit(img_,(int(set_x),int(set_y)))
-            win.blit(black,(int(set_x),int(set_y)))
+            if border[0][0][e] != 0:
+                set_x = int(pos[0]) + (int(size) * e)
+                set_y = int(pos[1]) - size
+                img_ = p.transform.scale(p.image.load("../tiles/" + str(border[0][0][e]) + ".png"),(size, size))
+                win.blit(img_,(int(set_x),int(set_y)))
+                win.blit(black,(int(set_x),int(set_y)))
     except:
         pass
     
     try:
         for e in range(0, len(border[1][0])):
-            set_x = int(pos[0]) + (int(size) * e)
-            set_y = int(pos[1]) + int(size) * mh
-            img_ = p.transform.scale(p.image.load("../tiles/" + str(border[1][0][e]) + ".png"),(size, size))
+            if border[1][0][e] != 0:
+                set_x = int(pos[0]) + (int(size) * e)
+                set_y = int(pos[1]) + int(size) * mh
+                img_ = p.transform.scale(p.image.load("../tiles/" + str(border[1][0][e]) + ".png"),(size, size))
+                win.blit(img_,(int(set_x),int(set_y)))
+                win.blit(black,(int(set_x),int(set_y)))
+    except:
+        pass
+    
+    try:
+        for e in range(0, len(border[2][0])):
+            set_x = int(pos[0]) - size
+            set_y = int(pos[1]) + (int(size) * e)
+            img_ = p.transform.scale(p.image.load("../tiles/" + str(border[2][0][e]) + ".png"),(size, size))
             win.blit(img_,(int(set_x),int(set_y)))
             win.blit(black,(int(set_x),int(set_y)))
     except:
         pass
     
     try:
-        for e in range(0, len(border[2][0])):
-            set_x = int(pos[0]) - size + 1
+        for e in range(0, len(border[3][0])):
+            set_x = int(pos[0]) + int(size) * mw
             set_y = int(pos[1]) + (int(size) * e)
-            img_ = p.transform.scale(p.image.load("../tiles/" + str(border[1][0][e]) + ".png"),(size, size))
+            img_ = p.transform.scale(p.image.load("../tiles/" + str(border[3][0][e]) + ".png"),(size, size))
             win.blit(img_,(int(set_x),int(set_y)))
             win.blit(black,(int(set_x),int(set_y)))
     except:

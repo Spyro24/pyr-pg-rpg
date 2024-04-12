@@ -63,15 +63,7 @@ def p_push_button(x, y, tx, ty):
                 return True
     return False
 
-def p_push_button2(x, y, tx, ty):
-    p.event.get()
-    mx, my = p.mouse.get_pos()
-    left, void, void = p.mouse.get_pressed()
-    if left == True:
-        if mx >= x and my >= y:
-            if mx <= (tx + x) and my <= (ty + y):
-                return True
-    return False
+
 def draw_x(win, pos, size, x_y): #This function load the X.png and draw it
     path = "./symbols/X.png"
     img = p.transform.scale(p.image.load(path),(size,size))
@@ -93,36 +85,6 @@ def draw_tile(win, pos, ov, size, x_y, tile_list, no):
             load_ =p.transform.scale(p.image.load("../tiles/overlay/" + str(no) + ".png"),(size,size))
             win.blit(load_,(pos[0] + (x_y[0] * size), pos[1] + ( x_y[1] * size)))
 
-#dev comment: remove this function before release
-def draw_map(win, pos, scale, map_, h_w, *opn):
-    xp = int(pos[0])
-    yp = int(pos[1])
-    size = (int(scale), int(scale))
-    iter_ = 0
-    if opn == ():
-        opn = ("","")
-    if opn[0] == "X":
-        for h in range(0, int(h_w[0])):
-            for w in range(0, int(h_w[0])):
-                if map_[iter_] != 0:
-                    img_ = p.transform.scale(p.image.load("./symbols/X.png"),size)
-                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
-                iter_ += 1
-    elif opn[0] == "ov":
-        for h in range(0, int(h_w[0])):
-            for w in range(0, int(h_w[0])):
-                if map_[iter_] != 0:
-                    img_ = p.transform.scale(p.image.load("../tiles/overlay/" + str(map_[iter_]) + ".png"),size)
-                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
-                iter_ += 1
-    else:
-        for h in range(0, int(h_w[0])):
-            for w in range(0, int(h_w[0])):
-                if map_[iter_] != 0:
-                    img_ = p.transform.scale(p.image.load("../tiles/" + str(map_[iter_]) + ".png"),size)
-                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
-                iter_ += 1
-                
 def load_iconset(path, icons):
     iconset = []
     for element in icons:
