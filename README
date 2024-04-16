@@ -1,3 +1,5 @@
+I rewrite theintiere programm to uses classes instead of useless and complicatet vars.
+
 V0.1 release are out
 You can now do much more and the script is for every pc optimized 
 minimal requirements: 1GB RAM, Linux, Intel Atom N450 with 1,66 GHz
@@ -15,7 +17,7 @@ You are free to use this game and the files from the game under the GPLv3 licens
 I will make the tools for the map files soon.
 
     ULTIMATE_RPG (The ultimate Python RPG with a rpg maker inside)
-    Copyright (C) 2024  Spyro24
+    Copyright (C) 2023-2024  Spyro24
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

@@ -16,7 +16,70 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import pygame as p
-import map_ as mp
+
+class map:
+    def __save(self): #Save a map (Only available in edit mode)
+        if self.edmode:
+            pass
+        else:
+            raise Exception("Permision denied to save the map")
+    
+    def __new(self): #create a initial map with a tile 1 layer
+        if self.edmode:
+            pass
+        else:
+            raise Exception("Permision denied to create a initial map")
+        
+    def __load(self): #This is a internal function for the map class.Please do not use!
+        map_tmp = [] #This is the actual map. 
+        map_file = open(str(self.path) + str(self.x) + "_" + str(self.y), "br")
+        for layer in range(0,6):
+            map_tmp.append([])
+            for tile in range(0, self.w * self.h):
+                map_tmp[layer].append(int.from_bytes(map_file.read(self.tsb), "big"))
+        self.map = map_tmp
+        
+    def __init__(self,pos_x,pos_y,map_w,map_h,ts,tsb,path, map_ed, win, tile_obj):
+        self.x = pos_x #The x position of the map
+        self.y = pos_y #The y position of the map
+        self.w = map_w #With of the map (in tiles)
+        self.h = map_h #Hight of the map
+        self.ts = ts #Tile size in px (Tiles are squares)
+        self.tsb = tsb #Tile size in bytes (for the loading from a map file)
+        self.path = path #path of the map
+        self.window = win
+        self.tobj = tile_obj
+        self.edmode = bool(map_ed)
+        self.__load() #load the map on init
+        if bool(map_ed) == True: #check if this class is used by the map_editor
+            try: #try to load a existing map
+                self.__load()
+            except:
+                pass
+        else:
+            pass
+    
+    def back(self, *get_var):
+        stack = []
+        for element in get_var:
+            if element == "map_map":
+                stack.append(self.map)
+        return stack
+    
+    def draw(self, pos_x, pos_y, scale):
+        xp = int(pos_x)
+        yp = int(pos_y)
+        size = (int(scale), int(scale))
+        iter_ = 0
+        if True:
+            for h in range(0, int(self.h)):
+                for w in range(0, int(self.w)):
+                    if self.map[0][iter_] != 0:
+                        img_ = p.transform.scale(self.tobj[1][0][self.map[0][iter_] - 1],size)
+                        self.window.blit(img_,(xp + w * size[0], yp + h * size[1]))
+                    else:
+                        pass
+                    iter_ += 1
 
 def map_load(x,y,w,h,leng):
     show = [] #ground layer
@@ -25,37 +88,7 @@ def map_load(x,y,w,h,leng):
     act  = [] #action laxer (for the dialog script)
     acthit = [] #IDK
     overdraw = [] #drawed over the character layer
-    load_ = 1
-    fil = open("../map/" + str(x) + "_" + str(y), "br")
-    
-    if load_:
-        for a in range(0,w):
-            for b in range(0,h):
-                show.append(int.from_bytes(fil.read(leng), "big"))
-                
-        for a in range(0,w):
-            for b in range(0,h):
-                hit.append(int.from_bytes(fil.read(leng), "big"))
-        
-        #load script for overlay
-        for a in range(0,w):
-            for b in range(0,h):
-                overlay.append(int.from_bytes(fil.read(leng), "big"))
-        
-        #load action map
-        for a in range(0,w):
-            for b in range(0,h):
-                act.append(int.from_bytes(fil.read(leng), "big"))
-                
-        for a in range(0,w):
-            for b in range(0,h):
-                acthit.append(int.from_bytes(fil.read(leng), "big"))
-                
-        for a in range(0,w):
-            for b in range(0,h):
-                overdraw.append(int.from_bytes(fil.read(leng), "big"))
-            
-    return show,hit,overlay,act,acthit,overdraw
+
 
 def draw_map(win, pos, scale, map_, h_w, *opn):
     xp = int(pos[0])

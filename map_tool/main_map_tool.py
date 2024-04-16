@@ -60,6 +60,7 @@ tile_size = int(((mapt_w_h / 10) * 8) / 18)
 print(tile_size)
 map_goto = None
 map_layers = 6
+map = prm.map(0,0,16,16,16,2,"../map/", True, mapt_win, [tile_list,tile_png_list])
 
 while mapt_run:
     if mapt_mode == "EDIT":
@@ -123,9 +124,7 @@ while mapt_run:
                 
             if map_draw:
                 pw.draw_rect(mapt_win,0,0,(mapt_w_h / 10) * 8, (mapt_w_h / 10) *8, (0,0,0))
-                prm.draw_map(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), ((mapt_w_h / 10) * 8) / 18, map_cur[0], (map_w, map_h))
-                if map_e_mode == "ov":
-                    prm.draw_map(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), ((mapt_w_h / 10) * 8) / 18, map_cur[0], (map_w, map_h))
+                map.draw((mapt_w_h / 20),(mapt_w_h / 20), ((mapt_w_h / 10) * 8) / 18)
                 prm.map_border_blit(mapt_win,map_w, map_h, ((mapt_w_h / 20),(mapt_w_h / 20)),tile_size, prm.map_border(map_x, map_y,map_w,map_h,map_tile_bytes))
                 mapt_w_update = True
                 map_draw = False
@@ -166,6 +165,25 @@ while mapt_run:
                         tile_display = True
                         sleep(0.1)
             
+            if pw.p_push_button(0, mapt_w_w / 10 * 8, mapt_w_h / 10 * 6, mapt_w_w / 10 * 2): #Moide Selector
+                if pw.p_push_button(0, mapt_w_w / 10 * 8, mapt_w_h / 10 * 2, mapt_w_w / 10):
+                    map_e_mode = "GROUND"
+                    edit_layer = 0
+                    redraw = True
+                    sleep(0.1)
+                if pw.p_push_button(0, mapt_w_w / 10 * 9, mapt_w_h / 10 * 2, mapt_w_w / 10 ):
+                    edit_mode = 2
+                    redraw = True
+                    sleep(0.1)
+                if pw.p_push_button(mapt_w_h / 10 * 2, mapt_w_w / 10 * 8, mapt_w_h / 10 * 2, mapt_w_w / 10):
+                    map_e_mode = "HITBOX"
+                    redraw = True
+                    sleep(0.1)
+                if pw.p_push_button(mapt_w_h / 10 * 2, mapt_w_w / 10 * 9, mapt_w_h / 10 * 2, mapt_w_w / 10):
+                    edit_mode = 4
+                    redraw = True
+                    sleep(0.1)
+                        
             if pw.p_push_button(0,0,(mapt_w_h / 10) * 8,(mapt_w_h / 10) * 8): #MapInteraction
                 if pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) - tile_size,(mapt_w_h / 20) + tile_size* map_w,(mapt_w_h / 20)): #Go one map up
                     map_y -= 1
@@ -194,23 +212,42 @@ while mapt_run:
                     map_load = True
                     map_draw = True
                     sleep(0.1)
-
-                    
+                        
                 void, set_t = pw.button_grid((mapt_w_h / 20),(mapt_w_h / 20),tile_size,map_w,map_h)
                 if set_t != None:
                     if map_e_mode == "GROUND":
                         pw.draw_tile(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), False, tile_size, void, tile_png_list, tile_cur)
                         map_cur[0].pop(set_t)
                         map_cur[0].insert(set_t, tile_cur)
+                    
+                    elif map_e_mode == "HITBOX":
+                        pw.draw_x(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)),tile_size, void)
+                        tester_ = map_cur[1].pop(set_t)
+                        if tester_ == 1:
+                            map_cur[1].insert(set_t, 0)
+                            pw.draw_tile(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), False, tile_size, void,tile_png_list, map_cur[0][set_t])
+                            pw.draw_tile(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), True, tile_size, void, tile_png_list,map_cur[2][set_t])
+                            time.sleep(0.1)
+                        else:
+                            map_cur[1].insert(set_t, 1)
+                            pw.draw_tile(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), False, tile_size, void,tile_png_list, map_cur[0][set_t])
+                            pw.draw_tile(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), True, tile_size, void, tile_png_list,map_cur[2][set_t])
+                            pw.draw_x(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), tile_size, void)
+                            time.sleep(0.1)
                         
                     mapt_w_update = True
                     
-                
+
+#----------Tile Selector script--------------------------------------------------------------
     if mapt_mode == "TILE_SELECT":
         mapt_lock = True
         mapt_if_red = True
         mapt_win.fill((0,0,0))
         sleep(0.1)
+        if map_e_mode == "HITBOX":
+            mapt_lock = False
+            mapt_mode == "EDIT"
+            
         while mapt_lock:
             
             if mapt_if_red:
@@ -263,7 +300,6 @@ while mapt_run:
                         tile_cur = len(tile_png_list[edit_layer])
                     pw.blit_icon(mapt_win, (mapt_w_h / 10) * 2, (mapt_w_w/ 10) * 9, tile_png_list[edit_layer][tile_cur-1], (mapt_w_h / 10))
                     mapt_w_update = True
-                
                 
             
 
