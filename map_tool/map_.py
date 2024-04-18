@@ -30,14 +30,18 @@ class map:
         else:
             raise Exception("Permision denied to create a initial map")
         
-    def __load(self): #This is a internal function for the map class.Please do not use!
-        map_tmp = [] #This is the actual map. 
-        map_file = open(str(self.path) + str(self.x) + "_" + str(self.y), "br")
-        for layer in range(0,6):
-            map_tmp.append([])
-            for tile in range(0, self.w * self.h):
-                map_tmp[layer].append(int.from_bytes(map_file.read(self.tsb), "big"))
-        self.map = map_tmp
+    def __load(self, init): #This is a internal function for the map class.Please do not use!
+        map_tmp = [] #This is the actual map.
+        try:
+            map_file = open(str(self.path) + str(self.x) + "_" + str(self.y), "br")
+            
+            for layer in range(0,6):
+                    map_tmp.append([])
+                    for tile in range(0, self.w * self.h):
+                        map_tmp[layer].append(int.from_bytes(map_file.read(self.tsb), "big"))
+            self.map = map_tmp
+        except:
+            raise Exception("Cant load map " + str(self.x) + "_" + str(self.y))
         
     def __init__(self,pos_x,pos_y,map_w,map_h,ts,tsb,path, map_ed, win, tile_obj):
         self.x = pos_x #The x position of the map
@@ -50,14 +54,7 @@ class map:
         self.window = win
         self.tobj = tile_obj
         self.edmode = bool(map_ed)
-        self.__load() #load the map on init
-        if bool(map_ed) == True: #check if this class is used by the map_editor
-            try: #try to load a existing map
-                self.__load()
-            except:
-                pass
-        else:
-            pass
+        self.__load(True) #load the map on init
     
     def back(self, *get_var):
         stack = []
@@ -80,7 +77,15 @@ class map:
                     else:
                         pass
                     iter_ += 1
-
+                    
+    def set(self,x,y):
+        #Set the map to new x and y postion
+        if self.edmode:
+            self.__save()
+        self.x = x
+        self.y = y
+        self.__load()
+        
 def map_load(x,y,w,h,leng):
     show = [] #ground layer
     hit  = [] #hitbox layer
@@ -89,36 +94,6 @@ def map_load(x,y,w,h,leng):
     acthit = [] #IDK
     overdraw = [] #drawed over the character layer
 
-
-def draw_map(win, pos, scale, map_, h_w, *opn):
-    xp = int(pos[0])
-    yp = int(pos[1])
-    size = (int(scale), int(scale))
-    iter_ = 0
-    if (opn == ()):
-        opn = ("","")
-    if opn[0] == "X":
-        for h in range(0, int(h_w[0])):
-            for w in range(0, int(h_w[0])):
-                if map_[iter_] != 0:
-                    img_ = p.transform.scale(p.image.load("./symbols/X.png"),size)
-                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
-                iter_ += 1
-    elif opn[0] == "ov":
-        for h in range(0, int(h_w[0])):
-            for w in range(0, int(h_w[0])):
-                if map_[iter_] != 0:
-                    img_ = p.transform.scale(p.image.load("../tiles/overlay/" + str(map_[iter_]) + ".png"),size)
-                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
-                iter_ += 1
-    else:
-        for h in range(0, int(h_w[0])):
-            for w in range(0, int(h_w[0])):
-                if map_[iter_] != 0:
-                    img_ = p.transform.scale(p.image.load("../tiles/" + str(map_[iter_]) + ".png"),size)
-                    win.blit(img_,(xp + w * size[0], yp + h * size[1]))
-                iter_ += 1
-                
 def map_border(mpx, mpy, mw, mh, bs):
     map_border = []
     try:
