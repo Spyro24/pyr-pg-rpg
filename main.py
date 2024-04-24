@@ -2,7 +2,7 @@
 
 """
     main script to run a pyr_pg based rpg
-    Copyright (C) 2024 Spyro24
+    Copyright (C) 2023-2024 Spyro24
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

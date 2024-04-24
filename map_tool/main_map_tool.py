@@ -51,17 +51,14 @@ map_h = 16
 map_l_x = map_x
 map_l_y = map_y
 map_draw = False
-map_cur = None
-map_load = True
 map_e_mode = "GROUND"
 map_new = False
 map_save = False
 tile_size = int(((mapt_w_h / 10) * 8) / 18)
 print(tile_size)
-map_goto = None
 map_layers = 6
 try:
-    map = prm.map(3,0,16,16,16,2,"../map/", True, mapt_win, [tile_list,tile_png_list])
+    map = prm.map(0,0,16,16,16,2,"../map/", True, mapt_win, [tile_list,tile_png_list])
 
 
     while mapt_run:
@@ -91,43 +88,12 @@ try:
                     mapt_if_red = False
                     map_draw = True
                 
-                if map_save:
-                    print("saved")
-                    mapf = open("../map/" + str(map_l_x) + "_" + str(map_l_y), "bw")
-                    map_ar = map_cur
-                    for element in map_ar:
-                        for object in element:
-                            mapf.write(int.to_bytes(int(object), length=int(map_tile_bytes), byteorder="big"))
-                    mapf.close()
-                    map_l_x = map_x
-                    map_l_y = map_y
-                    map_save = False
-                    
-                if map_load:
-                    try:
-                        map_cur = prm.map_load(map_x,map_y, map_w, map_h, map_tile_bytes)
-                    except:
-                        map_new = True
-                    map_load = False
-                    map_draw = True
-                    
-                if map_new:
-                    map_cur = []
-                    for layer in range(0,int(map_layers)):
-                        map_cur.append([])
-                        for pos in range(0,int(map_h * map_w)):
-                            if layer == 0:
-                                map_cur[layer].append(1)
-                            else:
-                                map_cur[layer].append(0)
-                            
-                    map_draw = True
-                    map_new = False                
+                       
                     
                 if map_draw:
                     pw.draw_rect(mapt_win,0,0,(mapt_w_h / 10) * 8, (mapt_w_h / 10) *8, (0,0,0))
                     map.draw((mapt_w_h / 20),(mapt_w_h / 20), ((mapt_w_h / 10) * 8) / 18)
-                    prm.map_border_blit(mapt_win,map_w, map_h, ((mapt_w_h / 20),(mapt_w_h / 20)),tile_size, prm.map_border(map_x, map_y,map_w,map_h,map_tile_bytes))
+                    #prm.map_border_blit(mapt_win,map_w, map_h, ((mapt_w_h / 20),(mapt_w_h / 20)),tile_size, prm.map_border(map_x, map_y,map_w,map_h,map_tile_bytes))
                     mapt_w_update = True
                     map_draw = False
                     
@@ -188,16 +154,12 @@ try:
                             
                 if pw.p_push_button(0,0,(mapt_w_h / 10) * 8,(mapt_w_h / 10) * 8): #MapInteraction
                     if pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) - tile_size,(mapt_w_h / 20) + tile_size* map_w,(mapt_w_h / 20)): #Go one map up
-                        map_y -= 1
-                        map_save = True
-                        map_load = True
+                        map.move("UP")
                         map_draw = True
                         sleep(0.1)
                         
                     elif pw.p_push_button((mapt_w_h / 20),(mapt_w_h / 20) + (tile_size * (map_h)),(mapt_w_h / 20) + tile_size * map_h,(mapt_w_h / 20)): #Go one map down
-                        map_y += 1
-                        map_save = True
-                        map_load = True
+                        map.move("DOWN")
                         map_draw = True
                         sleep(0.1)
                         
@@ -218,9 +180,8 @@ try:
                     void, set_t = pw.button_grid((mapt_w_h / 20),(mapt_w_h / 20),tile_size,map_w,map_h)
                     if set_t != None:
                         if map_e_mode == "GROUND":
-                            pw.draw_tile(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)), False, tile_size, void, tile_png_list, tile_cur)
-                            map_cur[0].pop(set_t)
-                            map_cur[0].insert(set_t, tile_cur)
+                            map.change_tile(0,set_t,tile_cur)
+                            map.draw_tile(0,void,(mapt_w_h / 20),(mapt_w_h / 20),((mapt_w_h / 10) * 8) / 18,set_t)
                         
                         elif map_e_mode == "HITBOX":
                             pw.draw_x(mapt_win, ((mapt_w_h / 20),(mapt_w_h / 20)),tile_size, void)

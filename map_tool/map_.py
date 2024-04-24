@@ -1,5 +1,5 @@
 """
-    Map modul for binary map files for map_tool (the editor for pyr_pg maps)
+    Map class to handle the binary maps.
     Copyright (C) 2024 Spyro24
 
     This program is free software: you can redistribute it and/or modify
@@ -20,28 +20,44 @@ import pygame as p
 class map:
     def __save(self): #Save a map (Only available in edit mode)
         if self.edmode:
-            pass
+            map_file = open(str(self.path) + str(self.x) + "_" + str(self.y), "bw")
+            for layer in self.map:
+                for tile in layer:
+                    map_file.write(int.to_bytes(int(tile), length=self.tsb, byteorder="big"))
+            map_file.close()
+                    
         else:
             raise Exception("Permision denied to save the map")
     
     def __new(self): #create a initial map with a tile 1 layer
         if self.edmode:
-            pass
+            map_cur = []
+            for layer in range(0,self.layer):
+                map_cur.append([])
+                for obj in range(0, self.w * self.h):
+                    if layer == 0:
+                        map_cur[layer].append(1)
+                    else:
+                        map_cur[layer].append(0)
+            self.map = map_cur
         else:
             raise Exception("Permision denied to create a initial map")
         
-    def __load(self, init): #This is a internal function for the map class.Please do not use!
+    def __load(self): #This is a internal function for the map class.Please do not use!
         map_tmp = [] #This is the actual map.
         try:
             map_file = open(str(self.path) + str(self.x) + "_" + str(self.y), "br")
             
-            for layer in range(0,6):
+            for layer in range(0,self.layer):
                     map_tmp.append([])
                     for tile in range(0, self.w * self.h):
                         map_tmp[layer].append(int.from_bytes(map_file.read(self.tsb), "big"))
             self.map = map_tmp
         except:
-            raise Exception("Cant load map " + str(self.x) + "_" + str(self.y))
+            if self.edmode:
+                self.__new()
+            else:
+                raise Exception("Cant load map " + str(self.x) + "_" + str(self.y))
         
     def __init__(self,pos_x,pos_y,map_w,map_h,ts,tsb,path, map_ed, win, tile_obj):
         self.x = pos_x #The x position of the map
@@ -54,7 +70,8 @@ class map:
         self.window = win
         self.tobj = tile_obj
         self.edmode = bool(map_ed)
-        self.__load(True) #load the map on init
+        self.layer = 8
+        self.__load() #load the map on init
     
     def back(self, *get_var):
         stack = []
@@ -85,6 +102,25 @@ class map:
         self.x = x
         self.y = y
         self.__load()
+        
+    def move(self, direction):
+        #move the map in the chosen direction
+        if direction == "UP":
+            self.set(self.x, self.y - 1)
+        elif direction == "DOWN":
+            self.set(self.x, self.y + 1)
+    
+    def change_tile(self,layer,pos,tile):
+        self.map[layer].pop(pos)
+        self.map[layer].insert(pos, tile)
+        
+    def draw_tile(self,layer, x_y, pos_x, pos_y, scale, pos):
+        xp = int(pos_x)
+        yp = int(pos_y)
+        size = (int(scale), int(scale))
+        img_ = p.transform.scale(self.tobj[1][0][(self.map[layer][pos]) - 1],size)
+        self.window.blit(img_,(xp + x_y[0] * size[0], yp + x_y [1] * size[1]))
+        
         
 def map_load(x,y,w,h,leng):
     show = [] #ground layer
