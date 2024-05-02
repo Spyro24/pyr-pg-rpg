@@ -1,6 +1,6 @@
 """
-    Map modul for binary map files for pyr_pg (python role pygame)
-    Copyright (C) 2023 Spyro24
+    Map class to handle the binary maps.
+    Copyright (C) 2024 Spyro24
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,162 +16,62 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import pygame as p
-import copy
 
-def load(x, y, w, h, leng):
-    show = [] #ground layer
-    hit  = [] #hitbox layer
-    overlay = [] #Overdraw over the ground layer
-    act  = [] #action laxer (for the dialog script)
-    acthit = [] #IDK
-    overdraw = [] #drawed over the character layer
-    load_ = 1
-    try:
-        fil = open("./map/" + str(x) + "_" + str(y), "br")
-    except:
-        print("[Err: Map load failed]\n[Err: no such map " +str(x) + "_" + str(y) + " ]")
-        load_ = 0
-    
-    if load_:
-        #Load the ground layer
-        for a in range(0,w):
-            for b in range(0,h):
-                testing = int.from_bytes(fil.read(leng), "big")
-                if testing != 0:
-                    show.append(p.image.load("./tiles/" + str(testing) + ".png").convert())
-                else:
-                    show.append(0)
+class map:
+    def __init__(self,win,x,y,mx,my,mp,tp,ts,mh,mw,tb):
+        self.load_state = False
+        self.layers = 8
+        self.tile_bytes = tb
+        self.gw = win #Pygame window object
+        self.pos_x = x #Blit x position
+        self.pos_y = y #Blit x position
+        self.map_x = mx #Map x position
+        self.map_y = my #Map x position
+        self.map_path = mp #The path to the map files
+        self.mw = mw #Map with in tiles
+        self.mh = mh #Map hight in tiles
+        self.tile_path = tp
+        self.gw_x, self.gw_y = self.gw.get_size()
+        self.scale = self.gw_x / self.mw
+        self.g_layer = p.Surface(self.gw.get_size())
+        self.y = 0
+        self.x = 0
         
-        #Load the hitbox layer
-        for a in range(0,w):
-            for b in range(0,h):
-                hit.append(int.from_bytes(fil.read(leng), "big"))
+    def load(self):
+        self.load_state = True
+        map_f = open(str(self.map_path) + str(self.map_x) + "_" + str(self.map_y), "br")
+        map = []
+        for n in range(0,self.layers):
+            map.append([])
+            for tile in range(0,self.mw * self.mh):
+                if n == 0:
+                    test = int.from_bytes(map_f.read(self.tile_bytes), "big")
+                    if test > 0:
+                        tmp =(p.transform.scale(p.image.load(str(self.tile_path) + str(test) + ".png"),(self.scale,self.scale)))
+                        map[n].append(tmp.convert())
+                    else:
+                        map[n].append(0)
+                        
+        self.map = map
+        self.create_surface()
         
-        #Load the ground overlay layer
-        for a in range(0,w):
-            for b in range(0,h):
-                testing = int.from_bytes(fil.read(leng), "big")
-                if testing != 0:
-                    overlay.append(p.image.load("./tiles/overlay/" + str(testing) + ".png").convert())
-                else:
-                    overlay.append(0)
-                    
-        #Load the action layer
-        for a in range(0,w):
-            for b in range(0,h):
-                act.append(int.from_bytes(fil.read(leng), "big"))
-                
-        #Load the action hit layer
-        for a in range(0,w):
-            for b in range(0,h):
-                acthit.append(int.from_bytes(fil.read(leng), "big"))
-                
-        #Load the ground overlay layer
-        for a in range(0,w):
-            for b in range(0,h):
-                testing = int.from_bytes(fil.read(leng), "big")
-                if testing != 0:
-                    overdraw.append(p.image.load("./tiles/p_overlay/" + str(testing) + ".png").convert())
-                else:
-                    overdraw.append(0)
-            
-    return [show,hit,overlay,act,acthit,overdraw]
-
-def blit(win,w,h,map_,size):
-    iter_ = 0
-    print(map_[2])
-    for y in range(0,w):
-        for x in range(0,h):
-            if map_[0][iter_] != 0:
-                win.blit(map_[0][iter_],(x * size, y * size))
-            
-            if map_[2][iter_] != 0:
-                win.blit(map_[2][iter_],(x * size, y * size))
-            
-            iter_ +=1
-            
-def red_area(win,x,y,rad,size,map_,w,h,*opt):
-    #A simple redraw function to redraw a map area
-    #map_blit(win,w,h,map_,size)
-    if rad <= 0:
-        print("[ERR: radius can't below 1]\n[ERR: radius < 1]")
-        return None
     
-    layer = 0
-    
-    xr = y - rad
-    yr = x - rad
-    
-    if xr < 0:
-        xr = 0
-    if yr < 0:
-        yr = 0
-     
-    if len(opt) > 0:
-        if opt[0] == 1:
-            layer = 2
-        elif opt[0] == 2:
-            layer = 5
-            
-        leng = rad * 2 + 1
-        for x_f in range(0,leng):
-            bx = (xr * h) + (x_f * h)
-            for y_f in range(0,leng):
-                by = yr + y_f
-                draw = by + bx
-                if draw >= h * w:
-                    draw = h * w - 1
-                if map_[layer][draw ] != 0:
-                    win.blit(map_[layer][draw ],((yr + y_f) * size,(xr + x_f)  * size))
-        return None
+    def move(self,x,y):
+        self.map_x += x
+        self.map_y += y
+        self.load()
+        self.create_surface()
         
-    leng = rad * 2 + 1
-    for x_f in range(0,leng):
-        bx = (xr * h) + (x_f * h)
-        for y_f in range(0,leng):
-            by = yr + y_f
-            draw = by + bx
-            if draw >= h * w:
-                draw = h * w - 1
-            if map_[0][draw ] != 0:
-                win.blit(map_[0][draw ],((yr + y_f) * size,(xr + x_f)  * size))
-            if map_[2][draw ] != 0:
-                win.blit(map_[2][draw ],((yr + y_f) * size,(xr + x_f)  * size))
-            if map_[5][draw ] != 0:
-                win.blit(map_[5][draw ],((yr + y_f) * size,(xr + x_f)  * size))
     
-def hit(y,x,w,h,map_):
-    if x < 0 or y < 0:
-        return False
-    if x > (w - 1) or y > (h - 1):
-        return False
-    
-    hit_p_m = map_[1]
-    hit = False
-    hit_pos = ((w * y) + x)
-    if hit_p_m[hit_pos] == 1:
-        hit = True
-    return hit
-    
-    
-def diascr(x,y,w,h,map_):
-    hit = False
-    if x < 0 or y < 0:
-        return False, 0
-    if x > (w - 1) or y > (h - 1):
-        return False, 0
-    try:
-        hitm = map_[3]
-        pos = ((y * w) + (x + 1)) - 1
-        if pos >= w * h:
-            pos = (w * h) - 1
-        elif pos < 0:
-            pos = 0
-        hitf = hitm[pos]
+    def create_surface(self):
+        count = 0
+        tmp0 = p.Surface(self.gw.get_size())
+        for h in range(0,self.mh):
+            for w in range(0,self.mw):
+                if self.map[0][count] != 0:
+                    tmp0.blit(self.map[0][count],(w * self.scale, h * self.scale))
+                count += 1
+        self.g_layer = tmp0
         
-        if hitf > 0:
-            hit = True
-        return [hit, hitf]
-    
-    except: pass
-    
+    def render(self):
+       self.gw.blit(self.g_layer,(self.x,self.y))
