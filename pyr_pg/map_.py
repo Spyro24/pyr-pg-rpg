@@ -52,6 +52,9 @@ class map:
                     else:
                         map[n].append(0)
                         
+                elif n == 1:
+                    map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
+        print(map[1])         
         self.map = map
         self.create_surface()
         
@@ -72,6 +75,9 @@ class map:
                     tmp0.blit(self.map[0][count],(w * self.scale, h * self.scale))
                 count += 1
         self.g_layer = tmp0
-        
+    
+    def get_hitbox(self):
+        return self.map[1]
+    
     def render(self):
        self.gw.blit(self.g_layer,(self.x,self.y))

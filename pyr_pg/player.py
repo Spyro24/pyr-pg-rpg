@@ -44,31 +44,78 @@ class player():
         for sprite in sprites:
             tmp.append(p.transform.scale(p.image.load("./players/" + str(p_f) + "/" + str(sprite) + ".png"),(self.player_scale, self.player_scale)))
         self.sprites = tmp
+        self.hit_map = map.get_hitbox()
             
     def update(self):
-        pass
+        self.hit_map = self.map.get_hitbox()
     
     def move(self, x, y):
-        #hitboxscript
-        #movescript
-        self.x += x
-        self.y += x
-        
-        if self.x >= self.ts:
-            self.tx += 1
-            self.x = 0
-        elif self.x < 0:
-            self.tx += -1
-            self.x = self.ts - 1
-        if self.tx < 0 and self.x < 8:
-            self.tx = self.mf_w - 1
-            self.map.move(-1,0)
+        if y > 0:
+            test = self.ty + 1
+            if test > self.mf_h - 1: test = self.mf_h - 1
+            if not(self.hit_map[(test * self.mf_h) + self.tx] == 1):
+                self.y += y
+                
+            if self.y >= self.ts:
+                self.y = 0
+                self.ty += 1
+                
+        elif y < 0:
+            test = self.ty
+            if test < 0: test = 0
+            if not(self.hit_map[(test * self.mf_h) + self.tx] == 1):
+                self.y += y
+                
+            if self.y < 0:
+                self.y = self.ts - 1
+                self.ty -= 1
+                
+        if x > 0:
+            test = self.tx + 1
+            if test > self.mf_h- 1: test = self.mf_h - 1
+            if not(self.hit_map[(self.ty * self.mf_h) + test] == 1):
+                self.x += x
+                
+            if self.x >= self.ts:
+                self.x = 0
+                self.tx += 1
+                
+        elif x< 0:
+            test = self.tx
+            if test < 0: test = 0
+            if not(self.hit_map[(self.ty * self.mf_h) + test] == 1):
+                self.x += x
+                
+            if self.x < 0:
+                self.x = self.ts - 1
+                self.tx -= 1
+        #move to the next map
+        if (self.ty < 0) and (self.y < int(self.ts / 2)):
+            self.map.move(0,-1)
+            self.update()
+            self.ty = self.mf_h - 1
             
+        elif (self.ty > self.mf_h - 2) and (self.y > int(self.ts / 2) + 1):
+            self.map.move(0,1)
+            self.update()
+            self.ty = -1
+            
+        if (self.tx < 0) and (self.x < int(self.ts / 2)):
+            self.map.move(-1,0)
+            self.update()
+            self.tx = self.mf_w - 1
+            
+        elif (self.tx > self.mf_w - 2) and (self.x > int(self.ts / 2) + 1):
+            self.map.move(1,0)
+            self.update()
+            self.tx = -1
+        
+        #set the state to move
         self.state.pop(0)
         self.state.insert(0, True)
     
     def render(self):
-        self.gw.blit(self.sprites[self.facing],(((self.tx *self.ts) + self.x) * self.points_y, self.y * self.points_y))
+        self.gw.blit(self.sprites[self.facing],(((self.tx *self.ts) + self.x) * self.points_x, ((self.ty *self.ts) + self.y) * self.points_x))
         
     def get_state(self, state):
         return self.state[state]   
