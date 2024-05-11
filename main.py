@@ -34,10 +34,10 @@ p.init()
 run = True
 game_win = p.display.set_mode((512,512))
 map = rpg_map.map(game_win,0,0,0,0,"./map/","./tiles/",16,16,16,2)
+map.load()
 player = rpg_player.player(game_win, 16, 16, 16, 0, (0,0), map)
 music = ps.sound(game_win, "./music/")
 music.play(0, "main")
-map.load()
 MoveSpeed = 0.2
 TileSize = 16
 ms = MoveSpeed / TileSize
@@ -70,7 +70,7 @@ while run:
     
     if render_win:
         player.reset_state()
-        print(fc)
+       # print(fc)
         fc += 1
         map.render()
         player.render()
