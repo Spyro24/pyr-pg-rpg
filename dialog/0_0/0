@@ -1,5 +1,5 @@
 set_box;0
-wait_enter
-set_box;1
-wait_enter
 {player};BlaBlubBah;{player_sprite}_speak;right;synth:voiceline
+wait_enter
+{player};Haha you can't find me;{player_sprite}_speak;right;synth:voiceline
+wait_enter

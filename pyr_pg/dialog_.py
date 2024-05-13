@@ -17,6 +17,7 @@
 """
 import pygame as p
 from time import sleep
+p.init()
 
 class dialog():
     def __init__(self, win, dialog_path, px, py, opn_set):
@@ -29,6 +30,10 @@ class dialog():
         self.text_box = p.Surface((self.gw_x / 10 * 8, self.gw_y / 10 * 3))
         self.ts = int(self.gw_x / 10)
         self._gen_box(0)
+        self.font = (p.font.SysFont(p.font.get_default_font(),int(self.gw_x / 10)))
+        self.space = (self.gw_x / 20)
+        self.textco = (255,255,255)
+        self.bgcol = (0,0,0)
         
     def _wait_enter(self):
         wait = True
@@ -46,6 +51,7 @@ class dialog():
         un_wrap = [line.strip() for line in un_wrap]
         print(un_wrap)
         for com in un_wrap:
+            self.gw.fill(self.bgcol)
             com = com.split(";")
             if com[0][0] == "#":
                 pass #only use is for commenting your dialog without a instruction
@@ -53,10 +59,31 @@ class dialog():
                 self._wait_enter()
             elif com[0] == "set_box":
                 self._gen_box(com[1])
-                self.gw.blit(self.text_box,(self.ts, self.ts * 7))
             else:
                 if com[0][0] == "{":
-                    name = self.pvar[com[0][1:len(com[0])]- 1]
+                    name = self.pvar[com[0][1:len(com[0]) - 1]]
+                text = []
+                get_mode = False
+                get = ""
+                cur_line = ""
+                for char in com[1]:
+                    if get_mode:
+                        if char == "}":
+                            get_mode = False
+                            cur_line += str(self.pvar[get])
+                            get = ""
+                        else:
+                            get += char
+                    else:
+                        cur_line += char
+                text.append(cur_line)
+                
+                #line render code
+                rend_line = 0
+                self.gw.blit(self.text_box,(self.ts, self.ts * 7))
+                for line in text:
+                    self.gw.blit(self.font.render((line), False,self.textco),(self.ts + self.ts / 10, self.ts * 7 + self.ts / 10))
+                    
                 
             p.display.update()
         
@@ -90,5 +117,5 @@ class dialog():
                     self.text_box.blit(bxskns[7],(self.ts * x, self.ts * y))
     
 test_win = p.display.set_mode((256*2, 256*2))
-test_dia = dialog(test_win, "../dialog/", 0, 0, {})
+test_dia = dialog(test_win, "../dialog/", 0, 0, {"player":"test"})
 test_dia.wrap(0)
