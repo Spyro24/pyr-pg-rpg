@@ -36,15 +36,24 @@ class player():
         self.ty = start_pos[1] #y position on tile map
         self.reset_state()
         self.ww, self.wh = self.gw.get_size()
-        self.points_x = self.ww / (self.mf_w * self.ts)
-        self.points_y = self.wh / (self.mf_h * self.ts)
-        self.player_scale = self.ww / self.mf_w
+        #code for get the corect scale for the textures
+        self.set_scale = 0
+        if self.wh > self.ww: set_scale = self.ww / self.mf_w
+        else: self.set_scale = self.wh / self.mf_w
+        #calculate the size for a move
+        self.points_x = self.set_scale * self.mf_w / (self.mf_w * self.ts)
+        self.points_y = self.set_scale * self.mf_w / (self.mf_h * self.ts)
+        
+        self.player_scale = self.set_scale #Scale of the player sprite
         self.map = map
         tmp = []
         for sprite in sprites:
             tmp.append(p.transform.scale(p.image.load("./players/" + str(p_f) + "/" + str(sprite) + ".png"),(self.player_scale, self.player_scale)))
         self.sprites = tmp
         self.hit_map = map.get_hitbox()
+        
+        self.in_x = (self.ww / 2) - ((self.mf_w / 2) * self.set_scale)
+        self.in_y = (self.wh / 2) - ((self.mf_w / 2) * self.set_scale)
             
     def update(self):
         self.hit_map = self.map.get_hitbox()
@@ -115,7 +124,10 @@ class player():
         self.state.insert(0, True)
     
     def render(self):
-        self.gw.blit(self.sprites[self.facing],(((self.tx *self.ts) + self.x) * self.points_x, ((self.ty *self.ts) + self.y) * self.points_x))
+        self.gw.blit(self.sprites[self.facing],(self.in_x + (((self.tx *self.ts) + self.x) * self.points_x), self.in_y + (((self.ty *self.ts) + self.y) * self.points_x)))
         
     def get_state(self, state):
-        return self.state[state]   
+        return self.state[state]
+    
+    def _debug(self): #the function for the debug class(its a external module thats loads with the main script)
+        return self.facing, self.x, self.y, self.tx, self.ty

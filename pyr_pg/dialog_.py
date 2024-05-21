@@ -20,11 +20,12 @@ from time import sleep
 p.init()
 
 class dialog():
-    def __init__(self, win, dialog_path, px, py, opn_set):
+    def __init__(self, win, dialog_path,sprite_path, px, py, opn_set):
         self.pvar = opn_set #contains a dictionery for all vars and options of the game (Playername, gamename and more)
         self.gw = win #game window
         self.gw_x, self.gw_y = self.gw.get_size()
         self.path = dialog_path
+        self.spath = sprite_path
         self.px = px #Players map X position
         self.py = py #Players map X position
         self.text_box = p.Surface((self.gw_x / 10 * 8, self.gw_y / 10 * 3))
@@ -45,13 +46,19 @@ class dialog():
                     
         
     def wrap(self, file_num):
+        auto_clear = False
+        name = ""
+        name_pos = (0,0)
         dia = open(self.path + str(self.px) + "_" + str(self.py) + "/" + str(file_num), "r")
         self.gw.blit(self.text_box,(self.ts, self.ts * 7))
         un_wrap = dia.readlines()
         un_wrap = [line.strip() for line in un_wrap]
         print(un_wrap)
+        update = True
         for com in un_wrap:
-            self.gw.fill(self.bgcol)
+            if auto_clear: #clear the screen after every instruction
+                self.gw.fill(self.bgcol)
+            
             com = com.split(";")
             if com[0][0] == "#":
                 pass #only use is for commenting your dialog without a instruction
@@ -59,14 +66,19 @@ class dialog():
                 self._wait_enter()
             elif com[0] == "set_box":
                 self._gen_box(com[1])
+            elif com[0] == "auto_clear":
+                auto_clear = True
             else:
                 if com[0][0] == "{":
                     name = self.pvar[com[0][1:len(com[0]) - 1]]
+                else:
+                    name = com[0]
                 text = []
                 get_mode = False
                 get = ""
                 cur_line = ""
                 for char in com[1]:
+                    
                     if get_mode:
                         if char == "}":
                             get_mode = False
@@ -78,14 +90,40 @@ class dialog():
                         cur_line += char
                 text.append(cur_line)
                 
+                dia_image = ""
+                if com[2][0] == "{":
+                    dia_image += self.pvar[com[2][1:len(com[2]) - 1]] + "/"
+                else:
+                    dia_image += str(com[2]) + "/"
+                dia_image += str(com[3]) + "_"
+                        
+                    
+                get_pos = com[4]
+                if get_pos.lower() == "left":
+                    name_pos = (1,3)
+                    impos = (1 * self.ts,4 * self.ts)
+                    dia_image += "left.png"
+                elif get_pos.lower() == "right":
+                    name_pos = (6,3)
+                    impos = (6 * self.ts,4 * self.ts)
+                    dia_image += "right.png"
+                
+                image_ = p.transform.scale(p.image.load(self.spath + dia_image),(self.ts * 3, self.ts * 3))
+                
                 #line render code
                 rend_line = 0
                 self.gw.blit(self.text_box,(self.ts, self.ts * 7))
+                self.gw.blit(self.font.render(name, False,self.textco),(self.ts * name_pos[0] + self.ts / 10, self.ts * name_pos[1] + self.ts / 10))
+                self.gw.blit(image_, impos)
                 for line in text:
                     self.gw.blit(self.font.render((line), False,self.textco),(self.ts + self.ts / 10, self.ts * 7 + self.ts / 10))
+                    update = True
                     
                 
-            p.display.update()
+                    
+            if update:   
+                p.display.update()
+                update = False
         
     def _gen_box(self, box):
         box_tiles = ["UP","DW","LE","RE","LE_UP_CO","RE_UP_CO","LE_DW_CO","RE_DW_CO","BG"] #The list with all availablen box tiles
@@ -94,7 +132,7 @@ class dialog():
         for bxt in box_tiles:
             bxskns.append(p.transform.scale(p.image.load(str(self.path) + "bg/" + str(bxskn) + "_" + str(bxt) + ".png"),(self.ts, self.ts)))
         
-        #ik that this scriptis not optimized for its use
+        #ik that this script is not optimized for its use
         for x in range(0,8):
             for y in range(0,3):
                 if (x == 0) and (y == 0):
@@ -116,6 +154,6 @@ class dialog():
                 elif (x == 7) and (y == 2):
                     self.text_box.blit(bxskns[7],(self.ts * x, self.ts * y))
     
-test_win = p.display.set_mode((256*2, 256*2))
-test_dia = dialog(test_win, "../dialog/", 0, 0, {"player":"test"})
+test_win = p.display.set_mode((250*2, 250*2))
+test_dia = dialog(test_win, "../dialog/", "../players/", 0, 0, {"player":"Test", "player_sprite":"synth"})
 test_dia.wrap(0)

@@ -32,10 +32,15 @@ class map:
         self.mh = mh #Map hight in tiles
         self.tile_path = tp
         self.gw_x, self.gw_y = self.gw.get_size()
-        self.scale = self.gw_x / self.mw
+        set_scale = 0
+        if self.gw_y > self.gw_x: set_scale = self.gw_x
+        else: set_scale = self.gw_y
+        self.scale = set_scale / self.mw
         self.g_layer = p.Surface(self.gw.get_size())
         self.y = 0
         self.x = 0
+        self.in_x = (self.gw_x / 2) - ((self.mw / 2) * self.scale)
+        self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
         
     def load(self):
         self.load_state = True
@@ -68,7 +73,7 @@ class map:
     
     def create_surface(self):
         count = 0
-        tmp0 = p.Surface(self.gw.get_size())
+        tmp0 = p.Surface((self.mw * self.scale, self.mh * self.scale))
         for h in range(0,self.mh):
             for w in range(0,self.mw):
                 if self.map[0][count] != 0:
@@ -80,4 +85,4 @@ class map:
         return self.map[1]
     
     def render(self):
-       self.gw.blit(self.g_layer,(self.x,self.y))
+       self.gw.blit(self.g_layer,(self.in_x + self.x, self.in_y + self.y))
