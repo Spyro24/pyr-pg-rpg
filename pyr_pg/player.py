@@ -23,8 +23,9 @@ class player():
     def reset_state(self):
         self.state = [False]
         
-    def __init__(self, game_win, mf_w, mf_h, ts, p_f, start_pos, map):
+    def __init__(self, game_win, mf_w, mf_h, ts, p_f, start_pos, map, dia):
         self.gw = game_win
+        self.dia = dia #Dialog object(to wrap the dia files
         self.mf_w = mf_w #move field width (in Tiles)
         self.mf_h = mf_h #move field hight (in Tiles)
         self.ts = ts #tile size
@@ -32,34 +33,49 @@ class player():
         sprites = ["UP", "DOWN", "LEFT", "RIGHT"] #This contains all sprites
         self.x = 0
         self.y = 0
-        self.tx = start_pos[0] #x position on tile map
-        self.ty = start_pos[1] #y position on tile map
+        self.tx = start_pos[0] #x position on map
+        self.ty = start_pos[1] #y position on map
         self.reset_state()
         self.ww, self.wh = self.gw.get_size()
         #code for get the corect scale for the textures
         self.set_scale = 0
-        if self.wh > self.ww: set_scale = self.ww / self.mf_w
-        else: self.set_scale = self.wh / self.mf_w
+        if self.ww > self.wh: set_scale = self.wh
+        else: self.set_scale = self.ww
+        self.set_scale = self.set_scale / self.mf_w
+        print(self.set_scale)
         #calculate the size for a move
-        self.points_x = self.set_scale * self.mf_w / (self.mf_w * self.ts)
-        self.points_y = self.set_scale * self.mf_w / (self.mf_h * self.ts)
+        self.gw_x, self.gw_y = self.gw.get_size()
+        set_scale = 0
+        if self.gw_y > self.gw_x: set_scale = self.gw_x
+        else: set_scale = self.gw_y
+        self.scale = set_scale / self.mf_w
+        self.in_x2 = int((self.gw_x / 2) - ((self.mf_w / 2) * self.scale))
+        self.in_y2 = int((self.gw_y / 2) - ((self.mf_w / 2) * self.scale))
+        print(self.in_x2, self.in_y2)
+        self.points_x = self.scale * self.mf_w / (self.mf_w * self.ts)
+        self.points_y = self.scale * self.mf_w / (self.mf_h * self.ts)
         
-        self.player_scale = self.set_scale #Scale of the player sprite
+        self.player_scale = self.scale #Scale of the player sprite
         self.map = map
         tmp = []
         for sprite in sprites:
             tmp.append(p.transform.scale(p.image.load("./players/" + str(p_f) + "/" + str(sprite) + ".png"),(self.player_scale, self.player_scale)))
         self.sprites = tmp
         self.hit_map = map.get_hitbox()
+        self.dia_map = self.map.get_dia()
         
         self.in_x = (self.ww / 2) - ((self.mf_w / 2) * self.set_scale)
-        self.in_y = (self.wh / 2) - ((self.mf_w / 2) * self.set_scale)
+        self.in_y = (self.wh / 2) - ((self.mf_h / 2) * self.set_scale)
+        print(self.in_x, self.in_y)
             
     def update(self):
         self.hit_map = self.map.get_hitbox()
+        self.dia_map = self.map.get_dia()
     
     def move(self, x, y):
-        if y > 0:
+        cur_tx = self.tx
+        cur_ty = self.ty
+        if y > 0: # Move DOWN
             test = self.ty + 1
             if test > self.mf_h - 1: test = self.mf_h - 1
             if not(self.hit_map[(test * self.mf_h) + self.tx] == 1):
@@ -69,7 +85,7 @@ class player():
                 self.y = 0
                 self.ty += 1
                 
-        elif y < 0:
+        elif y < 0: #Move UP
             test = self.ty
             if test < 0: test = 0
             if not(self.hit_map[(test * self.mf_h) + self.tx] == 1):
@@ -79,7 +95,7 @@ class player():
                 self.y = self.ts - 1
                 self.ty -= 1
                 
-        if x > 0:
+        if x > 0: #Move Right
             test = self.tx + 1
             if test > self.mf_h- 1: test = self.mf_h - 1
             if not(self.hit_map[(self.ty * self.mf_h) + test] == 1):
@@ -89,7 +105,7 @@ class player():
                 self.x = 0
                 self.tx += 1
                 
-        elif x< 0:
+        elif x< 0: #Move LEFT
             test = self.tx
             if test < 0: test = 0
             if not(self.hit_map[(self.ty * self.mf_h) + test] == 1):
@@ -119,12 +135,18 @@ class player():
             self.update()
             self.tx = -1
         
+        if (cur_tx != self.tx) or (cur_ty != self.ty):
+            test = self.dia_map[(self.ty * self.mf_h) + self.tx]
+            if not(test == 0):
+                self.dia.wrap(test, self.map.get_pos())
+            
         #set the state to move
         self.state.pop(0)
         self.state.insert(0, True)
     
     def render(self):
-        self.gw.blit(self.sprites[self.facing],(self.in_x + (((self.tx *self.ts) + self.x) * self.points_x), self.in_y + (((self.ty *self.ts) + self.y) * self.points_x)))
+        print((self.in_x2 + (((self.tx *self.ts) + self.x) * self.points_x), self.in_y2 + (((self.ty *self.ts) + self.y) * self.points_x)))
+        self.gw.blit(self.sprites[self.facing],(self.in_x2 + (((self.tx *self.ts) + self.x) * self.points_x), self.in_y2 + (((self.ty *self.ts) + self.y) * self.points_x)))
         
     def get_state(self, state):
         return self.state[state]

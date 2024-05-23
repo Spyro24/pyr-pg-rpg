@@ -41,6 +41,7 @@ class map:
         self.x = 0
         self.in_x = (self.gw_x / 2) - ((self.mw / 2) * self.scale)
         self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
+        print("A",self.in_x, self.in_y)
         
     def load(self):
         self.load_state = True
@@ -59,7 +60,9 @@ class map:
                         
                 elif n == 1:
                     map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
-        print(map[1])         
+                elif n == 2:
+                    map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
+                    
         self.map = map
         self.create_surface()
         
@@ -84,5 +87,15 @@ class map:
     def get_hitbox(self):
         return self.map[1]
     
+    def get_dia(self):
+        return self.map[2]
+    
+    def get_pos(self):
+        return (self.map_x,self.map_y)
+    
+    
     def render(self):
        self.gw.blit(self.g_layer,(self.in_x + self.x, self.in_y + self.y))
+    
+    def debug(self):
+        pass

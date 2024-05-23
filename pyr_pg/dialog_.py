@@ -20,18 +20,20 @@ from time import sleep
 p.init()
 
 class dialog():
-    def __init__(self, win, dialog_path,sprite_path, px, py, opn_set):
+    def __init__(self, win, dialog_path,sprite_path, opn_set):
         self.pvar = opn_set #contains a dictionery for all vars and options of the game (Playername, gamename and more)
         self.gw = win #game window
         self.gw_x, self.gw_y = self.gw.get_size()
         self.path = dialog_path
         self.spath = sprite_path
-        self.px = px #Players map X position
-        self.py = py #Players map X position
-        self.text_box = p.Surface((self.gw_x / 10 * 8, self.gw_y / 10 * 3))
-        self.ts = int(self.gw_x / 10)
+        self.text_box = p.Surface((self.gw_x / 10 * 8, self.gw_y / 10 * 3)) #Initial Textbox
+        #get the shortest window size
+        if self.gw_x > self.gw_y: scale = self.gw_y
+        else: scale = self.gw_x
+        
+        self.ts = int(scale/ 10) #Set how big a Dialog Tile is
         self._gen_box(0)
-        self.font = (p.font.SysFont(p.font.get_default_font(),int(self.gw_x / 10)))
+        self.font = (p.font.SysFont(p.font.get_default_font(),int(self.gw_x / 10))) #Main Font
         self.space = (self.gw_x / 20)
         self.textco = (255,255,255)
         self.bgcol = (0,0,0)
@@ -41,15 +43,16 @@ class dialog():
         while wait:
             sleep(0.05)
             for event in p.event.get():
-                if event.type == p.KEYUP:
+                if event.type == p.KEYDOWN:
                     wait = False
                     
         
-    def wrap(self, file_num):
+    def wrap(self, file_num, pos):
         auto_clear = False
         name = ""
         name_pos = (0,0)
-        dia = open(self.path + str(self.px) + "_" + str(self.py) + "/" + str(file_num), "r")
+        xp, yp = pos
+        dia = open(self.path + str(xp) + "_" + str(yp) + "/" + str(file_num), "r")
         self.gw.blit(self.text_box,(self.ts, self.ts * 7))
         un_wrap = dia.readlines()
         un_wrap = [line.strip() for line in un_wrap]
@@ -153,7 +156,8 @@ class dialog():
                     self.text_box.blit(bxskns[1],(self.ts * x, self.ts * y))
                 elif (x == 7) and (y == 2):
                     self.text_box.blit(bxskns[7],(self.ts * x, self.ts * y))
-    
-test_win = p.display.set_mode((250*2, 250*2))
-test_dia = dialog(test_win, "../dialog/", "../players/", 0, 0, {"player":"Test", "player_sprite":"synth"})
-test_dia.wrap(0)
+
+if __name__ == "__main__":
+    test_win = p.display.set_mode((250*2, 250*2))
+    test_dia = dialog(test_win, "../dialog/", "../players/", 0, 0, {"player":"Test", "player_sprite":"synth"})
+    test_dia.wrap(0)

@@ -22,7 +22,7 @@ import pygame as p
 import pyr_pg.map_ as rpg_map
 import pyr_pg.player as rpg_player
 import pyr_pg.kb as rpg_kb
-from pyr_pg.dialog import dialog_wrapper
+from pyr_pg.dialog_ import dialog
 from pyr_pg.launch_wrapper import launch_wrapper
 from time import sleep
 from time import time as time_get
@@ -32,10 +32,12 @@ import pyr_pg.debug as dbug
 
 p.init()
 run = True
-game_win = p.display.set_mode((768,512))
+#game_win = p.display.set_mode((768,512))
+game_win = p.display.set_mode((256,512))
 map = rpg_map.map(game_win,0,0,0,0,"./map/","./tiles/",16,16,16,2)
 map.load()
-player = rpg_player.player(game_win, 16, 16, 16, 0, (0,0), map)
+dialog = dialog(game_win, "./dialog/", "./players/",  {"player":"Test", "player_sprite":"synth"})
+player = rpg_player.player(game_win, 16, 16, 16, 0, (0,0), map, dialog)
 music = ps.sound(game_win, "./music/")
 music.play(0, "main")
 MoveSpeed = 0.2
@@ -44,8 +46,9 @@ ms = MoveSpeed / TileSize
 KT = time_get()
 render_win = True
 fc = 0
-debug = False
+debug = True
 deinf = dbug.debug(game_win, player, map, 30)
+
 
 while run:
     for event in p.event.get():
