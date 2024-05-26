@@ -33,7 +33,7 @@ import pyr_pg.debug as dbug
 p.init()
 run = True
 #game_win = p.display.set_mode((768,512))
-game_win = p.display.set_mode((256,512))
+game_win = p.display.set_mode((512,512))
 map = rpg_map.map(game_win,0,0,0,0,"./map/","./tiles/",16,16,16,2)
 map.load()
 dialog = dialog(game_win, "./dialog/", "./players/",  {"player":"Test", "player_sprite":"synth"})
@@ -46,7 +46,7 @@ ms = MoveSpeed / TileSize
 KT = time_get()
 render_win = True
 fc = 0
-debug = True
+debug = False
 deinf = dbug.debug(game_win, player, map, 30)
 
 

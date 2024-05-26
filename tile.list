@@ -1,8 +1,9 @@
+#Dont Delete me because I'm the tiles list with all availablen tilesin the editor.
 ---Normal Tiles---
-0 = None [Hard coded]
-1 = Grass []
-2 = Stonefloor []
-3 = Woodfloor []
+0 = Background [Hard coded]
+1 = Grass [Synthesys]
+2 = Stonefloor [Synthesys]
+3 = Woodfloor [Synthesys]
 4 = Lightwater [Synthesys]
 5 = Darkwater [Synthesys]
 6 = Sand [Synthesys]
@@ -19,10 +20,8 @@
 17 = []
 18 = Gravel [Kem]
 
-#comment
-
 ---Overlay Tiles---
-0 = None [Hard coded]
+0 = Air [Hard coded]
 1 = Stonefloor (Up right corner) [Synthesys]
 2 = Stonefloor (Up left corner) [Synthesys]
 3 = Stonefloor (Down right corner) [Synthesys]
@@ -30,4 +29,4 @@
 5 = roller (right) [Synthesys]
 
 ---Player overlay Tiles---
-0 = None [Hard coded]
+0 = Air [Hard coded]
