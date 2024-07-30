@@ -1,4 +1,12 @@
-I rewrite the intiere programm to uses classes instead of useless and complicatet vars.
+V0.4 [pre release] are out now
+I have added sprite sheets and tile sheets to make the programm faster.(and lesser Storage access.)
+It have now a intro screen and uses CutingEdge to cut the sprite sheets.
+coming soon for the map editor (Its WIP)
+and thank you for playing the game.
+I hope you have fun with it.(its now  about a half year old (first line of code was written on 21 december of 2023)
+windows support is curently disabled.(you can enable it with the corect python code that load all the files and saves(you have to write it by your self.))
+
+I rewrite theintiere programm to uses classes instead of useless and complicatet vars.
 
 V0.1 release are out
 You can now do much more and the script is for every pc optimized 

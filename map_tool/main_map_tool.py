@@ -56,7 +56,7 @@ map_new = False
 map_save = False
 tile_size = int(((mapt_w_h / 10) * 8) / 18)
 print(tile_size)
-map_layers = 6
+map_layers = 8
 try:
     map = prm.map(0,0,16,16,16,2,"../map/", True, mapt_win, [tile_list,tile_png_list])
 

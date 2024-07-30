@@ -1,0 +1,17 @@
+Internal
+|-pyr_pg
+| |-pyr_pg.config.config(string[config_file]) -> config obj
+| | |-{config_var}.load() -> None 'load the config file'
+| | |-{config_var}.save() -> None 'save the configuration to the config file'
+| | |-{config_var}.get(param) -> None 'get a parameter from the config'
+| | |-{config_var}.add(param, value) -> None 'add a new parameter with a specifc value'
+| | |-{config_var}.change(param, value) -> None 'set the selectet parameter to the value'
+| | 
+| |-pyr_pg.tile_handler
+| | |-pyr_pg.tile_handler.load_tiles({pygame.Surface obj}, folder, config, *font, mode="new") -> list 'folder=str(tilemap folder), config={pyr_pg.config obj} or dictonary, font={pyr_pg.font obj}, mode="new" or "legacy"'
+
+External
+|-Pygame
+| |-pygame.Surface((width, height), flags=0, depth=0, masks=None) -> Pygame Surface obj »flags=pygame.HWSURFACE, pygame.SRCALPHA«
+| | |-{Surface_var}.blit({Surface obj}, (dest_x, dest_y), area=None, special_flags=0) -> Pygame Rect obj »area=pygame.Rect«
+

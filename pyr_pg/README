@@ -1,0 +1,2 @@
+pyr_pg (python rpg libary) is a libary for rpg's and top down view games.
+To use pyr_pg you have to install pygame ("pip3 install pygame" or "pip install pygame")

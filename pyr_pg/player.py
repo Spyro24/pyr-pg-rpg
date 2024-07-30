@@ -19,137 +19,53 @@
 import pygame as p
 import time
 
-class player():
-    def reset_state(self):
-        self.state = [False]
-        
-    def __init__(self, game_win, mf_w, mf_h, ts, p_f, start_pos, map, dia):
+class player(): 
+    def __init__(self, game_win, config):
         self.gw = game_win
-        self.dia = dia #Dialog object(to wrap the dia files
-        self.mf_w = mf_w #move field width (in Tiles)
-        self.mf_h = mf_h #move field hight (in Tiles)
-        self.ts = ts #tile size
-        self.facing = 0
-        sprites = ["UP", "DOWN", "LEFT", "RIGHT"] #This contains all sprites
-        self.x = 0
-        self.y = 0
-        self.tx = start_pos[0] #x position on map
-        self.ty = start_pos[1] #y position on map
-        self.reset_state()
-        self.ww, self.wh = self.gw.get_size()
-        #code for get the corect scale for the textures
-        self.set_scale = 0
-        if self.ww > self.wh: set_scale = self.wh
-        else: self.set_scale = self.ww
-        self.set_scale = self.set_scale / self.mf_w
-        print(self.set_scale)
-        #calculate the size for a move
-        self.gw_x, self.gw_y = self.gw.get_size()
-        set_scale = 0
-        if self.gw_y > self.gw_x: set_scale = self.gw_x
-        else: set_scale = self.gw_y
-        self.scale = set_scale / self.mf_w
-        self.in_x2 = int((self.gw_x / 2) - ((self.mf_w / 2) * self.scale))
-        self.in_y2 = int((self.gw_y / 2) - ((self.mf_w / 2) * self.scale))
-        print(self.in_x2, self.in_y2)
-        self.points_x = self.scale * self.mf_w / (self.mf_w * self.ts)
-        self.points_y = self.scale * self.mf_w / (self.mf_h * self.ts)
+        self.main_config = config
+        self.tiles_x, self.tiles_y = config["tiles_xy"]
+        self.pos_x, self.pos_y = 0, 0
+        self.debug_colors = config["debug_colors"]
+        self.grid_pos_x, self.grid_pos_y = config["player_start_pos_xy"]
+        self.state = [False]
+        #---get shortest window size and create the tile sys for player---
+        self.shortest_window_size = 0
+        gw_w, gw_h = self.gw.get_size()
+        if gw_w > gw_h: self.shortest_window_size = gw_h
+        else: self.shortest_window_size = gw_w
+        self.tile_size = self.shortest_window_size / self.tiles_y
+        self.grid_zero_x, self.grid_zero_y = (gw_w / 2) - ((self.tiles_x / 2) * self.tile_size), (gw_h / 2) - ((self.tiles_y / 2) * self.tile_size)
+        self.micro_tile = self.tile_size / config["micro_tiling"]
+        #-----------------------------------------------------------------
+        #---setup hitboxes---
+        self.player_hitbox = p.Rect(( self.grid_zero_x + self.grid_pos_x * self.tile_size, self.pos_y),(self.tile_size, self.tile_size))
+        self.player_hitbox_color = self.debug_colors["player_hitbox"]
+        #-----------------------------------------------------------------
         
-        self.player_scale = self.scale #Scale of the player sprite
-        self.map = map
-        tmp = []
-        for sprite in sprites:
-            tmp.append(p.transform.scale(p.image.load("./players/" + str(p_f) + "/" + str(sprite) + ".png"),(self.player_scale, self.player_scale)))
-        self.sprites = tmp
-        self.hit_map = map.get_hitbox()
-        self.dia_map = self.map.get_dia()
-        
-        self.in_x = (self.ww / 2) - ((self.mf_w / 2) * self.set_scale)
-        self.in_y = (self.wh / 2) - ((self.mf_h / 2) * self.set_scale)
-        print(self.in_x, self.in_y)
-            
     def update(self):
         self.hit_map = self.map.get_hitbox()
         self.dia_map = self.map.get_dia()
     
     def move(self, x, y):
-        cur_tx = self.tx
-        cur_ty = self.ty
-        if y > 0: # Move DOWN
-            test = self.ty + 1
-            if test > self.mf_h - 1: test = self.mf_h - 1
-            if not(self.hit_map[(test * self.mf_h) + self.tx] == 1):
-                self.y += y
-                
-            if self.y >= self.ts:
-                self.y = 0
-                self.ty += 1
-                
-        elif y < 0: #Move UP
-            test = self.ty
-            if test < 0: test = 0
-            if not(self.hit_map[(test * self.mf_h) + self.tx] == 1):
-                self.y += y
-                
-            if self.y < 0:
-                self.y = self.ts - 1
-                self.ty -= 1
-                
-        if x > 0: #Move Right
-            test = self.tx + 1
-            if test > self.mf_h- 1: test = self.mf_h - 1
-            if not(self.hit_map[(self.ty * self.mf_h) + test] == 1):
-                self.x += x
-                
-            if self.x >= self.ts:
-                self.x = 0
-                self.tx += 1
-                
-        elif x< 0: #Move LEFT
-            test = self.tx
-            if test < 0: test = 0
-            if not(self.hit_map[(self.ty * self.mf_h) + test] == 1):
-                self.x += x
-                
-            if self.x < 0:
-                self.x = self.ts - 1
-                self.tx -= 1
-        #move to the next map
-        if (self.ty < 0) and (self.y < int(self.ts / 2)):
-            self.map.move(0,-1)
-            self.update()
-            self.ty = self.mf_h - 1
-            
-        elif (self.ty > self.mf_h - 2) and (self.y > int(self.ts / 2) + 1):
-            self.map.move(0,1)
-            self.update()
-            self.ty = -1
-            
-        if (self.tx < 0) and (self.x < int(self.ts / 2)):
-            self.map.move(-1,0)
-            self.update()
-            self.tx = self.mf_w - 1
-            
-        elif (self.tx > self.mf_w - 2) and (self.x > int(self.ts / 2) + 1):
-            self.map.move(1,0)
-            self.update()
-            self.tx = -1
-        
-        if (cur_tx != self.tx) or (cur_ty != self.ty):
-            test = self.dia_map[(self.ty * self.mf_h) + self.tx]
-            if not(test == 0):
-                self.dia.wrap(test, self.map.get_pos())
-            
+        #move the hitbox
+        self.player_hitbox.move_ip(self.micro_tile * x, self.micro_tile * y)
         #set the state to move
         self.state.pop(0)
         self.state.insert(0, True)
     
     def render(self):
-        print((self.in_x2 + (((self.tx *self.ts) + self.x) * self.points_x), self.in_y2 + (((self.ty *self.ts) + self.y) * self.points_x)))
-        self.gw.blit(self.sprites[self.facing],(self.in_x2 + (((self.tx *self.ts) + self.x) * self.points_x), self.in_y2 + (((self.ty *self.ts) + self.y) * self.points_x)))
+        pass
         
-    def get_state(self, state):
-        return self.state[state]
+    def get_state(self, stat):
+        return self.state[stat]
+    
+    def reset_resetable_states(self):
+        self.state.pop(0)
+        self.state.insert(0, False)
+    
+    def reset_state(self, stat):
+        self.state.pop(stat)
+        self.state.insert(stat, False)
     
     def _debug(self): #the function for the debug class(its a external module thats loads with the main script)
-        return self.facing, self.x, self.y, self.tx, self.ty
+        p.draw.rect(self.gw, self.player_hitbox_color, self.player_hitbox, width=3)

@@ -1,8 +1,19 @@
-Programming
+Game Director:
+  -Kem
+
+Lead Designer:
+  -Kem
+
+Idea:
+  -Kem
+
+Programming:
   -Spyro24
 
-Code
+Code:
   main.py
+   -Spyro24
+  start.py
    -Spyro24
 
 Libarys and modules:
@@ -17,6 +28,3 @@ Art:
       -Kem
   -Tiles:
     -Show in tile.list
-
-Idea
-  -Kem

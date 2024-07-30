@@ -1,0 +1,10 @@
+|-pyr_pg
+| |-map_
+| | |-{__init__(self, *settings)} settings contains a dict with all settings [V0.4]
+| | | |-{self.state} dict for the statemachine for the map Obj [V0.4]
+| | | | |-{"load":False} contains the Value of the load status [V0.4]
+| | | | ---
+| | | |
+| | | |-{self.params} dict with all default parameters (get owerwriten by *settings) [V0.4]
+| | | | |-{"window":None} contains the root pygame window from *settings [V0.4]
+| | | | |-{"map_xy":[0,0]} contains the map position values [V0.4]

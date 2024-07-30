@@ -1,4 +1,4 @@
-#Dont Delete me because I'm the tiles list with all availablen tilesin the editor.
+#Dont Delete me because I'm the tiles list with all availablen tiles in the editor.
 ---Normal Tiles---
 0 = Background [Hard coded]
 1 = Grass [Synthesys]
@@ -17,8 +17,7 @@
 14 = Green structure beam [Synthesys]
 15 = Yellow structure beam [Synthesys]
 16 = Blue structure beam [Synthesys]
-17 = []
-18 = Gravel [Kem]
+17 = Libarety floor I []
 
 ---Overlay Tiles---
 0 = Air [Hard coded]

@@ -1,8 +1,9 @@
-name=Ultimate RPG
-version=0.1
-tilesize=16
-winsize=16
-icon=None
-scale=1
-init_map=0,0
-init_pos=0,0
+name=pyr_pg_rpg
+display_name=Tales of Destiny
+version=0.4
+mx=0
+my=0
+px=0
+py=0
+map_w=16
+map_h=16

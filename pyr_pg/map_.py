@@ -18,34 +18,40 @@
 import pygame as p
 
 class map:
-    def __init__(self,win,x,y,mx,my,mp,tp,ts,mh,mw,tb):
-        self.load_state = False
-        self.layers = 8
-        self.tile_bytes = tb
-        self.gw = win #Pygame window object
-        self.pos_x = x #Blit x position
-        self.pos_y = y #Blit x position
-        self.map_x = mx #Map x position
-        self.map_y = my #Map x position
-        self.map_path = mp #The path to the map files
+    def __init__(self, *settings):
+        self.state = {"load":False}
+        self.params = {"window":None,"map_xy":[0,0], "map_dir":"./map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"map_wh":(16,16),
+                       "map_byte_size":2,"layers":8,"tile_size":(1,1)} # contains a list with all parameters of the game
+        self.map_hitboxes = [] #<- list with all hitboxes in [y][x] format
+        self.map_raw_hitboxes = [] #<- list with all raw hitboxes in [y][x] format
+        #---legacy code---
+        self.layers = self.params["layers"]
+        self.tile_bytes = self.params["map_byte_size"]
+        self.gw = self.params["window"] #Pygame window object
+        self.pos_x = 0 #Blit x position
+        self.pos_y = 0 #Blit x position
+        self.map_x = self.params["map_xy"][0] #Map x position
+        self.map_y = self.params["map_xy"][1] #Map x position
+        self.map_path = self.params["map_dir"] #The path to the map files
         self.mw = mw #Map with in tiles
         self.mh = mh #Map hight in tiles
-        self.tile_path = tp
+        self.tile_list = tile_list #A list with all tiles sorted by layer
         self.gw_x, self.gw_y = self.gw.get_size()
         set_scale = 0
         if self.gw_y > self.gw_x: set_scale = self.gw_x
         else: set_scale = self.gw_y
         self.scale = set_scale / self.mw
         self.g_layer = p.Surface(self.gw.get_size())
-        self.y = 0
-        self.x = 0
         self.in_x = (self.gw_x / 2) - ((self.mw / 2) * self.scale)
         self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
         print("A",self.in_x, self.in_y)
         
+        for key in settings.keys(): #overwrite and add parameters to the map
+            self.params[key] = settings[key]
+        
     def load(self):
-        self.load_state = True
-        map_f = open(str(self.map_path) + str(self.map_x) + "_" + str(self.map_y), "br")
+        self.state["load"] = True
+        map_f = open(str(self.params["map_dir"]) + str(self.params["map_xy"][0]) + "_" + str(self.params["map_xy"][1]), "br")
         map = []
         for n in range(0,self.layers):
             map.append([])
@@ -53,7 +59,7 @@ class map:
                 if n == 0:
                     test = int.from_bytes(map_f.read(self.tile_bytes), "big")
                     if test > 0:
-                        tmp =(p.transform.scale(p.image.load(str(self.tile_path) + str(test) + ".png"),(self.scale,self.scale)))
+                        tmp =(p.transform.scale(self.params["bg_tiles"][test],(self.scale,self.scale)))
                         map[n].append(tmp.convert())
                     else:
                         map[n].append(0)
@@ -91,11 +97,16 @@ class map:
         return self.map[2]
     
     def get_pos(self):
-        return (self.map_x,self.map_y)
+        return 0,0 #self.map_x,self.map_y
+    
+    def get_raw(x,y): #-> bool
+        pass
     
     
-    def render(self):
+    def render(self): #-> None
        self.gw.blit(self.g_layer,(self.in_x + self.x, self.in_y + self.y))
     
     def debug(self):
-        pass
+        for h in range(0):
+            for w in range(0):
+                pass

@@ -1,0 +1,26 @@
+|-setup the main script ("main.py")
+| |-setup the var's
+| | |-goto "main_class" in main and edit the custumisable section in "__init__"
+| | | |-{self.random_title_text} This var append a random text to your game title if its set to True [V0.4]
+| | | |-{self.player_speed} Sets the player speed to your chosen tps (tiles per second) [V0.4]
+| | | |-{self.debug} This is only for debuging the game [V0.4]
+| | | |-{self.object_lenght} Set this to the byte lenght thats have you set in the editor [V0.4]
+| | | |-{self.micro_tiling} Set the smoothnes of moving objects (higher values decreuses the performance) [V0.4]
+| | | |-{self.default_FPS} Set the default FPS (Its overwriten by the config is FPS not set to default) [V0.4]
+| | | |-
+| | | |-
+| | | |-
+| | | |-
+| | | |-
+| | | ---
+| | ---
+| ---
+|
+|-setup the files
+| |-setup "game.rpg"
+| | |-{name} set the name of the game [V0.4]
+| | |-{display_name} Set the name for displaying the game name [V0.4]
+| | |-{version} set the game version (if you are begining with creating set this to 0.0, increase it withupdating) [V0.4]
+| | ---
+| ---
+---

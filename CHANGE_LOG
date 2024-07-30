@@ -1,3 +1,15 @@
+V0.4
+-add changelog
+-add main script
+-rewrite many code to classes
+-add free movement
+-add settings menu
+-add player selector
+-add resume
+-add svafiles
+-add font
+-add many document to explore the code without reading the code
+
 V 0.0
 -add
  -pyr_pg [EXTERNAL]
