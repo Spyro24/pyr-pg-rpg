@@ -24,6 +24,9 @@ class map:
                        "map_byte_size":2,"layers":8,"tile_size":(1,1)} # contains a list with all parameters of the game
         self.map_hitboxes = [] #<- list with all hitboxes in [y][x] format
         self.map_raw_hitboxes = [] #<- list with all raw hitboxes in [y][x] format
+        #---Add +settings to the parameter list
+        for key in settings[0].keys(): #overwrite and add parameters to the map
+            self.params[key] = settings[0][key]
         #---legacy code---
         self.layers = self.params["layers"]
         self.tile_bytes = self.params["map_byte_size"]
@@ -33,9 +36,8 @@ class map:
         self.map_x = self.params["map_xy"][0] #Map x position
         self.map_y = self.params["map_xy"][1] #Map x position
         self.map_path = self.params["map_dir"] #The path to the map files
-        self.mw = mw #Map with in tiles
-        self.mh = mh #Map hight in tiles
-        self.tile_list = tile_list #A list with all tiles sorted by layer
+        self.mw, self.mh = self.params["map_wh"] #Map with in tiles
+        self.tile_list = [self.params["bg_tiles"], self.params["ov_tiles"]] #A list with all tiles sorted by layer
         self.gw_x, self.gw_y = self.gw.get_size()
         set_scale = 0
         if self.gw_y > self.gw_x: set_scale = self.gw_x
@@ -45,9 +47,6 @@ class map:
         self.in_x = (self.gw_x / 2) - ((self.mw / 2) * self.scale)
         self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
         print("A",self.in_x, self.in_y)
-        
-        for key in settings.keys(): #overwrite and add parameters to the map
-            self.params[key] = settings[key]
         
     def load(self):
         self.state["load"] = True
@@ -104,7 +103,7 @@ class map:
     
     
     def render(self): #-> None
-       self.gw.blit(self.g_layer,(self.in_x + self.x, self.in_y + self.y))
+       self.gw.blit(self.g_layer,(self.in_x, self.in_y))
     
     def debug(self):
         for h in range(0):

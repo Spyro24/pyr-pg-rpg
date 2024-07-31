@@ -247,6 +247,7 @@ class main_class():
     
     def setup_player(self, option):
         self.player_env = {"player":"Test", "player_sprite":"synth"}
+        self.map_config["window"] = self.game_win
         self.map = pyr_pg.map_.map(self.map_config)
         self.map.load()
         self.dialog = pyr_pg.dialog_.dialog(self.game_win, "./dialog/", "./players/",  self.player_env, self.audio_setup)
