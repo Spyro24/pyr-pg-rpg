@@ -50,7 +50,7 @@ class map:
         
     def load(self):
         self.state["load"] = True
-        map_f = open(str(self.params["map_dir"]) + str(self.params["map_xy"][0]) + "_" + str(self.params["map_xy"][1]), "br")
+        map_f = open(str(self.params["map_dir"]) + str(self.map_x) + "_" + str(self.map_y), "br")
         map = []
         for n in range(0,self.layers):
             map.append([])
@@ -58,7 +58,7 @@ class map:
                 if n == 0:
                     test = int.from_bytes(map_f.read(self.tile_bytes), "big")
                     if test > 0:
-                        tmp =(p.transform.scale(self.params["bg_tiles"][test],(self.scale,self.scale)))
+                        tmp =(p.transform.scale(self.params["bg_tiles"][test - 1],(self.scale,self.scale)))
                         map[n].append(tmp.convert())
                     else:
                         map[n].append(0)

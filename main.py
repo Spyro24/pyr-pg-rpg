@@ -249,6 +249,7 @@ class main_class():
         self.player_env = {"player":"Test", "player_sprite":"synth"}
         self.map_config["window"] = self.game_win
         self.map = pyr_pg.map_.map(self.map_config)
+        self.main_config["map"] = self.map
         self.map.load()
         self.dialog = pyr_pg.dialog_.dialog(self.game_win, "./dialog/", "./players/",  self.player_env, self.audio_setup)
         self.player = pyr_pg.player.player(self.game_win, self.main_config)
@@ -319,15 +320,12 @@ class main_class():
         self.b_pos_y = (h / 2) - (self.lowest_size / 2)
         self.menu_size = self.lowest_size / 10
         self.audio_setup = pyr_pg.sound.sound(self.game_win, "./music/")
-        
-        
+                
     def close_game(self):
         p.quit()
         exit(0)
     
     
-
-
 if __name__ == "__main__":
     #try:
         game = main_class()

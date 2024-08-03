@@ -1,0 +1,18 @@
+the entire text ofthe devlog is in german.
+Diesen text schreibe ich nur um am projekt zu bleiben.
+Und bemangelt nicht die rechtschreibfehler.(der text ist nur für mich, aber damit du der leser verstehst wie alles
+funktioniert im detail schreibe ich diesen text immer weiter Entwicklugstag für entwicklungstag.
+)
+
+Samstag 03 August 2024 
+Heute muste ich feststellen das ein skurieler bug im spiel war der das hitbox system zertört hatt.
+(Grund war das die configuration fehler haft war und rects nur ints unterstützen.)
+Es sollte jetze ohne bugs funktionieren.(aber es ist leider rechen intensiver weil jetze das rect jedes mal neu erstelt
+wird.)
+Morgen wird die V0.4 Pre release gepusht.
+
+Freitag 02 August 2024
+Heute habe ich den script geschrieben um eine endlose map zu krieren indem der spieler wenn er über
+rand A läuft er wieder an rand B erscheint nach dem die neue map geladen hatt.
+(Das kann später noch zu problemen führen das der Player stuckläuft weil wenn man über denn map rand
+läuft der hitboxtriger auf False gesetzt wird.)
