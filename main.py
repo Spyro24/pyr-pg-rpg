@@ -37,10 +37,11 @@ class main_class():
         self.default_FPS = 30
         tilesheet_size = "12x6"
         #----------------------------------------------------------------------
+        self.debug_colors = {"player_hitbox":(0, 0, 255), "map_hitbox":(0,127,255)}
         self.map_config = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":tilesheet_size}),
                            "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/", {"size":tilesheet_size}),
-                           "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":tilesheet_size})}
-        self.debug_colors = {"player_hitbox":(0, 0, 255), "map_hitbox":()}
+                           "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":tilesheet_size}),
+                           "debug_col":self.debug_colors}
         self.main_config = {"tiles_xy":(16,16), "player_start_pos_xy":(0,0), "debug_colors":self.debug_colors, "micro_tiling":self.micro_tiling}
         self.player_speed = 1 / ((self.main_config["micro_tiling"] * self.player_speed))
         #self.
@@ -300,6 +301,7 @@ class main_class():
                 self.player.render()
                 if self.debug:
                     self.player._debug()
+                    self.map.debug()
                 p.display.flip()
                 render_win = False
         

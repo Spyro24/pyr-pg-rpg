@@ -21,13 +21,14 @@ class map:
     def __init__(self, *settings):
         self.state = {"load":False}
         self.params = {"window":None,"map_xy":[0,0], "map_dir":"./map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"map_wh":(16,16),
-                       "map_byte_size":2,"layers":8,"tile_size":(1,1)} # contains a list with all parameters of the game
+                       "map_byte_size":2,"layers":8,"tile_size":(1,1), "debug_col":{"map_hitbox":(0,127,127)}} # contains a list with all parameters of the game
         self.map_hitboxes = [] #<- list with all hitboxes in [y][x] format
         self.map_raw_hitboxes = [] #<- list with all raw hitboxes in [y][x] format
         #---Add +settings to the parameter list
         for key in settings[0].keys(): #overwrite and add parameters to the map
             self.params[key] = settings[0][key]
         #---legacy code---
+            self.debug_col = self.params["debug_col"]["map_hitbox"]
         self.layers = self.params["layers"]
         self.tile_bytes = self.params["map_byte_size"]
         self.gw = self.params["window"] #Pygame window object
@@ -67,7 +68,20 @@ class map:
                     map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
                 elif n == 2:
                     map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
-                    
+        
+        #---code for creating the hitboxes---
+        #clear hitboxes
+        self.map_hitboxes = []
+        self.map_raw_hitboxes = []
+        n = 0
+        for h in range(self.mh):
+            self.map_raw_hitboxes.append([])
+            for w in range(self.mw):
+                self.map_raw_hitboxes[h].append(map[1][n])
+                n += 1
+        
+        for obj in self.map_raw_hitboxes:
+            print(obj)
         self.map = map
         self.create_surface()
         
@@ -82,8 +96,13 @@ class map:
     def create_surface(self):
         count = 0
         tmp0 = p.Surface((self.mw * self.scale, self.mh * self.scale))
-        for h in range(0,self.mh):
-            for w in range(0,self.mw):
+        for h in range(self.mh):
+            self.map_hitboxes.append([])
+            for w in range(self.mw):
+                if self.map_raw_hitboxes[h][w] == 1:
+                    self.map_hitboxes[h].append(p.Rect((self.in_x + (self.scale * w), self.in_y + (self.scale * h)), (self.scale, self.scale)))
+                else:
+                    self.map_hitboxes[h].append((self.scale * -3, self.scale * -3, 1, 1))
                 if self.map[0][count] != 0:
                     tmp0.blit(self.map[0][count],(w * self.scale, h * self.scale))
                 count += 1
@@ -106,6 +125,6 @@ class map:
        self.gw.blit(self.g_layer,(self.in_x, self.in_y))
     
     def debug(self):
-        for h in range(0):
-            for w in range(0):
-                pass
+        for h in range(self.mh):
+            for w in range(self.mw):
+                p.draw.rect(self.gw, self.debug_col, self.map_hitboxes[h][w], width=3)
