@@ -285,7 +285,8 @@ class main_class():
             
             if (time_get() - self.player_speed) > KT:
                 if key_ar[119]:
-                    self.player.move(0,-1)                    
+                    self.player.move(0,-1)
+                    self.player.set_facing("UP")
                 if key_ar[100]:
                     self.player.move(1,0)              
                 if key_ar[115]:
@@ -332,11 +333,10 @@ class main_class():
     
     
 if __name__ == "__main__":
-    #try:
+    try:
         game = main_class()
         game.play()
-   # except BaseException as err:
-        p.quit()
+    except BaseException as err:
         try:
             import datetime
             log_time = datetime.datetime.now()
@@ -353,3 +353,4 @@ if __name__ == "__main__":
         print("Error: " + str(err))
         print("------Error end------")
         print("\nplease report this to the developers if this is not a filepath error")
+    p.quit()

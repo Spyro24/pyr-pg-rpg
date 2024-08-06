@@ -49,6 +49,9 @@ class player():
         #---setup player positions---
         self.minor_pos_x = self.diff
         self.minor_pos_y = self.diff
+        #---setup player other vars---
+        self.facing = "UP"
+        #-----------------------------------------------------------------
         
     def update(self):
         self.hit_map = self.map.get_hitbox()
@@ -103,7 +106,16 @@ class player():
         
         test_hitbox = p.Rect((self.grid_zero_x + ((grid_pos_x * self.tile_size) + ((tmp_minor_pos_x - self.diff) * self.micro_tile)), self.grid_zero_y + ((grid_pos_y * self.tile_size) + ((tmp_minor_pos_y - self.diff) * self.micro_tile))),(self.tile_size, self.tile_size))
             
-            
+        if self.facing == "UP":
+            get_hitbox = self.map.get_hitbox(self.grid_pos_x, self.grid_pos_y - 1)
+            if get_hitbox != 0:
+                if test_hitbox.colliderect(get_hitbox):
+                    hitbox_trigger = True
+            get_hitbox_left = self.map.get_hitbox(self.grid_pos_x - 1, self.grid_pos_y - 1)
+            get_hitbox_right = self.map.get_hitbox(self.grid_pos_x + 1, self.grid_pos_y - 1)
+            if (get_hitbox_left != 0) and test_hitbox.colliderect(get_hitbox_left):
+                tmp_minor_pos_x += 1
+                        
         #set all vars if the hitboxe arent trigered
         if not hitbox_trigger:
             self.minor_pos_x = tmp_minor_pos_x
@@ -132,6 +144,9 @@ class player():
     
     def resume_game(self, save_dict):
         self.facing = save_dict["player_facing"]
+        
+    def set_facing(self, facing_dir):
+        self.facing = facing_dir
         
     def _debug(self): #the function for the debug class(its a external module thats loads with the main script)
         p.draw.rect(self.gw, self.player_hitbox_color, self.player_hitbox, width=3)

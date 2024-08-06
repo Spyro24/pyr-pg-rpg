@@ -63,9 +63,11 @@ if __name__ == "__main__":
     b = 0
     win = p.display.set_mode((700,700))
     tiles = load_tiles("../tiles/ground", {"size":"12x6"})
+    ov = load_tiles("../tiles/overlay", {"size":"12x6"})
     print(len(tiles))
     for t in range(len(tiles)):
         win.blit(tiles[t],(b * 64, of * 64))
+        win.blit(ov[t],(b * 64, of * 64))
         b += 1
         if (t + 1) % 12 == 0:
             of += 1

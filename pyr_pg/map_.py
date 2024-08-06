@@ -38,13 +38,14 @@ class map:
         self.map_y = self.params["map_xy"][1] #Map x position
         self.map_path = self.params["map_dir"] #The path to the map files
         self.mw, self.mh = self.params["map_wh"] #Map with in tiles
-        self.tile_list = [self.params["bg_tiles"], self.params["ov_tiles"]] #A list with all tiles sorted by layer
+        self.tile_list = [self.params["bg_tiles"], self.params["gd_tiles"]] #A list with all tiles sorted by layer
         self.gw_x, self.gw_y = self.gw.get_size()
         set_scale = 0
         if self.gw_y > self.gw_x: set_scale = self.gw_x
         else: set_scale = self.gw_y
         self.scale = set_scale / self.mw
         self.g_layer = p.Surface(self.gw.get_size())
+        self.gov_layer = p.Surface(self.gw.get_size())
         self.in_x = (self.gw_x / 2) - ((self.mw / 2) * self.scale)
         self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
         print("A",self.in_x, self.in_y)
@@ -56,6 +57,7 @@ class map:
         for n in range(0,self.layers):
             map.append([])
             for tile in range(0,self.mw * self.mh):
+                #create the ground layer
                 if n == 0:
                     test = int.from_bytes(map_f.read(self.tile_bytes), "big")
                     if test > 0:
@@ -63,11 +65,17 @@ class map:
                         map[n].append(tmp.convert())
                     else:
                         map[n].append(0)
-                        
+                #create the hitboxes        
                 elif n == 1:
                     map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
+                #create the ground overlay layer
                 elif n == 2:
-                    map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
+                    test = int.from_bytes(map_f.read(self.tile_bytes), "big")
+                    if test > 0:
+                        tmp =(p.transform.scale(self.tile_list[1][test - 1],(self.scale,self.scale)))
+                        map[n].append(tmp.convert_alpha())
+                    else:
+                        map[n].append(0)
         
         #---code for creating the hitboxes---
         #clear hitboxes
@@ -96,20 +104,21 @@ class map:
     def create_surface(self):
         count = 0
         tmp0 = p.Surface((self.mw * self.scale, self.mh * self.scale))
+        tmp1 = p.Surface((self.mw * self.scale, self.mh * self.scale), flags=p.SRCALPHA)
         for h in range(self.mh):
             self.map_hitboxes.append([])
             for w in range(self.mw):
                 if self.map_raw_hitboxes[h][w] == 1:
                     self.map_hitboxes[h].append(p.Rect((self.in_x + (self.scale * w), self.in_y + (self.scale * h)), (self.scale, self.scale)))
                 else:
-                    self.map_hitboxes[h].append((self.scale * -3, self.scale * -3, 1, 1))
+                    self.map_hitboxes[h].append(0)
                 if self.map[0][count] != 0:
                     tmp0.blit(self.map[0][count],(w * self.scale, h * self.scale))
+                if self.map[2][count] != 0:
+                    tmp1.blit(self.map[2][count],(w * self.scale, h * self.scale))
                 count += 1
-        self.g_layer = tmp0
-    
-    def get_hitbox(self):
-        return self.map[1]
+        self.g_layer = tmp0.convert()
+        self.gov_layer = tmp1.convert_alpha()
     
     def get_dia(self):
         return self.map[2]
@@ -120,11 +129,21 @@ class map:
     def get_raw(x,y): #-> bool
         pass
     
+    def get_hitbox(self, x, y): #-> 0 or pygame.Rect()
+        hb = 0
+        try:
+            hb = self.map_hitboxes[y][x]
+        except:
+            hb = 0
+        return hb
+    
     
     def render(self): #-> None
        self.gw.blit(self.g_layer,(self.in_x, self.in_y))
+       self.gw.blit(self.gov_layer,(self.in_x, self.in_y))
     
     def debug(self):
         for h in range(self.mh):
             for w in range(self.mw):
-                p.draw.rect(self.gw, self.debug_col, self.map_hitboxes[h][w], width=3)
+                if self.map_hitboxes[h][w] != 0:
+                    p.draw.rect(self.gw, self.debug_col, self.map_hitboxes[h][w], width=3)
