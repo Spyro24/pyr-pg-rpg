@@ -48,7 +48,6 @@ class map:
         self.gov_layer = p.Surface(self.gw.get_size())
         self.in_x = (self.gw_x / 2) - ((self.mw / 2) * self.scale)
         self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
-        print("A",self.in_x, self.in_y)
         
     def load(self):
         self.state["load"] = True
@@ -87,9 +86,6 @@ class map:
             for w in range(self.mw):
                 self.map_raw_hitboxes[h].append(map[1][n])
                 n += 1
-        
-        for obj in self.map_raw_hitboxes:
-            print(obj)
         self.map = map
         self.create_surface()
         

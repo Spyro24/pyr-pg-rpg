@@ -51,11 +51,16 @@ class player():
         self.minor_pos_y = self.diff
         #---setup player other vars---
         self.facing = "UP"
+        self.state_table = {"UP":(0,-1,-1,-1,1,-1,1,0,-1,0), "DOWN":(0,1,1,1,-1,1,-1,0,1,0),"LEFT":(-1,0,-1,1,-1,-1,0,-1,0,1),"RIGHT":(1,0,1,-1,1,1,0,1,0,-1)}
+        self.player_flags = {"DEATH":False, "ATACK":False, "INVULNERABLE": False, "AKTIVE": True}
         #-----------------------------------------------------------------
         
     def update(self):
         self.hit_map = self.map.get_hitbox()
         self.dia_map = self.map.get_dia()
+        
+    def set_flag(self, flag, value, table="FLAG_TABLE"):
+        pass
     
     def move(self, x, y):
         #save all values that are modified
@@ -106,15 +111,19 @@ class player():
         
         test_hitbox = p.Rect((self.grid_zero_x + ((grid_pos_x * self.tile_size) + ((tmp_minor_pos_x - self.diff) * self.micro_tile)), self.grid_zero_y + ((grid_pos_y * self.tile_size) + ((tmp_minor_pos_y - self.diff) * self.micro_tile))),(self.tile_size, self.tile_size))
             
-        if self.facing == "UP":
-            get_hitbox = self.map.get_hitbox(self.grid_pos_x, self.grid_pos_y - 1)
-            if get_hitbox != 0:
-                if test_hitbox.colliderect(get_hitbox):
-                    hitbox_trigger = True
-            get_hitbox_left = self.map.get_hitbox(self.grid_pos_x - 1, self.grid_pos_y - 1)
-            get_hitbox_right = self.map.get_hitbox(self.grid_pos_x + 1, self.grid_pos_y - 1)
-            if (get_hitbox_left != 0) and test_hitbox.colliderect(get_hitbox_left):
-                tmp_minor_pos_x += 1
+        state = self.state_table[self.facing]
+        get_hitbox = self.map.get_hitbox(self.grid_pos_x + state[0] , self.grid_pos_y + state[1])
+        if get_hitbox != 0:
+            if test_hitbox.colliderect(get_hitbox):
+                hitbox_trigger = True
+        get_hitbox_left = self.map.get_hitbox(self.grid_pos_x + state[2], self.grid_pos_y + state[3])
+        get_hitbox_right = self.map.get_hitbox(self.grid_pos_x + state[4], self.grid_pos_y + state[5])
+        if (get_hitbox_left != 0) and test_hitbox.colliderect(get_hitbox_left):
+            tmp_minor_pos_x += state[6]
+            tmp_minor_pos_y += state[7]
+        if (get_hitbox_right != 0) and test_hitbox.colliderect(get_hitbox_right):
+            tmp_minor_pos_x += state[8]
+            tmp_minor_pos_y += state[9]
                         
         #set all vars if the hitboxe arent trigered
         if not hitbox_trigger:

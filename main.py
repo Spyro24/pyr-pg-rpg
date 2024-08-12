@@ -36,7 +36,11 @@ class main_class():
         self.micro_tiling = 16
         self.default_FPS = 30
         tilesheet_size = "12x6"
+        self.FPS_COUNTER = True
+        self.debug_console = True
         #----------------------------------------------------------------------
+        self.main_FPS_count = 0
+        self.rendered_FPS_count = 0
         self.debug_colors = {"player_hitbox":(0, 0, 255), "map_hitbox":(0,127,255)}
         self.map_config = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":tilesheet_size}),
                            "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/", {"size":tilesheet_size}),
@@ -260,9 +264,10 @@ class main_class():
         self.play_game()
         
     def play_game(self):
+        debug_console = self.debug_console
         from time import time as time_get
         FPS_get = time_get()
-        FPSmax = 30
+        FPSmax = 128
         FPS_c = 0
         KT = time_get()
         ms = 0.001
@@ -271,33 +276,49 @@ class main_class():
 
 
         while run:
-            
+            #---begin of the game loop---
+            cur_frame_time = time_get()
             for event in p.event.get():
                 if event.type == p.QUIT:
                     run = False
             
             key_ar = p.key.get_pressed()
+            
             '''
             for n in range(0, len(key_ar)):
                 if key_ar[n]:
                     print(n)
             '''
             
-            if (time_get() - self.player_speed) > KT:
+            if (cur_frame_time - self.player_speed) > KT:
                 if key_ar[119]:
-                    self.player.move(0,-1)
                     self.player.set_facing("UP")
+                    self.player.move(0,-1)
                 if key_ar[100]:
+                    self.player.set_facing("RIGHT")
                     self.player.move(1,0)              
                 if key_ar[115]:
+                    self.player.set_facing("DOWN")
                     self.player.move(0,1)
                 if key_ar[97]:
+                    self.player.set_facing("LEFT")
                     self.player.move(-1,0)
                 if self.player.get_state(0):
                     KT = time_get()
                     self.player.reset_state(0)
             
-            if (time_get() - (1/FPSmax)) > last_frame:
+            if key_ar[60]:
+                if debug_console:
+                    console = input(">>> ")
+                    console = console.split(" ")
+                    print(console)
+                    if console[0] == "set":
+                        if console[1] == "player":
+                            if console[2] == "speed":
+                                self.player_speed = 1 / ((self.main_config["micro_tiling"] * float(console[3])))
+                    
+            
+            if (cur_frame_time - (1/FPSmax)) > last_frame:
                 last_frame = time_get()
                 self.game_win.fill((0,0,0))
                 self.player.reset_resetable_states()
@@ -308,6 +329,18 @@ class main_class():
                     self.map.debug()
                 p.display.flip()
                 render_win = False
+                self.rendered_FPS_count += 1
+            
+            #---end of game loop---
+            self.main_FPS_count += 1 
+            if self.FPS_COUNTER:
+                if (FPS_get + 1) < cur_frame_time:
+                    FPS_get = cur_frame_time
+                    print("RFPS: " + str(self.rendered_FPS_count))
+                    print(" FPS: " + str(self.main_FPS_count))
+                    self.main_FPS_count = 0
+                    self.rendered_FPS_count = 0
+                    
         
     def resume(self, player_save_file):
         pass
