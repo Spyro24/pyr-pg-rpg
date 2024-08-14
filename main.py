@@ -31,14 +31,17 @@ class main_class():
         #----modify this section for your game if you use this start script----
         self.random_title_text = True #Set it to false if you don't want to use a sufix for the tiitle
         self.player_speed = 8
-        self.debug = True
+        self.debug = False
         self.object_lenght = 2
         self.micro_tiling = 16
         self.default_FPS = 30
         tilesheet_size = "12x6"
         self.FPS_COUNTER = True
         self.debug_console = True
+        self.standard_player_sprite = "blue_cube"
+        self.character_path = "./characters/"
         #----------------------------------------------------------------------
+        
         self.main_FPS_count = 0
         self.rendered_FPS_count = 0
         self.debug_colors = {"player_hitbox":(0, 0, 255), "map_hitbox":(0,127,255)}
@@ -46,7 +49,8 @@ class main_class():
                            "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/", {"size":tilesheet_size}),
                            "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":tilesheet_size}),
                            "debug_col":self.debug_colors}
-        self.main_config = {"tiles_xy":(16,16), "player_start_pos_xy":(0,0), "debug_colors":self.debug_colors, "micro_tiling":self.micro_tiling}
+        self.main_config = {"tiles_xy":(16,16), "player_start_pos_xy":(0,0), "debug_colors":self.debug_colors, "micro_tiling":self.micro_tiling,
+                            "character_path":self.character_path, "player_sprite":self.standard_player_sprite}
         self.player_speed = 1 / ((self.main_config["micro_tiling"] * self.player_speed))
         #self.
         self.platform = os.name

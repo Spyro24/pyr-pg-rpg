@@ -4,8 +4,9 @@ import pyr_pg.map_
 import pyr_pg.player
 import pyr_pg.dialog_
 import pyr_pg.tile_handler
+import pyr_pg.cutting_edge
 
-version = "0.2.0"
+version = "0.2.3"
 
 def splash(win, splash_duration):
     #create the pyr_pg splash(no images are used.)

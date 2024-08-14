@@ -18,6 +18,7 @@
 
 import pygame as p
 import time
+import pyr_pg
 
 class player(): 
     def __init__(self, game_win, config):
@@ -53,6 +54,9 @@ class player():
         self.facing = "UP"
         self.state_table = {"UP":(0,-1,-1,-1,1,-1,1,0,-1,0), "DOWN":(0,1,1,1,-1,1,-1,0,1,0),"LEFT":(-1,0,-1,1,-1,-1,0,-1,0,1),"RIGHT":(1,0,1,-1,1,1,0,1,0,-1)}
         self.player_flags = {"DEATH":False, "ATACK":False, "INVULNERABLE": False, "AKTIVE": True}
+        self.sprite_laoder = pyr_pg.cutting_edge.CuttingEdge(str(config["player_sprite"]) + ".conf", str(config["character_path"]))
+        self.player_sprite_table = self.sprite_laoder.return_sprite_table()
+        self.player_sprite = p.transform.scale(self.player_sprite_table[self.facing],(self.tile_size, self.tile_size)) # rewrite this line in the future for the new sprites
         #-----------------------------------------------------------------
         
     def update(self):
@@ -138,7 +142,7 @@ class player():
         self.state.insert(0, True)
     
     def render(self):
-        pass
+        self.gw.blit(self.player_sprite, self.player_hitbox)
         
     def get_state(self, stat):
         return self.state[stat]
@@ -156,6 +160,7 @@ class player():
         
     def set_facing(self, facing_dir):
         self.facing = facing_dir
+        self.player_sprite = p.transform.scale(self.player_sprite_table[self.facing],(self.tile_size, self.tile_size))
         
     def _debug(self): #the function for the debug class(its a external module thats loads with the main script)
         p.draw.rect(self.gw, self.player_hitbox_color, self.player_hitbox, width=3)

@@ -1,3 +1,6 @@
+I keep trying to finished the player sprites this week to publish the final V0.4 Release.
+
+
 V0.4 [pre release] are out now
 I have added sprite sheets and tile sheets to make the programm faster.(and lesser Storage access.)
 It have now a intro screen and uses CutingEdge to cut the sprite sheets.
@@ -24,7 +27,7 @@ own rpg becouse the code in main.py make it playable.
 You are free to use this game and the files from the game under the GPLv3 license to make your own game.
 I will make the tools for the map files soon.
 
-    ULTIMATE_RPG (The ultimate Python RPG with a rpg maker inside)
+    (pyr-pg-rpg) (A Python RPG Maker with a bultin rpg)
     Copyright (C) 2023-2024  Spyro24
 
     This program is free software: you can redistribute it and/or modify
@@ -39,4 +42,3 @@ I will make the tools for the map files soon.
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
