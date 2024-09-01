@@ -370,24 +370,32 @@ class main_class():
     
     
 if __name__ == "__main__":
-    try:
+    runner = "Dev"
+    if runner == "User":
+        try:
+            game = main_class()
+            game.play()
+        except BaseException as err:
+            try:
+                import datetime
+                log_time = datetime.datetime.now()
+            except ImportError as err:
+                log_time = err
+            
+            print("\n\n\n")
+            print("-----Fatal Error-----")
+            print("Crash Time: " + str(log_time))
+            print("Operating System: " + str(os.name))
+            print("Game Name: " + str(game.game_name))
+            print("Game Version: " + str(game.game_version))
+            print("pyr_pg Version: " + str(pyr_pg.version))
+            print("Error: " + str(err))
+            print("------Error end------")
+            print("\nplease report this to the developers if this is not a filepath error")
+        p.quit()
+    elif runner == "Dev":
         game = main_class()
         game.play()
-    except BaseException as err:
-        try:
-            import datetime
-            log_time = datetime.datetime.now()
-        except ImportError as err:
-            log_time = err
-        
-        print("\n\n\n")
-        print("-----Fatal Error-----")
-        print("Crash Time: " + str(log_time))
-        print("Operating System: " + str(os.name))
-        print("Game Name: " + str(game.game_name))
-        print("Game Version: " + str(game.game_version))
-        print("pyr_pg Version: " + str(pyr_pg.version))
-        print("Error: " + str(err))
-        print("------Error end------")
-        print("\nplease report this to the developers if this is not a filepath error")
-    p.quit()
+        p.quit()
+    else:
+        print("Your are not a valid user for this programm")

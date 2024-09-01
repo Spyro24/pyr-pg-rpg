@@ -19,16 +19,21 @@ import pygame as p
 
 class map:
     def __init__(self, *settings):
+        #---user vars---
+        #---------------
+        #---internal vars---
+        self.death_end = b""
         self.state = {"load":False}
         self.params = {"window":None,"map_xy":[0,0], "map_dir":"../map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"map_wh":(16,16),
                        "map_byte_size":2,"layers":8,"tile_size":(1,1), "debug_col":{"map_hitbox":(0,127,127)}} # contains a list with all parameters of the game
         self.map_hitboxes = [] #<- list with all hitboxes in [y][x] format
         self.map_raw_hitboxes = [] #<- list with all raw hitboxes in [y][x] format
-        #---Add +settings to the parameter list
+        #-------------------
+        #---Add settings to the parameter list
         for key in settings[0].keys(): #overwrite and add parameters to the map
             self.params[key] = settings[0][key]
         #---legacy code---
-            self.debug_col = self.params["debug_col"]["map_hitbox"]
+        self.debug_col = self.params["debug_col"]["map_hitbox"]
         self.layers = self.params["layers"]
         self.tile_bytes = self.params["map_byte_size"]
         self.gw = self.params["window"] #Pygame window object
@@ -50,42 +55,70 @@ class map:
         self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
         
     def load(self):
+        self.death_end = b""
         self.state["load"] = True
         map_f = open(str(self.params["map_dir"]) + str(self.map_x) + "_" + str(self.map_y), "br")
         map = []
+        raw_map = []
         for n in range(0,self.layers):
             map.append([])
             for tile in range(0,self.mw * self.mh):
                 #create the ground layer
                 if n == 0:
                     test = int.from_bytes(map_f.read(self.tile_bytes), "big")
-                    if test > 0:
-                        tmp = p.transform.scale(self.params["bg_tiles"][test - 1],(self.scale,self.scale))
-                        map[n].append(tmp.convert())
-                    else:
-                        map[n].append(0)
+                    #tmp = p.transform.scale(self.params["bg_tiles"][test - 1],(self.scale,self.scale)) #hold this for 
+                    map[n].append(test)
+                    
                 #create the hitboxes        
                 elif n == 1:
                     map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
                 #create the ground overlay layer
                 elif n == 2:
                     test = int.from_bytes(map_f.read(self.tile_bytes), "big")
-                    if test > 0:
-                        tmp =(p.transform.scale(self.tile_list[1][test - 1],(self.scale,self.scale)))
-                        map[n].append(tmp.convert_alpha())
-                    else:
-                        map[n].append(0)
+                    #tmp =(p.transform.scale(self.tile_list[1][test - 1],(self.scale,self.scale)))
+                    map[n].append(test)
+                else:
+                    self.death_end += int.to_bytes(0, self.tile_bytes, "big")
         
         #---code for creating the hitboxes---
         #clear hitboxes
         self.map_hitboxes = []
-        self.map_raw_hitboxes = []
+        self.raw_hitboxes = []
+        n = 0
+        #create the hitboxes
+        for h in range(self.mh):
+            self.raw_hitboxes.append([])
+            for w in range(self.mw):
+                self.raw_hitboxes[h].append(map[1][n])
+                n += 1
+        
+        #---create changeable ground layer---
+        self.raw_ground_layer = []
         n = 0
         for h in range(self.mh):
-            self.map_raw_hitboxes.append([])
+            self.raw_ground_layer.append([])
             for w in range(self.mw):
-                self.map_raw_hitboxes[h].append(map[1][n])
+                self.raw_ground_layer[h].append(map[0][n])
                 n += 1
+                
+        #---create changeable ground overlay layer---
+        self.raw_ground_ov_layer = []
+        n = 0
+        for h in range(self.mh):
+            self.raw_ground_ov_layer.append([])
+            for w in range(self.mw):
+                self.raw_ground_ov_layer[h].append(map[2][n])
+                n += 1
+        
+        #---prepare the map
+        map.pop(0)
+        map.insert(0, self.raw_ground_layer) #insert the ground layer
+        map.pop(1)
+        map.insert(1, self.raw_hitboxes)
+        map.pop(2)
+        map.insert(2, self.raw_ground_ov_layer)
+        
+        print("lenght of map is: " + str(len(map)))
         self.map = map
         self.create_surface()
         
@@ -97,10 +130,41 @@ class map:
         self.create_surface()
         
     def save_map(self):
-        pass
+        map_bytes = b""
+        #unpack ground layer and put it in map_bytes (section 0)
+        for h in range(len(self.map[0])):
+            for w in range(len(self.map[0][h])):
+                map_bytes += int.to_bytes(self.map[0][h][w], self.tile_bytes, "big")
+        
+        #unpack hitbox and put it in map_bytes (section 1)
+        for h in range(len(self.map[1])):
+            for w in range(len(self.map[1][h])):
+                map_bytes += int.to_bytes(self.map[1][h][w], self.tile_bytes, "big")
+                
+        #unpack ground overlay layer and put it in map_bytes (section 1)
+        for h in range(len(self.map[2])):
+            for w in range(len(self.map[2][h])):
+                map_bytes += int.to_bytes(self.map[2][h][w], self.tile_bytes, "big")
+        
+        #add the death end (compatibility issue)
+        map_bytes += self.death_end
+        print(map_bytes)
+        print(len(map_bytes))
+        try:
+            map_f = open(str(self.params["map_dir"]) + str(self.map_x) + "_" + str(self.map_y), "bw")
+            map_f.write(map_bytes)
+        except:
+            print("Map Data are not writen to file :(")
+        finally:
+            map_f.close()
     
     def change_tile(self, pos, layer, number):
         change_x, change_y = pos
+        if layer == 0:
+            self.map[0][change_y].pop(change_x)
+            self.map[0][change_y].insert(change_x, number)
+        
+        self.create_surface()
     
     def update_surface(self, pos, layer, number):
         pass
@@ -110,19 +174,19 @@ class map:
     
     def create_surface(self):
         count = 0
-        tmp0 = p.Surface((self.mw * self.scale, self.mh * self.scale))
+        tmp0 = p.Surface((self.mw * self.scale, self.mh * self.scale)) #groundlayer
         tmp1 = p.Surface((self.mw * self.scale, self.mh * self.scale), flags=p.SRCALPHA)
         for h in range(self.mh):
             self.map_hitboxes.append([])
             for w in range(self.mw):
-                if self.map_raw_hitboxes[h][w] == 1:
+                if self.raw_hitboxes[h][w] == 1:
                     self.map_hitboxes[h].append(p.Rect((self.in_x + (self.scale * w), self.in_y + (self.scale * h)), (self.scale, self.scale)))
                 else:
                     self.map_hitboxes[h].append(0)
-                if self.map[0][count] != 0:
-                    tmp0.blit(self.map[0][count],(w * self.scale, h * self.scale))
-                if self.map[2][count] != 0:
-                    tmp1.blit(self.map[2][count],(w * self.scale, h * self.scale))
+                if self.map[0][h][w] != 0:
+                    tmp0.blit(p.transform.scale(self.params["bg_tiles"][self.map[0][h][w] - 1],(self.scale,self.scale)) ,(w * self.scale, h * self.scale))
+                if self.map[2][h][w] != 0:
+                    tmp1.blit(p.transform.scale(self.tile_list[1][self.map[2][h][w] - 1],(self.scale,self.scale)) ,(w * self.scale, h * self.scale))
                 count += 1
         self.g_layer = tmp0.convert()
         self.gov_layer = tmp1.convert_alpha()

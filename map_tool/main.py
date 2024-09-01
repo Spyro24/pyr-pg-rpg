@@ -139,16 +139,19 @@ class Main():
                     
                         
                 
-                if (selected_tile_num + 1) > 0:
-                    self.cur_selected_tile = (self.editor_tile_sheet_pos * self.tiles_per_page) + (selected_tile_num + 1)
-                    if self.cur_selected_tile > 0:
-                        self.show_single_tile((self.tiling_size * 8, self.tiling_size * 30), (self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
-                        update = True
+            if (selected_tile_num + 1) > 0:
+                self.cur_selected_tile = (self.editor_tile_sheet_pos * self.tiles_per_page) + (selected_tile_num + 1)
+                if self.cur_selected_tile > 0:
+                    self.show_single_tile((self.tiling_size * 8, self.tiling_size * 30), (self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
+                    update = True
                     
             
             if update:
                 p.display.flip()
             
+    def change_tile(self, pos):
+        if self.edit_mode == 0:
+            self.map_object.change_tile(pos, 0, self.cur_selected_tile)
         
     def editor_loop(self):
         update = True
@@ -176,13 +179,25 @@ class Main():
                 if selector_activate.collidepoint(mpos):
                     self.tile_selector()
                     redraw = True
+                    
+                elif self.map_manipulator_grid.activate_rect.collidepoint(mpos):
+                    change_tile_coords = self.map_manipulator_grid.get_click(mpos)
+                    print(change_tile_coords)
+                    self.change_tile(change_tile_coords)
+                    redraw = True
             
             if update:
                 p.display.flip()
             
     def quit_editor(self):
+        self.map_object.save_map()
         p.quit()
 
 if __name__ == "__main__":
+    #try:
         Editor = Main()
+    #except BaseException as err:
+    #    print(err)
+    #finally:
         Editor.quit_editor()
+        
