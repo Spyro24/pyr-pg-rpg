@@ -84,7 +84,7 @@ class main_class():
                     print("cannot configure the game.\nHere the Error: [ " + str(err) + " ]")
                     print("---Error---")
                     
-        if self.platform == "nt":
+        elif self.platform == "nt":
             self.conf_path = str(os.environ['APPDATA'] + "/config/pyr-pg/" + self.game_name)
             if not os.path.exists(self.conf_path):
                 os.makedirs(self.conf_path)

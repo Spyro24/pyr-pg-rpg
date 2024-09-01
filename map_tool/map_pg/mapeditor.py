@@ -1,5 +1,5 @@
 """
-    Map class to handle the binary maps.
+    main map editor widget.
     Copyright (C) 2024 Spyro24
 
     This program is free software: you can redistribute it and/or modify
@@ -17,10 +17,12 @@
 """
 import pygame as p
 
-class map:
+class mapeditor:
     def __init__(self, *settings):
+        self.editmode = "GROUND"
+        self.editmode_num = 0
         self.state = {"load":False}
-        self.params = {"window":None,"map_xy":[0,0], "map_dir":"./map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"map_wh":(16,16),
+        self.params = {"window":None,"map_xy":[0,0], "map_dir":"../map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"map_wh":(16,16),
                        "map_byte_size":2,"layers":8,"tile_size":(1,1), "debug_col":{"map_hitbox":(0,127,127)}} # contains a list with all parameters of the game
         self.map_hitboxes = [] #<- list with all hitboxes in [y][x] format
         self.map_raw_hitboxes = [] #<- list with all raw hitboxes in [y][x] format
@@ -46,8 +48,6 @@ class map:
         self.scale = set_scale / self.mw
         self.g_layer = p.Surface(self.gw.get_size())
         self.gov_layer = p.Surface(self.gw.get_size())
-        self.in_x = (self.gw_x / 2) - ((self.mw / 2) * self.scale)
-        self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
         
     def load(self):
         self.state["load"] = True
@@ -137,9 +137,6 @@ class map:
     def render(self): #-> None
        self.gw.blit(self.g_layer,(self.in_x, self.in_y))
        self.gw.blit(self.gov_layer,(self.in_x, self.in_y))
-    
-    def debug(self):
-        for h in range(self.mh):
-            for w in range(self.mw):
-                if self.map_hitboxes[h][w] != 0:
-                    p.draw.rect(self.gw, self.debug_col, self.map_hitboxes[h][w], width=3)
+       
+    def return_settings(self):
+        return {"EDIT_MODE":self.editmode, "LAYRED_MAP":self.map}

@@ -20,7 +20,7 @@ import pygame as p
 class map:
     def __init__(self, *settings):
         self.state = {"load":False}
-        self.params = {"window":None,"map_xy":[0,0], "map_dir":"./map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"map_wh":(16,16),
+        self.params = {"window":None,"map_xy":[0,0], "map_dir":"../map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"map_wh":(16,16),
                        "map_byte_size":2,"layers":8,"tile_size":(1,1), "debug_col":{"map_hitbox":(0,127,127)}} # contains a list with all parameters of the game
         self.map_hitboxes = [] #<- list with all hitboxes in [y][x] format
         self.map_raw_hitboxes = [] #<- list with all raw hitboxes in [y][x] format
@@ -60,7 +60,7 @@ class map:
                 if n == 0:
                     test = int.from_bytes(map_f.read(self.tile_bytes), "big")
                     if test > 0:
-                        tmp =(p.transform.scale(self.params["bg_tiles"][test - 1],(self.scale,self.scale)))
+                        tmp = p.transform.scale(self.params["bg_tiles"][test - 1],(self.scale,self.scale))
                         map[n].append(tmp.convert())
                     else:
                         map[n].append(0)
@@ -96,6 +96,17 @@ class map:
         self.load()
         self.create_surface()
         
+    def save_map(self):
+        pass
+    
+    def change_tile(self, pos, layer, number):
+        change_x, change_y = pos
+    
+    def update_surface(self, pos, layer, number):
+        pass
+    
+    def show_hitboxes(self):
+        pass
     
     def create_surface(self):
         count = 0
@@ -134,9 +145,11 @@ class map:
         return hb
     
     
-    def render(self): #-> None
-       self.gw.blit(self.g_layer,(self.in_x, self.in_y))
-       self.gw.blit(self.gov_layer,(self.in_x, self.in_y))
+    def render(self, layer, pos, size): #-> None
+        if layer == 0:
+            self.gw.blit(p.transform.scale(self.g_layer,size),pos)
+        elif layer == 1:
+            self.gw.blit(p.transform.scale(self.gov_layer,size),pos)
     
     def debug(self):
         for h in range(self.mh):
