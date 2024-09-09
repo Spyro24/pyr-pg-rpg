@@ -11,10 +11,8 @@ Programming:
   -Spyro24
 
 Code:
-  main.py
-   -Spyro24
-  start.py
-   -Spyro24
+  -pyr_pg
+    -Spyro24
 
 Libarys and modules:
   -pyr_pg by Spyro24
@@ -23,7 +21,7 @@ Libarys and modules:
 Art:
   -Character:
     -Blue Cube:
-      -Synthesys
+      -Spyro24
     -Other:
       -Kem
   -Tiles:

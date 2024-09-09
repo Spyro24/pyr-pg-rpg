@@ -115,7 +115,7 @@ class main_class():
             p.display.set_caption(self.game_config.get("display_name") + ": " + random_line[chosen_tiitle])
         else:
             p.display.set_caption(self.game_config.get("display_name"))
-        #pyr_pg.splash(self.game_win, 1.2)
+        pyr_pg.splash(self.game_win, 1.2)
         self.setup_env()
         self.main_menu()
         

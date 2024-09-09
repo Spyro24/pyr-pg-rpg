@@ -32,6 +32,7 @@ class Main():
         self.init_window()
         self.load_tiles()
         #---internal vars (DO NOT CHANGE)---
+        self.font = map_pg.font.font(self.editor_display, "./symbols/standard")
         self.map_size_tiles = (16,16)
         self.settings = {"window":self.editor_display, "bg_tiles":self.ground_tiles.retun_tiles(), "gd_tiles":self.overlay_tiles.retun_tiles(), "ov_tiles":[]}
         self.quit = False
@@ -42,13 +43,26 @@ class Main():
         self.tile_choser_tile_selector = map_pg.clickgrid.ClickGrid((12,6),(0, 2*self.tiling_size, 48*self.tiling_size, 24*self.tiling_size))
         self.map_manipulator_grid = map_pg.clickgrid.ClickGrid(self.map_size_tiles,(16 * self.tiling_size, 2 *self.tiling_size, 16 * self.tiling_size, 16 * self.tiling_size))
         self.bg_col = (0,0,0)
+        self.menu_colors = {"fg_ddm":(0, 100, 0),"bg_ddm":(0, 0, 255)}
+        self.menu_list = [map_pg.DropDown.drop_down(self.editor_display, self.tiling_size, (0,self.tiling_size), 4, self.font, [self.menu_colors["bg_ddm"], self.menu_colors['fg_ddm']], (0,0,2*self.tiling_size,self.tiling_size), {"Exit":self.quit_editor}, mode="advance")]
         #-----------------------------------
         #---loading images---
         self.tile_selctor_menu_bar = p.image.load("./symbols/menu_bar_tile_selector.png")
         self.editor_images_dict = {"no_tile":p.transform.scale(p.image.load("./symbols/no_tile.png"),(4*self.tiling_size, 4*self.tiling_size))}
         #--------------------
+        #---activatoren---
+        self.in_menu_bar_activate = [p.Rect(0, 0,self.tiling_size * 2, self.tiling_size)]
+        self.menubar_activator = p.Rect(0,0,self.tiling_size * self.tiling_wh[0],self.tiling_size)
+        #-----------------
         self.create_map_obj(self.settings)
         self.editor_loop()
+    
+    def test_menu_bar(self):
+        mpos = p.mouse.get_pos()
+        for activator in range(len(self.in_menu_bar_activate)):
+            if self.in_menu_bar_activate[activator].collidepoint(mpos):
+                self.menu_list[activator].open(mpos)
+            
         
     def load_tiles(self):
         self.ground_tiles = tile_handler.tile_handler("../tiles/ground", {"size":"12x6"})
@@ -78,7 +92,10 @@ class Main():
     def render_map(self):
         if self.edit_mode == 0:
             self.map_object.render(0, (16 * self.tiling_size, 2 *self.tiling_size), (16 * self.tiling_size, 16 * self.tiling_size))
-            
+    
+    def option_bar(self):
+        self.font.draw("File", self.tiling_size, (0,0))
+        
     def show_single_tile(self, pos, size, tile):
         if self.edit_mode == 0:
             self.editor_display.blit(p.transform.scale(self.settings["bg_tiles"][tile], size), pos)
@@ -86,6 +103,13 @@ class Main():
     def show_tile_sheet(self):
         if self.edit_mode == 0:
             self.ground_tiles.draw_map(self.editor_tile_sheet_pos, (0,2*self.tiling_size), 24*self.tiling_size)
+    
+    def show_debug_grid(self):
+        for w in range(self.tiling_wh[0]):
+            p.draw.line(self.editor_display, (0, 255, 0), (self.tiling_size * w, 0), (self.tiling_size * w, self.tiling_size * self.tiling_wh[1]))
+            
+        for h in range(self.tiling_wh[1]):
+            p.draw.line(self.editor_display, (0, 255, 255), (0, self.tiling_size * h), (self.tiling_size * self.tiling_wh[0], self.tiling_size * h))
         
     def tile_selector(self):
         run = True
@@ -95,6 +119,7 @@ class Main():
         while run:
             if redraw:
                 self.editor_display.fill(self.bg_col)
+                self.option_bar()
                 self.show_tile_sheet()
                 self.editor_display.blit(map_pg.image_helper.scale_on_h(self.tile_selctor_menu_bar, 8 * self.tiling_size), (0, 26*self.tiling_size))
                 if self.cur_selected_tile > 0:
@@ -156,15 +181,17 @@ class Main():
     def editor_loop(self):
         update = True
         redraw = True
-        selector_activate = self.editor_display.blit(self.editor_images_dict["no_tile"],(self.tiling_size * 16, self.tiling_size * 18))
+        selector_activate = self.editor_display.blit(self.editor_images_dict["no_tile"],(self.tiling_size * 16, self.tiling_size * 19))
         while not self.quit:
             if redraw:
                 self.editor_display.fill(self.bg_col)
+                self.option_bar()
                 self.render_map()
                 if self.cur_selected_tile == 0:
-                    self.editor_display.blit(self.editor_images_dict["no_tile"],(self.tiling_size * 16, self.tiling_size * 18))
+                    self.editor_display.blit(self.editor_images_dict["no_tile"],(self.tiling_size * 16, self.tiling_size * 19))
                 else:
-                    self.show_single_tile((self.tiling_size * 16, self.tiling_size * 18),(self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
+                    self.show_single_tile((self.tiling_size * 16, self.tiling_size * 19),(self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
+                #self.show_debug_grid()
                 redraw = False
                 update = True
             
@@ -180,6 +207,10 @@ class Main():
                     self.tile_selector()
                     redraw = True
                     
+                elif self.menubar_activator.collidepoint(mpos):
+                    self.test_menu_bar()
+                    redraw = True
+                    
                 elif self.map_manipulator_grid.activate_rect.collidepoint(mpos):
                     change_tile_coords = self.map_manipulator_grid.get_click(mpos)
                     print(change_tile_coords)
@@ -192,6 +223,7 @@ class Main():
     def quit_editor(self):
         self.map_object.save_map()
         p.quit()
+        exit(0)
 
 if __name__ == "__main__":
     #try:
