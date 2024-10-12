@@ -100,7 +100,7 @@ if __name__ == "__main__":
     import font
     ts = 30
     window = p.display.set_mode((ts * 50, ts * 30))
-    font = font.font(window, "../symbols/standard")
+    font = font.font(window, "../res/fonts/standard")
     infotext = "A\nB\nC\nD\nE\nF\nG"
     infobox = InfoBox(window, font, ts, (ts *3, ts * 4), (9,7))
     infobox.show(infotext)

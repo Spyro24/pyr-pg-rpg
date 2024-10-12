@@ -28,7 +28,7 @@ import time
 
 class main_class():
     def __init__(self):
-        #----modify this section for your game if you use this start script----
+        #----modify this section for your game if you use this runner----
         self.random_title_text = True #Set it to false if you don't want to use a sufix for the tiitle
         self.player_speed = 8
         self.debug = False
@@ -41,7 +41,6 @@ class main_class():
         self.standard_player_sprite = "blue_cube"
         self.character_path = "./characters/"
         #----------------------------------------------------------------------
-        
         self.main_FPS_count = 0
         self.rendered_FPS_count = 0
         self.debug_colors = {"player_hitbox":(0, 0, 255), "map_hitbox":(0,127,255)}
@@ -52,8 +51,16 @@ class main_class():
         self.main_config = {"tiles_xy":(16,16), "player_start_pos_xy":(0,0), "debug_colors":self.debug_colors, "micro_tiling":self.micro_tiling,
                             "character_path":self.character_path, "player_sprite":self.standard_player_sprite}
         self.player_speed = 1 / ((self.main_config["micro_tiling"] * self.player_speed))
-        #self.
         self.platform = os.name
+        info = open("./res/main_menu/info_box", "r")
+        self.info_text = info.readlines()
+        info.close()
+        print(self.info_text)
+        inf = ""
+        for line in self.info_text:
+            inf += line
+        self.info_text = inf
+        print(self.info_text)
         self.game_config = pyr_pg.config.config("./game.rpg")
         self.game_name = self.game_config.get("name")
         self.game_version = self.game_config.get("version")
@@ -83,11 +90,14 @@ class main_class():
                     print("---Error---")
                     print("cannot configure the game.\nHere the Error: [ " + str(err) + " ]")
                     print("---Error---")
-                    
-        elif self.platform == "nt":
-            self.conf_path = str(os.environ['APPDATA'] + "/config/pyr-pg/" + self.game_name)
-            if not os.path.exists(self.conf_path):
-                os.makedirs(self.conf_path)
+        
+        #I have outcomment this section because i have no windows tester
+        #elif self.platform == "nt":
+        #    self.conf_path = str(os.environ['APPDATA'] + "/config/pyr-pg/" + self.game_name)
+        #    if not os.path.exists(self.conf_path):
+        #        os.makedirs(self.conf_path)
+        
+        #general config if you use a generic system
         else:
             #----- You have to use linux in the 0.4 to 1.0
             #but a simple config is here
@@ -105,6 +115,7 @@ class main_class():
     
     def play(self):
         self.game_win = p.display.set_mode((int(float(self.global_config.get("win_w"))),int(float(self.global_config.get("win_h")))))
+        self.font = pyr_pg.font.font(self.game_win, "./res/fonts/standard")
         self.map_config["window"] = self.game_win
         if self.random_title_text:
             text_list = open("./pyr_pg/random_tittle_texts","r")
@@ -117,58 +128,66 @@ class main_class():
             p.display.set_caption(self.game_config.get("display_name"))
         pyr_pg.splash(self.game_win, 1.2)
         self.setup_env()
-        self.main_menu()
+        #This has to be configured after the env--------------
+        self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menu_size / 2), (self.b_pos_x, self.b_pos_y), (20,20))
+        #-----------------------------------------------------
+        self.main_menu() #Open the main menu and start the game
         
     def main_menu(self):
         render = True
         run = True
         redraw = True
+        #all main menu images
         background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
         title = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menu_size * 4,self.menu_size * 2))
         settings = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menu_size,self.menu_size))
         start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menu_size*3,self.menu_size))
         continue_g = p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menu_size*3,self.menu_size))
+        info = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menu_size,self.menu_size))
         #button rectangles
         set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size *9)))
         load_rect = self.game_win.blit(continue_g, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 8)))
         new_rect = self.game_win.blit(start_newg, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 6.5)))
+        info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
         #setup button vars
         start_new_game = False
         while run: #main menu loop
             for event in p.event.get():
                 if event.type == p.QUIT:
                     run = False
-                    self.close_game()
-                    
+                    self.close_game()                    
             m_click = p.mouse.get_pressed()
-            m_pos = p.mouse.get_pos()
-            
+            m_pos = p.mouse.get_pos()            
             if m_click[0]:
                 if set_rect.collidepoint(m_pos):
                     print("open settings menu")
                     self.audio_setup.play("sfx_1", "menu_click")
                     self.menu_settings()
-                    redraw = True
-                
+                    redraw = True                
                 if new_rect.collidepoint(m_pos):
                     self.audio_setup.play("sfx_1", "menu_click")
                     run = False
                     start_new_game = True
-            
+                if info_rect.collidepoint(mpos):
+                    self.info_box.show(self.info_text)
+                    redraw = True
             if redraw:
                 self.game_win.blit(background, (self.b_pos_x, self.b_pos_y))
                 self.game_win.blit(title, (self.b_pos_x + (self.menu_size * 3), self.b_pos_y + self.menu_size))
                 set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size *9)))
+                info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
                 self.game_win.blit(continue_g, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 8)))
                 self.game_win.blit(start_newg, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 6.5)))
                 redraw = False
-                render = True
-                
+                render = True                
             if render:
                 p.display.flip()
                 render = False
         if start_new_game:
             self.menu_create_character()
+            
+    def show_info(self):
+        pass
             
     def menu_settings(self):
         render = True
@@ -183,11 +202,9 @@ class main_class():
             for event in p.event.get():
                 if event.type == p.QUIT:
                     menu__setting__ = False
-                    self.close_game()
-            
+                    self.close_game()            
             m_click = p.mouse.get_pressed()
-            m_pos = p.mouse.get_pos()
-                    
+            m_pos = p.mouse.get_pos()                    
             if redraw:
                 self.game_win.blit(background,(self.b_pos_x, self.b_pos_y))
                 back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y))
@@ -195,12 +212,10 @@ class main_class():
                 if self.debug:
                     pass
                 render = True
-                redraw = False
-            
+                redraw = False            
             if render:
                 p.display.flip()
-                render = False
-                
+                render = False                
             if m_click[0]:
                 if back.collidepoint(m_pos):
                     menu__setting__ = False
@@ -225,28 +240,23 @@ class main_class():
             for event in p.event.get():
                 if event.type == p.QUIT:
                     menu__setting__ = False
-                    self.close_game()
-            
+                    self.close_game()            
             m_click = p.mouse.get_pressed()
-            m_pos = p.mouse.get_pos()
-            
+            m_pos = p.mouse.get_pos()            
             if m_click[0]:
                 if back.collidepoint(m_pos):
                     back_to_main = True
-                    menu__create_character__ = False
-                
+                    menu__create_character__ = False                
                 if start_b.collidepoint(m_pos):
                     start_game = True
-                    menu__create_character__ = False
-                    
+                    menu__create_character__ = False                    
             if redraw:
                 self.game_win.blit(background,(self.b_pos_x, self.b_pos_y))
                 back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
                 decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menu_size * 4)))
                 start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size * 9)))
                 render = True
-                redraw = False
-            
+                redraw = False            
             if render:
                 p.display.flip()
                 render = False
@@ -277,23 +287,18 @@ class main_class():
         ms = 0.001
         run = True
         last_frame = time_get()
-
-
         while run:
             #---begin of the game loop---
             cur_frame_time = time_get()
             for event in p.event.get():
                 if event.type == p.QUIT:
-                    run = False
-            
-            key_ar = p.key.get_pressed()
-            
+                    run = False            
+            key_ar = p.key.get_pressed()            
             '''
             for n in range(0, len(key_ar)):
                 if key_ar[n]:
                     print(n)
-            '''
-            
+            '''            
             if (cur_frame_time - self.player_speed) > KT:
                 if key_ar[119]:
                     self.player.set_facing("UP")
@@ -309,8 +314,7 @@ class main_class():
                     self.player.move(-1,0)
                 if self.player.get_state(0):
                     KT = time_get()
-                    self.player.reset_state(0)
-            
+                    self.player.reset_state(0)            
             if key_ar[60]:
                 if debug_console:
                     console = input(">>> ")
@@ -319,9 +323,7 @@ class main_class():
                     if console[0] == "set":
                         if console[1] == "player":
                             if console[2] == "speed":
-                                self.player_speed = 1 / ((self.main_config["micro_tiling"] * float(console[3])))
-                    
-            
+                                self.player_speed = 1 / ((self.main_config["micro_tiling"] * float(console[3])))            
             if (cur_frame_time - (1/FPSmax)) > last_frame:
                 last_frame = time_get()
                 self.game_win.fill((0,0,0))
@@ -333,8 +335,7 @@ class main_class():
                     self.map.debug()
                 p.display.flip()
                 render_win = False
-                self.rendered_FPS_count += 1
-            
+                self.rendered_FPS_count += 1            
             #---end of game loop---
             self.main_FPS_count += 1 
             if self.FPS_COUNTER:
@@ -343,8 +344,7 @@ class main_class():
                     print("RFPS: " + str(self.rendered_FPS_count))
                     print(" FPS: " + str(self.main_FPS_count))
                     self.main_FPS_count = 0
-                    self.rendered_FPS_count = 0
-                    
+                    self.rendered_FPS_count = 0                    
         
     def resume(self, player_save_file):
         pass
