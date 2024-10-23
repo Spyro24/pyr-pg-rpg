@@ -8,7 +8,20 @@ class tokenizerSystem:
         self.onetokens = tokenTable[3]
         
     def returnTokens(self, string: str) -> list[tuple]:
-        
+        string = string.lower()
+        rawTokens = string.split(" ")
+        tokens = []
+        for token in rawTokens:
+            if self.onetokens.count(token):
+                tokens.append((token, 3))
+                rawTokens[rawTokens.index(token)] = None
+            else:
+                tokens.append(None)
+        for token in rawTokens:
+            if rawTokens[rawTokens.index(token)] != None:
+                index = rawTokens[rawTokens.index(token)]
+                curToken = token
+        return tokens
     
 
 class speechSynth:
@@ -17,4 +30,6 @@ class speechSynth:
         
 
 if __name__ == "__main__": #Unit test
-    tokenizer = tokenizerSystem([[],["ll"],[],["ist", "ein"]])
+    tokenizer = tokenizerSystem([["wi"],["ll","ko"],["men"],["ist", "ein", "an"]])
+    print(tokenizer.returnTokens(input("Input a string > ")))
+    
