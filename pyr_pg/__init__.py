@@ -19,6 +19,7 @@ import pyr_pg.options_menu
 import pyr_pg.log_system
 import pyr_pg.npc
 import pyr_pg.npc_handler
+import pyr_pg.speechSynth
 
 version = "0.3.8"
 

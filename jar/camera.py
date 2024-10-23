@@ -82,6 +82,6 @@ class cameraBox:
     
     def __calcVertices(self) -> None:
         self.__topLeft = self.__bounds[0]
-        self.__topRight =
-        self.__buttomLeft =
+        self.__topRight = None
+        self.__buttomLeft = None
         self.__buttomRight =self.__bounds[1]

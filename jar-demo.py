@@ -45,6 +45,7 @@ class jarRun():
             if lastFrame + frameTime < time.time():
                 lastFrame = curTime
                 self.player.tick(joyEvents)
+                self.camera.tick()
                 #render the stuff
                 self.window.fill((0,0,0))
                 self.window.set_at(self.windowMidpoint, (255,255,255))
