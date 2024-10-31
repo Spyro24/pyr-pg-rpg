@@ -64,7 +64,7 @@ class Main():
                 self.menu_list[activator].open(mpos)
             
         
-    def load_tiles(self):
+    def load_tiles(self): #Load all tile sheets
         self.ground_tiles = tile_handler.tile_handler("../tiles/ground", {"size":"12x6"})
         self.overlay_tiles = tile_handler.tile_handler("../tiles/overlay", {"size":"12x6"})
         self.ground_tiles.add_gw(self.editor_display)
@@ -90,7 +90,9 @@ class Main():
         self.editor_display = p.display.set_mode((self.tiling_size * self.tiling_wh[0], self.tiling_size * self.tiling_wh[1]))
         
     def render_map(self):
-        if self.edit_mode == 0:
+        if self.edit_mode == 0: #Ground Edit
+            self.map_object.render(0, (16 * self.tiling_size, 2 *self.tiling_size), (16 * self.tiling_size, 16 * self.tiling_size))
+        elif self.edit_mode == 1: #Map Overlay Edit
             self.map_object.render(0, (16 * self.tiling_size, 2 *self.tiling_size), (16 * self.tiling_size, 16 * self.tiling_size))
     
     def option_bar(self):
@@ -103,6 +105,8 @@ class Main():
     def show_tile_sheet(self):
         if self.edit_mode == 0:
             self.ground_tiles.draw_map(self.editor_tile_sheet_pos, (0,2*self.tiling_size), 24*self.tiling_size)
+        if self.edit_mode == 1:
+            self.overlay_tiles.draw_map(self.editor_tile_sheet_pos, (0,2*self.tiling_size), 24*self.tiling_size)
     
     def show_debug_grid(self):
         for w in range(self.tiling_wh[0]):
@@ -126,15 +130,12 @@ class Main():
                         self.show_single_tile((self.tiling_size * 8, self.tiling_size * 30), (self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
                 redraw = False
                 update = True
-                
             for event in p.event.get():
                 if event.type == p.QUIT:
                     run = False
                     self.quit = True
-            
             mpos = p.mouse.get_pos()
             mclick = p.mouse.get_pressed()
-            
             if (not clicked) and (mclick[0] == True):
                 clicked = True
                 action_bar_pos = self.tile_editor_action_bar.get_click(mpos)
@@ -161,16 +162,11 @@ class Main():
                         redraw = True
             elif mclick[0] == False:
                 clicked = False
-                    
-                        
-                
             if (selected_tile_num + 1) > 0:
                 self.cur_selected_tile = (self.editor_tile_sheet_pos * self.tiles_per_page) + (selected_tile_num + 1)
                 if self.cur_selected_tile > 0:
                     self.show_single_tile((self.tiling_size * 8, self.tiling_size * 30), (self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
                     update = True
-                    
-            
             if update:
                 p.display.flip()
             
@@ -194,12 +190,10 @@ class Main():
                 #self.show_debug_grid()
                 redraw = False
                 update = True
-            
             for event in p.event.get():
                 if event.type == p.QUIT:
                     run = False
                     self.quit = True
-            
             mpos = p.mouse.get_pos()
             mclick = p.mouse.get_pressed()
             if mclick[0] == True:
@@ -216,7 +210,6 @@ class Main():
                     print(change_tile_coords)
                     self.change_tile(change_tile_coords)
                     redraw = True
-            
             if update:
                 p.display.flip()
             

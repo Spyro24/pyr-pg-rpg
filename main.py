@@ -168,12 +168,12 @@ class main_class():
                     self.audio_setup.play("sfx_1", "menu_click")
                     run = False
                     start_new_game = True
-                if info_rect.collidepoint(mpos):
+                if info_rect.collidepoint(m_pos):
                     self.info_box.show(self.info_text)
                     redraw = True
             if redraw:
                 self.game_win.blit(background, (self.b_pos_x, self.b_pos_y))
-                self.game_win.blit(title, (self.b_pos_x + (self.menu_size * 3), self.b_pos_y + self.menu_size))
+                #self.game_win.blit(title, (self.b_pos_x + (self.menu_size * 3), self.b_pos_y + self.menu_size))
                 set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size *9)))
                 info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
                 self.game_win.blit(continue_g, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 8)))

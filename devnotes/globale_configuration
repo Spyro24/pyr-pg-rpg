@@ -1,0 +1,2 @@
+pg_window | Pygame window objekt oder ähnliches
+font | pyr_pg.font.font objekt (kein pygame font objekt) oder ein ähnlich funktionierendes objekt

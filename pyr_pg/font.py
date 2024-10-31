@@ -52,6 +52,6 @@ class font():
 
 if __name__ == "__main__":
     _test_win = p.display.set_mode((700,700))
-    _test_font = font(_test_win, "./test_assets/standard")
+    _test_font = font(_test_win, "./res/fonts/standard")
     _test_font.draw("Layer 1", 20, (5,5))
     p.display.flip()
