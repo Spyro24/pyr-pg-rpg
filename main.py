@@ -65,6 +65,7 @@ class main_class():
         self.game_name = self.game_config.get("name")
         self.game_version = self.game_config.get("version")
         print("try to init game: " + self.game_name)
+        print("[PYR-PG][Info] version " + pyr_pg.version)
         is_ready = False
         
         

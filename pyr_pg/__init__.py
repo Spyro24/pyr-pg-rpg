@@ -8,7 +8,8 @@ import pyr_pg.cutting_edge
 import pyr_pg.infobox
 import pyr_pg.font
 
-version = "0.2.4"
+version = "0.2.5"
+print("[PYR-PG][Info] version " + version)
 
 def splash(win, splash_duration):
     #create the pyr_pg splash(no images are used.)
