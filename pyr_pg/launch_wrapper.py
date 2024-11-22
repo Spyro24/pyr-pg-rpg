@@ -18,7 +18,7 @@ def launch_wrapper(launch_file):
     for option in wrap:
         element = option.split("=")
         
-        #iterate the elemnt for a vald option(Ignore invalid data)
+        #iterate the element for a vald option(Ignore invalid data)
         if element[0] == "name":
             game_name = element[1].strip()
         elif element[0] == "version":

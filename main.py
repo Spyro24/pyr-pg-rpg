@@ -43,6 +43,7 @@ class main_class():
         #----------------------------------------------------------------------
         self.main_FPS_count = 0
         self.rendered_FPS_count = 0
+        self.global_config = {"pg_window":None, "options":None}
         self.debug_colors = {"player_hitbox":(0, 0, 255), "map_hitbox":(0,127,255)}
         self.map_config = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":tilesheet_size}),
                            "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/", {"size":tilesheet_size}),
@@ -105,17 +106,17 @@ class main_class():
             #(Please use the next time linux to run the game)
             self.conf_path = "./main_conf"
             
-        self.global_config = pyr_pg.config.config(self.conf_path + "/global_config")
+        self.global_config_file = pyr_pg.config.config(self.conf_path + "/global_config")
         if not is_ready:
             get_wh = p.display.set_mode((0,0))
             w,h = get_wh.get_size()
-            self.global_config.add("win_w", w / 1.5)
-            self.global_config.add("win_h", h / 1.5)
-        self.global_config.save()
+            self.global_config_file.add("win_w", w / 1.5)
+            self.global_config_file.add("win_h", h / 1.5)
+        self.global_config_file.save()
         
     
     def play(self):
-        self.game_win = p.display.set_mode((int(float(self.global_config.get("win_w"))),int(float(self.global_config.get("win_h")))))
+        self.game_win = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
         self.font = pyr_pg.font.font(self.game_win, "./res/fonts/standard")
         self.map_config["window"] = self.game_win
         if self.random_title_text:
@@ -129,8 +130,17 @@ class main_class():
             p.display.set_caption(self.game_config.get("display_name"))
         pyr_pg.splash(self.game_win, 1.2)
         self.setup_env()
+        #---Export important vars to self.global_config---
+        self.global_config["pg_window"] = self.game_win
+        self.global_config["font"]      = self.font
+        #-------------------------------------------------
         #This has to be configured after the env--------------
         self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menu_size / 2), (self.b_pos_x, self.b_pos_y), (20,20))
+        self.options = pyr_pg.options_menu.options_menu(self.global_config)
+        self.options.create("./res/menus/options_menu.png")
+        #-----------------------------------------------------
+        #---Export all other important vars to self.global_config---
+        self.global_config['options']   = self.options
         #-----------------------------------------------------
         self.main_menu() #Open the main menu and start the game
         
@@ -274,7 +284,7 @@ class main_class():
         self.map = pyr_pg.map_.map(self.map_config)
         self.main_config["map"] = self.map
         self.map.load()
-        self.dialog = pyr_pg.dialog_.dialog(self.game_win, "./dialog/", "./players/",  self.player_env, self.audio_setup)
+        self.dialog = pyr_pg.dialog_wrapper.dialog(self.global_config)#(self.game_win, "./dialog/", "./players/",  self.player_env, self.audio_setup)
         self.player = pyr_pg.player.player(self.game_win, self.main_config)
         self.play_game()
         
@@ -324,7 +334,9 @@ class main_class():
                     if console[0] == "set":
                         if console[1] == "player":
                             if console[2] == "speed":
-                                self.player_speed = 1 / ((self.main_config["micro_tiling"] * float(console[3])))            
+                                self.player_speed = 1 / ((self.main_config["micro_tiling"] * float(console[3])))
+            if key_ar[27]:
+                self.options.open()
             if (cur_frame_time - (1/FPSmax)) > last_frame:
                 last_frame = time_get()
                 self.game_win.fill((0,0,0))

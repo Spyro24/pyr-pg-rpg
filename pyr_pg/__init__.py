@@ -7,9 +7,10 @@ import pyr_pg.tile_handler
 import pyr_pg.cutting_edge
 import pyr_pg.infobox
 import pyr_pg.font
+import pyr_pg.dialog_wrapper
+import pyr_pg.options_menu
 
 version = "0.2.5"
-print("[PYR-PG][Info] version " + version)
 
 def splash(win, splash_duration):
     #create the pyr_pg splash(no images are used.)
