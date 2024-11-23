@@ -46,6 +46,7 @@ class options_menu():
         self.runtime_config['selector'] = selector
         
     def open(self):
+        key_hold = True
         tile_size = self.config['tile_size']
         bx, by = self.config['blit_pos']
         blit_obj = self.blit_surface
@@ -59,10 +60,26 @@ class options_menu():
             for event in p.event.get():
                 if event.type == p.QUIT:
                     run = False
+            key_ar = p.key.get_pressed()
+            
+            if key_ar[115]:
+                selector_pos += 1
+                update = True
+            elif key_ar[119]:
+                if selector_pos > 0:
+                    selector_pos -= 1
+                    update = True
+            elif key_ar[27]:
+                if key_hold == False:
+                    run = False
+            else:
+                key_hold = False
+            
             if update:
                 blit_obj.blit(menu_bg, (bx, by))
                 blit_obj.blit(selector, (selector_bx, selector_by + (tile_size * (selector_pos))))
                 p.display.flip()
+                time.sleep(0.1)
                 update = False
     
     def __setup_env(self):
@@ -85,4 +102,4 @@ if __name__ == "__main__":
     _test_menu = options_menu(_test_config)
     _test_menu.create("./res/menus/options_menu.png")
     _test_menu.open()
-    p.display.flip()
+    p.quit()

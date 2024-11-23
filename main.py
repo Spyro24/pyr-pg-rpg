@@ -289,6 +289,7 @@ class main_class():
         self.play_game()
         
     def play_game(self):
+        mb_pressed = False
         debug_console = self.debug_console
         from time import time as time_get
         FPS_get = time_get()
@@ -336,7 +337,11 @@ class main_class():
                             if console[2] == "speed":
                                 self.player_speed = 1 / ((self.main_config["micro_tiling"] * float(console[3])))
             if key_ar[27]:
-                self.options.open()
+                if not mb_pressed:
+                    self.options.open()
+                mb_pressed = True
+            else:
+                mb_pressed = False
             if (cur_frame_time - (1/FPSmax)) > last_frame:
                 last_frame = time_get()
                 self.game_win.fill((0,0,0))
