@@ -80,4 +80,9 @@ class CuttingEdge():
 
 if __name__ == "__main__":
     window = p.display.set_mode((1000,1000))
-    test_sprite = CuttingEdge("blue_cube.conf", "../characters/", debug="shell")
+    test_sprite = CuttingEdge("blue_cube.conf", "./res/characters/", debug="shell").return_sprite_table()
+    sprites = list(test_sprite.keys())
+    print(sprites)
+    for n in range(len(sprites)):
+        window.blit(test_sprite[sprites[n]], (0, n * 20))
+    p.display.flip()
