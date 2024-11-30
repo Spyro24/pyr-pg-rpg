@@ -101,7 +101,7 @@ class main_class():
         
         #general config if you use a generic system
         else:
-            #----- You have to use linux in the 0.4 to 1.0
+            #----- You have to use linux in the 0.4 to x.0
             #but a simple config is here
             #(Please use the next time linux to run the game)
             self.conf_path = "./main_conf"

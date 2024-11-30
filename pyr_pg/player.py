@@ -18,46 +18,49 @@
 
 import pygame as p
 import time
-import pyr_pg
 
 class player(): 
-    def __init__(self, game_win, config):
-        self.gw = game_win
-        self.main_config = config
-        self.tiles_x, self.tiles_y = config["tiles_xy"]
-        self.debug_colors = config["debug_colors"]
-        self.grid_pos_x, self.grid_pos_y = config["player_start_pos_xy"]
-        self.state = [False]
-        self.map = config["map"]
-        #---get shortest window size and create the tile sys for player---
-        self.shortest_window_size = 0
-        gw_w, gw_h = self.gw.get_size()
-        if gw_w > gw_h: self.shortest_window_size = gw_h
-        else: self.shortest_window_size = gw_w
-        self.tile_size = self.shortest_window_size / self.tiles_y
-        self.grid_zero_x, self.grid_zero_y = (gw_w / 2) - ((self.tiles_x / 2) * self.tile_size), (gw_h / 2) - ((self.tiles_y / 2) * self.tile_size)
-        self.micro_tile = self.tile_size / config["micro_tiling"]
-        #-----------------------------------------------------------------
-        #---setup hitboxes---
-        self.player_hitbox = p.Rect((self.grid_zero_x + self.grid_pos_x * self.tile_size, self.grid_zero_y + self.grid_pos_y* self.tile_size),(self.tile_size, self.tile_size))
-        self.player_hitbox_color = self.debug_colors["player_hitbox"]
-        self.npc_hitboxes = []
-        #-----------------------------------------------------------------
-        #---setup hitpoints---
-        self.diff = config["micro_tiling"] / 2
-        self.max_diff = config["micro_tiling"]
-        #-----------------------------------------------------------------
-        #---setup player positions---
-        self.minor_pos_x = self.diff
-        self.minor_pos_y = self.diff
-        #---setup player other vars---
-        self.facing = "UP"
-        self.state_table = {"UP":(0,-1,-1,-1,1,-1,1,0,-1,0), "DOWN":(0,1,1,1,-1,1,-1,0,1,0),"LEFT":(-1,0,-1,1,-1,-1,0,-1,0,1),"RIGHT":(1,0,1,-1,1,1,0,1,0,-1)}
-        self.player_flags = {"DEATH":False, "ATACK":False, "INVULNERABLE": False, "AKTIVE": True}
-        self.sprite_laoder = pyr_pg.cutting_edge.CuttingEdge(str(config["player_sprite"]) + ".conf", str(config["character_path"]))
-        self.player_sprite_table = self.sprite_laoder.return_sprite_table()
-        self.player_sprite = p.transform.scale(self.player_sprite_table[self.facing],(self.tile_size, self.tile_size)) # rewrite this line in the future for the new sprites
-        #-----------------------------------------------------------------
+    def __init__(self, game_win, config, test=False):
+        self.config_version = "0.0.1"
+        self.storage = {"player_name":"", "position":[0,0,0,0,0,0]}
+        if not test:
+            import pyr_pg
+            self.gw = game_win
+            self.main_config = config
+            self.tiles_x, self.tiles_y = config["tiles_xy"]
+            self.debug_colors = config["debug_colors"]
+            self.grid_pos_x, self.grid_pos_y = config["player_start_pos_xy"]
+            self.state = [False]
+            self.map = config["map"]
+            #---get shortest window size and create the tile sys for player---
+            self.shortest_window_size = 0
+            gw_w, gw_h = self.gw.get_size()
+            if gw_w > gw_h: self.shortest_window_size = gw_h
+            else: self.shortest_window_size = gw_w
+            self.tile_size = self.shortest_window_size / self.tiles_y
+            self.grid_zero_x, self.grid_zero_y = (gw_w / 2) - ((self.tiles_x / 2) * self.tile_size), (gw_h / 2) - ((self.tiles_y / 2) * self.tile_size)
+            self.micro_tile = self.tile_size / config["micro_tiling"]
+            #-----------------------------------------------------------------
+            #---setup hitboxes---
+            self.player_hitbox = p.Rect((self.grid_zero_x + self.grid_pos_x * self.tile_size, self.grid_zero_y + self.grid_pos_y* self.tile_size),(self.tile_size, self.tile_size))
+            self.player_hitbox_color = self.debug_colors["player_hitbox"]
+            self.npc_hitboxes = []
+            #-----------------------------------------------------------------
+            #---setup hitpoints---
+            self.diff = config["micro_tiling"] / 2
+            self.max_diff = config["micro_tiling"]
+            #-----------------------------------------------------------------
+            #---setup player positions---
+            self.minor_pos_x = self.diff
+            self.minor_pos_y = self.diff
+            #---setup player other vars---
+            self.facing = "UP"
+            self.state_table = {"UP":(0,-1,-1,-1,1,-1,1,0,-1,0), "DOWN":(0,1,1,1,-1,1,-1,0,1,0),"LEFT":(-1,0,-1,1,-1,-1,0,-1,0,1),"RIGHT":(1,0,1,-1,1,1,0,1,0,-1)}
+            self.player_flags = {"DEATH":False, "ATACK":False, "INVULNERABLE": False, "AKTIVE": True}
+            self.sprite_laoder = pyr_pg.cutting_edge.CuttingEdge(str(config["player_sprite"]) + ".conf", str(config["character_path"]))
+            self.player_sprite_table = self.sprite_laoder.return_sprite_table()
+            self.player_sprite = p.transform.scale(self.player_sprite_table[self.facing],(self.tile_size, self.tile_size)) # rewrite this line in the future for the new sprites
+            #-----------------------------------------------------------------
         
     def update(self):
         self.hit_map = self.map.get_hitbox()
@@ -162,5 +165,27 @@ class player():
         self.facing = facing_dir
         self.player_sprite = p.transform.scale(self.player_sprite_table[self.facing],(self.tile_size, self.tile_size))
         
+    def import_file(self, file):
+        pass
+    
+    def export_file(self, file):
+        export = open(file, "bw")
+        version = self.config_version.split(".")
+        for num in version:
+            export.write(int.to_bytes(int(num), 1))
+        export.write(bytes(self.storage['player_name'], "UTF8")) #Player name
+        export.write(int.to_bytes(255, 1)) #spacer
+        export.close()
+        
+    def store(self, param):
+        params = param
+        if params[0] == "PlayerName":
+            self.storage['player_name'] = params[1]
+    
     def _debug(self): #the function for the debug class(its a external module thats loads with the main script)
         p.draw.rect(self.gw, self.player_hitbox_color, self.player_hitbox, width=3)
+        
+if __name__ == "__main__":
+    test_player = player(None, None, test=True)
+    #test_player.store(["PlayerName", "Test_Player"])
+    test_player.export_file("./test_player")
