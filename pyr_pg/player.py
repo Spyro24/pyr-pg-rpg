@@ -172,9 +172,12 @@ class player():
         export = open(file, "bw")
         version = self.config_version.split(".")
         for num in version:
-            export.write(int.to_bytes(int(num), 1))
+            export.write(int.to_bytes(int(num), 1, "little"))
         export.write(bytes(self.storage['player_name'], "UTF8")) #Player name
-        export.write(int.to_bytes(255, 1)) #spacer
+        export.write(int.to_bytes(255, 1, "little")) #spacer
+        for pos in self.storage['position']:
+            export.write(bytes(str(pos), "UTF8"))
+            export.write(int.to_bytes(255, 1, "little")) #spacer
         export.close()
         
     def store(self, param):
@@ -187,5 +190,5 @@ class player():
         
 if __name__ == "__main__":
     test_player = player(None, None, test=True)
-    #test_player.store(["PlayerName", "Test_Player"])
+    test_player.store(["PlayerName", "Test_Player"])
     test_player.export_file("./test_player")
