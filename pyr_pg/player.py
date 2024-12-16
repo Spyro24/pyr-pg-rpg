@@ -54,12 +54,12 @@ class player():
             self.minor_pos_x = self.diff
             self.minor_pos_y = self.diff
             #---setup player other vars---
-            self.facing = "UP"
-            self.state_table = {"UP":(0,-1,-1,-1,1,-1,1,0,-1,0), "DOWN":(0,1,1,1,-1,1,-1,0,1,0),"LEFT":(-1,0,-1,1,-1,-1,0,-1,0,1),"RIGHT":(1,0,1,-1,1,1,0,1,0,-1)}
-            self.player_flags = {"DEATH":False, "ATACK":False, "INVULNERABLE": False, "AKTIVE": True}
-            self.sprite_laoder = pyr_pg.cutting_edge.CuttingEdge(str(config["player_sprite"]) + ".conf", str(config["character_path"]))
+            self.facing              = "UP"
+            self.state_table         = {"UP":(0,-1,-1,-1,1,-1,1,0,-1,0), "DOWN":(0,1,1,1,-1,1,-1,0,1,0),"LEFT":(-1,0,-1,1,-1,-1,0,-1,0,1),"RIGHT":(1,0,1,-1,1,1,0,1,0,-1)}
+            self.player_flags        = {"DEATH":False, "ATACK":False, "INVULNERABLE": False, "AKTIVE": True}
+            self.sprite_laoder       = pyr_pg.cutting_edge.CuttingEdge(str(config["player_sprite"]) + ".conf", str(config["character_path"]))
             self.player_sprite_table = self.sprite_laoder.return_sprite_table()
-            self.player_sprite = p.transform.scale(self.player_sprite_table[self.facing],(self.tile_size, self.tile_size)) # rewrite this line in the future for the new sprites
+            self.player_sprite       = p.transform.scale(self.player_sprite_table[self.facing],(self.tile_size, self.tile_size)) # rewrite this line in the future for the new sprites
             #-----------------------------------------------------------------
         
     def update(self):
@@ -71,19 +71,19 @@ class player():
     
     def move(self, x, y):
         #save all values that are modified
-        test_hitbox = self.player_hitbox.move(self.micro_tile * x, self.micro_tile * y)
+        test_hitbox     = self.player_hitbox.move(self.micro_tile * x, self.micro_tile * y)
         tmp_minor_pos_x = self.minor_pos_x + x
         tmp_minor_pos_y = self.minor_pos_y + y        
-        hitbox_trigger = False
-        grid_pos_x = self.grid_pos_x
-        grid_pos_y = self.grid_pos_y
+        hitbox_trigger  = False
+        grid_pos_x      = self.grid_pos_x
+        grid_pos_y      = self.grid_pos_y
         
         #get colisions with other rects
         #set new positions
         if tmp_minor_pos_x > self.max_diff:
             while tmp_minor_pos_x > self.max_diff:
                 tmp_minor_pos_x -= self.max_diff
-                grid_pos_x += 1
+                grid_pos_x      += 1
                 
         elif tmp_minor_pos_x < 0:
             while tmp_minor_pos_x < 0:

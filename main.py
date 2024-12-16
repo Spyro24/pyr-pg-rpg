@@ -25,32 +25,43 @@ import subprocess
 import pyr_pg
 from random import randint
 import time
+import runtime_store as rs
 
 class main_class():
     def __init__(self):
+        self.runtime_store = {}
         #----modify this section for your game if you use this runner----
+        self.runtime_store[rs.PlayerSpeed]  = 8
+        self.runtime_store[rs.ObjectLenght] = 2
+        self.runtime_store[rs.DefaultFps]   = 30
+        #----------------------------------------------------------------
         self.random_title_text = True #Set it to false if you don't want to use a sufix for the tiitle
-        self.player_speed = 8
+        self.player_speed = self.runtime_store[rs.PlayerSpeed]
         self.debug = False
-        self.object_lenght = 2
-        self.micro_tiling = 16
+        self.object_lenght = self.runtime_store[rs.ObjectLenght]
+        self.runtime_store[rs.MicroTiling] = 16
         self.default_FPS = 30
-        tilesheet_size = "12x6"
-        self.FPS_COUNTER = True
+        self.runtime_store[rs.TileSheetSize] = "12x6"
+        self.FPS_COUNTER   = True
         self.debug_console = True
         self.standard_player_sprite = "blue_cube"
-        self.character_path = "./characters/"
-        #----------------------------------------------------------------------
+        self.character_path = "./res/characters/"
         self.main_FPS_count = 0
         self.rendered_FPS_count = 0
-        self.global_config = {"pg_window":None, "options":None}
-        self.debug_colors = {"player_hitbox":(0, 0, 255), "map_hitbox":(0,127,255)}
-        self.map_config = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":tilesheet_size}),
-                           "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/", {"size":tilesheet_size}),
-                           "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":tilesheet_size}),
-                           "debug_col":self.debug_colors}
-        self.main_config = {"tiles_xy":(16,16), "player_start_pos_xy":(0,0), "debug_colors":self.debug_colors, "micro_tiling":self.micro_tiling,
-                            "character_path":self.character_path, "player_sprite":self.standard_player_sprite}
+        self.global_config = {"pg_window":None,
+                              "options"  :None}
+        self.debug_colors  = {"player_hitbox":(0, 0, 255),
+                              "map_hitbox":(0,127,255)}
+        self.map_config    = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/",    {"size":self.runtime_store[rs.TileSheetSize]}),
+                              "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/",   {"size":self.runtime_store[rs.TileSheetSize]}),
+                              "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":self.runtime_store[rs.TileSheetSize]}),
+                              "debug_col":self.debug_colors}
+        self.main_config   = {"tiles_xy":(16,16),
+                              "player_start_pos_xy":(0,0),
+                              "debug_colors":self.debug_colors,
+                              "micro_tiling":self.runtime_store[rs.MicroTiling],
+                              "character_path":self.character_path,
+                              "player_sprite":self.standard_player_sprite}
         self.player_speed = 1 / ((self.main_config["micro_tiling"] * self.player_speed))
         self.platform = os.name
         info = open("./res/main_menu/info_box", "r")
@@ -120,11 +131,11 @@ class main_class():
         self.font = pyr_pg.font.font(self.game_win, "./res/fonts/standard")
         self.map_config["window"] = self.game_win
         if self.random_title_text:
-            text_list = open("./pyr_pg/random_tittle_texts","r")
-            random_line = text_list.readlines() #read every line from the configuration file
-            text_list.close() #close the configuration nfile
-            random_line = [line.strip() for line in random_line]
+            text_list     = open("./pyr_pg/random_tittle_texts","r")
+            random_line   = text_list.readlines() #read every line from the configuration file
+            random_line   = [line.strip() for line in random_line]
             chosen_tiitle = randint(0, len(random_line) - 1)
+            text_list.close() #close the configuration nfile
             p.display.set_caption(self.game_config.get("display_name") + ": " + random_line[chosen_tiitle])
         else:
             p.display.set_caption(self.game_config.get("display_name"))
