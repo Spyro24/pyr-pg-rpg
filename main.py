@@ -24,30 +24,31 @@ from pathlib import Path
 import subprocess
 import pyr_pg
 from random import randint
-import time
+#import time
 import runtime_store as rs
 
 class main_class():
-    def __init__(self):
+    def __init__(self, LogSystem=print):
         self.runtime_store = {}
         #----modify this section for your game if you use this runner----
         self.runtime_store[rs.PlayerSpeed]  = 8
         self.runtime_store[rs.ObjectLenght] = 2
         self.runtime_store[rs.DefaultFps]   = 30
+        self.runtime_store[rs.LogSystem]    = LogSystem
         #----------------------------------------------------------------
-        self.random_title_text = True #Set it to false if you don't want to use a sufix for the tiitle
-        self.player_speed = self.runtime_store[rs.PlayerSpeed]
-        self.debug = False
-        self.object_lenght = self.runtime_store[rs.ObjectLenght]
-        self.runtime_store[rs.MicroTiling] = 16
-        self.default_FPS = 30
+        self.random_title_text               = True #Set it to false if you don't want to use a sufix for the tiitle
+        self.player_speed                    = self.runtime_store[rs.PlayerSpeed]
+        self.debug                           = False
+        self.object_lenght                   = self.runtime_store[rs.ObjectLenght]
+        self.runtime_store[rs.MicroTiling]   = 16
+        self.default_FPS                     = 30
         self.runtime_store[rs.TileSheetSize] = "12x6"
-        self.FPS_COUNTER   = True
-        self.debug_console = True
-        self.standard_player_sprite = "blue_cube"
-        self.character_path = "./res/characters/"
-        self.main_FPS_count = 0
-        self.rendered_FPS_count = 0
+        self.FPS_COUNTER                     = True
+        self.debug_console                   = True
+        self.standard_player_sprite          = "blue_cube"
+        self.character_path                  = "./res/characters/"
+        self.main_FPS_count                  = 0
+        self.rendered_FPS_count              = 0
         self.global_config = {"pg_window":None,
                               "options"  :None}
         self.debug_colors  = {"player_hitbox":(0, 0, 255),
@@ -127,9 +128,11 @@ class main_class():
         
     
     def play(self):
-        self.game_win = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
-        self.font = pyr_pg.font.font(self.game_win, "./res/fonts/standard")
-        self.map_config["window"] = self.game_win
+        self.runtime_store[rs.WindowProperties]            = {}
+        self.runtime_store[rs.WindowProperties][rs.Window] = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
+        self.game_win                                      = self.runtime_store[rs.WindowProperties][rs.Window]
+        self.font                                          = pyr_pg.font.font(self.game_win, "./res/fonts/standard")
+        self.map_config["window"]                          = self.game_win
         if self.random_title_text:
             text_list     = open("./pyr_pg/random_tittle_texts","r")
             random_line   = text_list.readlines() #read every line from the configuration file
@@ -147,7 +150,7 @@ class main_class():
         #-------------------------------------------------
         #This has to be configured after the env--------------
         self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menu_size / 2), (self.b_pos_x, self.b_pos_y), (20,20))
-        self.options = pyr_pg.options_menu.options_menu(self.global_config)
+        self.options  = pyr_pg.options_menu.options_menu(self.global_config)
         self.options.create("./res/menus/options_menu.png")
         #-----------------------------------------------------
         #---Export all other important vars to self.global_config---
@@ -161,15 +164,15 @@ class main_class():
         redraw = True
         #all main menu images
         background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
-        title = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menu_size * 4,self.menu_size * 2))
-        settings = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menu_size,self.menu_size))
+        title      = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menu_size * 4,self.menu_size * 2))
+        settings   = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menu_size,self.menu_size))
         start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menu_size*3,self.menu_size))
         continue_g = p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menu_size*3,self.menu_size))
-        info = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menu_size,self.menu_size))
+        info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menu_size,self.menu_size))
         #button rectangles
-        set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size *9)))
+        set_rect  = self.game_win.blit(settings, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size *9)))
         load_rect = self.game_win.blit(continue_g, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 8)))
-        new_rect = self.game_win.blit(start_newg, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 6.5)))
+        new_rect  = self.game_win.blit(start_newg, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 6.5)))
         info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
         #setup button vars
         start_new_game = False
@@ -195,7 +198,7 @@ class main_class():
                     redraw = True
             if redraw:
                 self.game_win.blit(background, (self.b_pos_x, self.b_pos_y))
-                #self.game_win.blit(title, (self.b_pos_x + (self.menu_size * 3), self.b_pos_y + self.menu_size))
+                self.game_win.blit(title, (self.b_pos_x + (self.menu_size * 3), self.b_pos_y + self.menu_size))
                 set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size *9)))
                 info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
                 self.game_win.blit(continue_g, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 8)))
@@ -290,13 +293,13 @@ class main_class():
             self.setup_player("create")
     
     def setup_player(self, option):
-        self.player_env = {"player":"Test", "player_sprite":"synth"}
+        self.player_env           = {"player":"Test", "player_sprite":"synth"}
         self.map_config["window"] = self.game_win
-        self.map = pyr_pg.map_.map(self.map_config)
-        self.main_config["map"] = self.map
+        self.map                  = pyr_pg.map_.map(self.map_config)
+        self.main_config["map"]   = self.map
+        self.dialog               = pyr_pg.dialog_wrapper.dialog(self.global_config)#(self.game_win, "./dialog/", "./players/",  self.player_env, self.audio_setup)
+        self.player               = pyr_pg.player.player(self.game_win, self.main_config)
         self.map.load()
-        self.dialog = pyr_pg.dialog_wrapper.dialog(self.global_config)#(self.game_win, "./dialog/", "./players/",  self.player_env, self.audio_setup)
-        self.player = pyr_pg.player.player(self.game_win, self.main_config)
         self.play_game()
         
     def play_game(self):
@@ -304,7 +307,7 @@ class main_class():
         debug_console = self.debug_console
         from time import time as time_get
         FPS_get = time_get()
-        FPSmax = 128
+        FPSmax = 60
         FPS_c = 0
         KT = time_get()
         ms = 0.001
@@ -399,10 +402,11 @@ class main_class():
     
     
 if __name__ == "__main__":
-    runner = "Dev"
+    logsys = pyr_pg.log_system.log()
+    runner = "User"
     if runner == "User":
         try:
-            game = main_class()
+            game = main_class(LogSystem=logsys.insert)
             game.play()
         except BaseException as err:
             try:
@@ -411,16 +415,17 @@ if __name__ == "__main__":
             except ImportError as err:
                 log_time = err
             
-            print("\n\n\n")
-            print("-----Fatal Error-----")
-            print("Crash Time: " + str(log_time))
-            print("Operating System: " + str(os.name))
-            print("Game Name: " + str(game.game_name))
-            print("Game Version: " + str(game.game_version))
-            print("pyr_pg Version: " + str(pyr_pg.version))
-            print("Error: " + str(err))
-            print("------Error end------")
-            print("\nplease report this to the developers if this is not a filepath error")
+            log = game.runtime_store[rs.LogSystem]
+            log(1, "-----Fatal Error-----",
+                   "Crash Time: " + str(log_time),
+                   "Operating System: " + str(os.name),
+                   "Game Name: " + str(game.game_name),
+                   "Game Version: " + str(game.game_version),
+                   "pyr_pg Version: " + str(pyr_pg.version),
+                   "Error: " + str(err),
+                   "------Error end------",
+                   "\nplease report this to the developers if this is not a filepath error")
+            logsys.WriteLog(path="./logs/")
         p.quit()
     elif runner == "Dev":
         game = main_class()

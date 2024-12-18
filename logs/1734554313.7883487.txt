@@ -1,0 +1,10 @@
+-----Fatal Error-----
+Crash Time: 2024-12-18 21:38:37.155641
+Operating System: posix
+Game Name: pyr_pg_rpg
+Game Version: 1.0
+pyr_pg Version: 0.2.6
+Error: '-'
+------Error end------
+
+please report this to the developers if this is not a filepath error
