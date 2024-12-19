@@ -4,15 +4,15 @@ import time
 #Info: the Info box need a min size from (9,4) to show up corectly
 class InfoBox():
     def __init__(self, win, font, grid_size, pos, outer_size, col=[(0, 128, 128),(128, 0, 128),(128,128,0),(100,100,100)], action=False, button_text=["Close","Clear"]):
-        self.window = win
-        self.font = font
-        self.size = grid_size
-        self.init_pos = pos
-        self.outer_size = outer_size
-        self.colors = col
-        self.action = action
+        self.window      = win
+        self.font        = font
+        self.size        = grid_size
+        self.init_pos    = pos
+        self.outer_size  = outer_size
+        self.colors      = col
+        self.action      = action
         self.button_text = button_text
-        self.rect_list = []
+        self.rect_list   = []
         self.create_rects()
         
     def show(self, text):
@@ -21,7 +21,7 @@ class InfoBox():
         print(showable_text)
         #setup textscroller
         rect_size = self.rect_list[1][3]
-        lines = int(rect_size / self.size)
+        lines     = int(rect_size / self.size)
         print(lines)
         #setup local vars
         x_init = self.init_pos[0] + self.size
@@ -98,11 +98,11 @@ class InfoBox():
 #Unit test
 if __name__ == "__main__":
     import font
-    ts = 30
-    window = p.display.set_mode((ts * 50, ts * 30))
-    font = font.font(window, "../res/fonts/standard")
+    ts       = 30
+    window   = p.display.set_mode((ts * 50, ts * 30))
+    font     = font.font(window, "../res/fonts/standard")
     infotext = "A\nB\nC\nD\nE\nF\nG"
-    infobox = InfoBox(window, font, ts, (ts *3, ts * 4), (9,7))
+    infobox  = InfoBox(window, font, ts, (ts *3, ts * 4), (9,7))
     infobox.show(infotext)
     p.quit()
     

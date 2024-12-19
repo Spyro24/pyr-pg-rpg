@@ -22,13 +22,13 @@ import time
 class player(): 
     def __init__(self, game_win, config, test=False):
         self.config_version = "0.0.1"
-        self.storage = {"player_name":"", "position":[0,0,0,0,0,0]}
+        self.storage        = {"player_name":"", "position":[0,0,0,0,0,0]}
         if not test:
             import pyr_pg
-            self.gw = game_win
-            self.main_config = config
-            self.tiles_x, self.tiles_y = config["tiles_xy"]
-            self.debug_colors = config["debug_colors"]
+            self.gw                          = game_win
+            self.main_config                 = config
+            self.tiles_x, self.tiles_y       = config["tiles_xy"]
+            self.debug_colors                = config["debug_colors"]
             self.grid_pos_x, self.grid_pos_y = config["player_start_pos_xy"]
             self.state = [False]
             self.map = config["map"]
@@ -42,12 +42,12 @@ class player():
             self.micro_tile = self.tile_size / config["micro_tiling"]
             #-----------------------------------------------------------------
             #---setup hitboxes---
-            self.player_hitbox = p.Rect((self.grid_zero_x + self.grid_pos_x * self.tile_size, self.grid_zero_y + self.grid_pos_y* self.tile_size),(self.tile_size, self.tile_size))
+            self.player_hitbox       = p.Rect((self.grid_zero_x + self.grid_pos_x * self.tile_size, self.grid_zero_y + self.grid_pos_y* self.tile_size),(self.tile_size, self.tile_size))
             self.player_hitbox_color = self.debug_colors["player_hitbox"]
-            self.npc_hitboxes = []
+            self.npc_hitboxes        = []
             #-----------------------------------------------------------------
             #---setup hitpoints---
-            self.diff = config["micro_tiling"] / 2
+            self.diff     = config["micro_tiling"] / 2
             self.max_diff = config["micro_tiling"]
             #-----------------------------------------------------------------
             #---setup player positions---
@@ -88,17 +88,17 @@ class player():
         elif tmp_minor_pos_x < 0:
             while tmp_minor_pos_x < 0:
                 tmp_minor_pos_x += self.max_diff
-                grid_pos_x -= 1
+                grid_pos_x      -= 1
                 
         if tmp_minor_pos_y > self.max_diff:
             while tmp_minor_pos_y > self.max_diff:
-                tmp_minor_pos_y-= self.max_diff
-                grid_pos_y += 1
+                tmp_minor_pos_y -= self.max_diff
+                grid_pos_y      += 1
                 
         elif tmp_minor_pos_y < 0:
             while tmp_minor_pos_y < 0:
                 tmp_minor_pos_y += self.max_diff
-                grid_pos_y -= 1
+                grid_pos_y      -= 1
         
         
         #go around the screen
@@ -123,7 +123,7 @@ class player():
         if get_hitbox != 0:
             if test_hitbox.colliderect(get_hitbox):
                 hitbox_trigger = True
-        get_hitbox_left = self.map.get_hitbox(self.grid_pos_x + state[2], self.grid_pos_y + state[3])
+        get_hitbox_left  = self.map.get_hitbox(self.grid_pos_x + state[2], self.grid_pos_y + state[3])
         get_hitbox_right = self.map.get_hitbox(self.grid_pos_x + state[4], self.grid_pos_y + state[5])
         if (get_hitbox_left != 0) and test_hitbox.colliderect(get_hitbox_left):
             tmp_minor_pos_x += state[6]
@@ -134,10 +134,10 @@ class player():
                         
         #set all vars if the hitboxe arent trigered
         if not hitbox_trigger:
-            self.minor_pos_x = tmp_minor_pos_x
-            self.minor_pos_y = tmp_minor_pos_y
-            self.grid_pos_x = grid_pos_x
-            self.grid_pos_y = grid_pos_y
+            self.minor_pos_x   = tmp_minor_pos_x
+            self.minor_pos_y   = tmp_minor_pos_y
+            self.grid_pos_x    = grid_pos_x
+            self.grid_pos_y    = grid_pos_y
             self.player_hitbox = test_hitbox
             
         #set the state to move
@@ -162,7 +162,7 @@ class player():
         self.facing = save_dict["player_facing"]
         
     def set_facing(self, facing_dir):
-        self.facing = facing_dir
+        self.facing        = facing_dir
         self.player_sprite = p.transform.scale(self.player_sprite_table[self.facing],(self.tile_size, self.tile_size))
         
     def import_file(self, file):

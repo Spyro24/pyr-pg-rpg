@@ -3,19 +3,19 @@ import time
 
 class options_menu():
     def __init__(self, globconfig):
-        self.global_config = globconfig
-        self.blit_surface = self.global_config["pg_window"]
-        self.config = {"gridsize":(16,16), "blit_pos":(0,0), "tile_size":0}
+        self.global_config  = globconfig
+        self.blit_surface   = self.global_config["pg_window"]
+        self.config         = {"gridsize":(16,16), "blit_pos":(0,0), "tile_size":0}
         self.runtime_config = {"menu_bg":None, "selector":None}
-        self.options = {}
+        self.options        = {}
         self.__setup_env()
     
     def create(self, png):
-        tile_size = self.config['tile_size']
-        grid_size = self.config['gridsize']
+        tile_size      = self.config['tile_size']
+        grid_size      = self.config['gridsize']
         menu_tilesheet = p.image.load(png)
         menu_tile_list = []
-        menu_tilesize = menu_tilesheet.get_size()[0] / 3
+        menu_tilesize  = menu_tilesheet.get_size()[0] / 3
         for y_tile in range(4):
             for x_tile in range(3):
                 cur_tile = p.surface.Surface((menu_tilesize,menu_tilesize), flags=p.SRCALPHA)
@@ -42,20 +42,21 @@ class options_menu():
         selector = p.surface.Surface((tile_size * (grid_size[0] - 2),tile_size), flags=p.SRCALPHA)
         for x in range(grid_size[0] - 2):
             selector.blit(menu_tile_list[9], (tile_size * x, 0))
-        self.runtime_config['menu_bg'] = menu_bg
+        self.runtime_config['menu_bg']  = menu_bg
         self.runtime_config['selector'] = selector
         
     def open(self):
-        key_hold = True
-        tile_size = self.config['tile_size']
-        bx, by = self.config['blit_pos']
-        blit_obj = self.blit_surface
-        menu_bg = self.runtime_config['menu_bg']
-        selector = self.runtime_config['selector']
-        selector_bx, selector_by = bx + tile_size, by + tile_size
+        key_hold     = True
+        tile_size    = self.config['tile_size']
+        bx, by       = self.config['blit_pos']
+        blit_obj     = self.blit_surface
+        menu_bg      = self.runtime_config['menu_bg']
+        selector     = self.runtime_config['selector']
+        selector_bx  = by + tile_size
+        selector_by  = bx + tile_size
         selector_pos = 0
-        update = True
-        run = True
+        update       = True
+        run          = True
         while run:
             for event in p.event.get():
                 if event.type == p.QUIT:
@@ -83,14 +84,14 @@ class options_menu():
                 update = False
     
     def __setup_env(self):
-        window_wh = self.blit_surface.get_size()
+        window_wh     = self.blit_surface.get_size()
         shortest_side = window_wh[1]
         if window_wh[0] < window_wh[1]:
             shortest_side = window_wh[0]
         blit_point = (0, 0)
         midpoint = (window_wh[0]/2, window_wh[1]/2)
         blit_point = (midpoint[0] - shortest_side/2, midpoint[1] - shortest_side/2)
-        self.config["blit_pos"] = blit_point
+        self.config["blit_pos"]  = blit_point
         self.config["tile_size"] = int(shortest_side / self.config["gridsize"][0])
         
 if __name__ == "__main__":
