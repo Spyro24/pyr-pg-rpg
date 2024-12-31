@@ -45,7 +45,7 @@ class main_class():
         self.runtime_store[rs.TileSheetSize] = "12x6"
         self.FPS_COUNTER                     = True
         self.debug_console                   = True
-        self.standard_player_sprite          = "blue_cube"
+        self.standard_player_sprite          = "protogen_kem"
         self.character_path                  = "./res/characters/"
         self.main_FPS_count                  = 0
         self.rendered_FPS_count              = 0
@@ -64,22 +64,20 @@ class main_class():
                               "character_path":self.character_path,
                               "player_sprite":self.standard_player_sprite}
         self.player_speed = 1 / ((self.main_config["micro_tiling"] * self.player_speed))
-        self.platform = os.name
-        info = open("./res/main_menu/info_box", "r")
-        self.info_text = info.readlines()
-        info.close()
-        print(self.info_text)
-        inf = ""
+        self.platform     = os.name
+        info              = open("./res/main_menu/info_box", "r")
+        self.info_text    = info.readlines(); info.close()
+        inf               = ""
         for line in self.info_text:
             inf += line
-        self.info_text = inf
-        print(self.info_text)
-        self.game_config = pyr_pg.config.config("./game.rpg")
-        self.game_name = self.game_config.get("name")
+        self.info_text    = inf
+        self.game_config  = pyr_pg.config.config("./game.rpg")
+        self.game_name    = self.game_config.get("name")
         self.game_version = self.game_config.get("version")
+        is_ready          = False
         print("try to init game: " + self.game_name)
         print("[PYR-PG][Info] version " + pyr_pg.version)
-        is_ready = False
+        print(self.info_text)
         
         
         if self.platform == "posix": # init for a linux system
