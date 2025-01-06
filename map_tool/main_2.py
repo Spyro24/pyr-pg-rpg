@@ -9,11 +9,14 @@ class multi_editor():
         self.ui_size       = 30
         self.font_size     = self.ui_size - 2
         self.font          = map_pg.font.font(self.window, "./res/fonts/standard")
+        self.colors        = [(0, 133, 255)]
         self.global_config = {}
         self.images        = {}
         self.buttons       = []
         self.menus         = []
+        self.visible_rects = []
         self.editor_mode   = 0
+        self.editor_md_tag = "Mapeditor"
         self.load_maped()
         self.main_loop()
         
@@ -42,6 +45,7 @@ class multi_editor():
             
             if mclick[0] == True:
                 self.menus[0].open(mpos)
+                self.menus[1].open(mpos)
                 update = True
                 
             if update:
@@ -49,6 +53,8 @@ class multi_editor():
                 self.menu_bar()
                 if self.editor_mode == 0:
                     p.draw.rect(self.window, (100,100,100), self.tile_choser_rect, 3)
+                    p.draw.rect(self.window, (100,100,100), self.maped_rect, 3)
+                self.left_side_menu()
                 p.draw.rect(self.window, (100,100,100), self.tool_options_rect, 3)
                 p.display.flip()
                 update = False
@@ -58,13 +64,20 @@ class multi_editor():
         logo_scaled = p.transform.scale(logo, (self.font_size, self.font_size))
         self.images["logo_scaled"] = logo_scaled
         self.buttons.append(self.window.blit(logo_scaled,(0,0)))
+        self.visible_rects.append(p.Rect((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size)))
+        self.buttons.append(self.visible_rects[0])
         self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (0, self.font_size), 5, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[0], {"Settings":self.settings, "About":None, "Exit":self.end}, mode="advance"))
+        self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (self.ui_size, self.ui_size * 5), 6, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[1], {"Mapeditor":self.settings}, mode="advance"))
     
     def settings(self):
         pass
     
     def menu_bar(self):
         self.window.blit(self.images["logo_scaled"],(0,0))
+        
+    def left_side_menu(self):
+        p.draw.rect(self.window, self.colors[0], self.visible_rects[0])
+        self.font.draw(self.editor_md_tag, self.font_size, self.visible_rects[0].topleft)
     
     def end(self):
         p.quit()
@@ -75,6 +88,7 @@ class multi_editor():
         win_w, win_h = self.window.get_size()
         self.tile_choser_rect  = p.Rect((win_w - (self.ui_size * 8), self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
         self.tool_options_rect = p.Rect((0, self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
+        self.maped_rect        = p.Rect((self.ui_size * 8,self.ui_size * 3),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
 
 if __name__ == "__main__":
     while True:
