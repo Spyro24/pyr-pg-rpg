@@ -24,13 +24,13 @@ class InfoBox():
         lines     = int(rect_size / self.size)
         print(lines)
         #setup local vars
-        x_init = self.init_pos[0] + self.size
-        y_init = self.init_pos[1] + self.size 
-        x = x_init
-        y = y_init
-        scroll = 0
+        x_init    = self.init_pos[0] + self.size
+        y_init    = self.init_pos[1] + self.size 
+        x         = x_init
+        y         = y_init
+        scroll    = 0
         scrollock = 0
-        len_text = len(showable_text)
+        len_text  = len(showable_text)
         #setup runtime vars
         run = True
         redraw = True
@@ -82,12 +82,12 @@ class InfoBox():
                 
     def create_rects(self):
         outer_rect = p.Rect(self.init_pos, (self.outer_size[0] * self.size, self.outer_size[1] * self.size))
-        self.rect_list.append(outer_rect)
-        text_rect = p.Rect((self.init_pos[0] + self.size, self.init_pos[1] + self.size), ((self.outer_size[0] - 2) * self.size, (self.outer_size[1] - 4) * self.size))
-        self.rect_list.append(text_rect)
+        text_rect  = p.Rect((self.init_pos[0] + self.size, self.init_pos[1] + self.size), ((self.outer_size[0] - 2) * self.size, (self.outer_size[1] - 4) * self.size))
         clear_rect = p.Rect(self.init_pos[0] + self.size, self.init_pos[1] + (self.outer_size[1] * self.size) - (self.size * 2), self.size * 3, self.size)
-        self.rect_list.append(clear_rect)
         close_rect = p.Rect(self.init_pos[0] + ((self.outer_size[0] - 4) * self.size), self.init_pos[1] + (self.outer_size[1] * self.size) - (self.size * 2), self.size * 3, self.size)
+        self.rect_list.append(outer_rect)
+        self.rect_list.append(text_rect)
+        self.rect_list.append(clear_rect)
         self.rect_list.append(close_rect)
         
     def on_end(self, clicked):

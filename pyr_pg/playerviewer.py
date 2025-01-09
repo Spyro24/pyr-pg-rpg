@@ -1,6 +1,6 @@
 """
     playerviewer - A Tool to view player files from pyr-pg
-    Copyright (C) 2024 Spyro24
+    Copyright (C) 2024-2025 Spyro24
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 class PlayerDataViewer():
     def __init__(self):
         self.player_data = {"PlayerName":"", "fileversion":"", "Position":[]}
-        self.version = "0.0.1"
+        self.version     = "0.0.1"
         
     def run(self):
         print("pyr-pg player save viewer - A Tool to view player files")

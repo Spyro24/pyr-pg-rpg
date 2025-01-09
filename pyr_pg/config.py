@@ -1,6 +1,3 @@
-"""
-    Copyright (C) 2024 Spyro24
-"""
 class config():
     def __init__(self, file):
         self.file = file

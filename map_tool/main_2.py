@@ -54,6 +54,8 @@ class multi_editor():
                 if self.editor_mode == 0:
                     p.draw.rect(self.window, (100,100,100), self.tile_choser_rect, 3)
                     p.draw.rect(self.window, (100,100,100), self.maped_rect, 3)
+                elif self.editor_mode == 1:
+                    self.font.draw("Coming Soon", self.font_size, (self.ui_size * 10, self.ui_size * 5))
                 self.left_side_menu()
                 p.draw.rect(self.window, (100,100,100), self.tool_options_rect, 3)
                 p.display.flip()
@@ -67,7 +69,7 @@ class multi_editor():
         self.visible_rects.append(p.Rect((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size)))
         self.buttons.append(self.visible_rects[0])
         self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (0, self.font_size), 5, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[0], {"Settings":self.settings, "About":None, "Exit":self.end}, mode="advance"))
-        self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (self.ui_size, self.ui_size * 5), 6, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[1], {"Mapeditor":self.settings}, mode="advance"))
+        self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (self.ui_size, self.ui_size * 5), 6, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[1], {"Mapeditor":self.set_mode_mapeditor, "Paintmode":self.set_mode_paint}, mode="advance"))
     
     def settings(self):
         pass
@@ -89,6 +91,14 @@ class multi_editor():
         self.tile_choser_rect  = p.Rect((win_w - (self.ui_size * 8), self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
         self.tool_options_rect = p.Rect((0, self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
         self.maped_rect        = p.Rect((self.ui_size * 8,self.ui_size * 3),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
+        
+    def set_mode_mapeditor(self):
+        self.editor_md_tag = "Mapeditor"
+        self.editor_mode   = 0
+    
+    def set_mode_paint(self):
+        self.editor_md_tag = "Paintmode"
+        self.editor_mode   = 1
 
 if __name__ == "__main__":
     while True:

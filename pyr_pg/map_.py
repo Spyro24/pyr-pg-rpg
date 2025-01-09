@@ -1,20 +1,3 @@
-"""
-    Map class to handle the binary maps.
-    Copyright (C) 2024 Spyro24
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
 import pygame as p
 
 class map:
@@ -27,20 +10,20 @@ class map:
         #---Add +settings to the parameter list
         for key in settings[0].keys(): #overwrite and add parameters to the map
             self.params[key] = settings[0][key]
+            self.debug_col   = self.params["debug_col"]["map_hitbox"]
         #---legacy code---
-            self.debug_col = self.params["debug_col"]["map_hitbox"]
-        self.layers = self.params["layers"]
-        self.tile_bytes = self.params["map_byte_size"]
-        self.gw = self.params["window"] #Pygame window object
-        self.pos_x = 0 #Blit x position
-        self.pos_y = 0 #Blit x position
-        self.map_x = self.params["map_xy"][0] #Map x position
-        self.map_y = self.params["map_xy"][1] #Map x position
-        self.map_path = self.params["map_dir"] #The path to the map files
-        self.mw, self.mh = self.params["map_wh"] #Map with in tiles
-        self.tile_list = [self.params["bg_tiles"], self.params["gd_tiles"]] #A list with all tiles sorted by layer
+        self.layers          = self.params["layers"]
+        self.tile_bytes      = self.params["map_byte_size"]
+        self.gw              = self.params["window"] #Pygame window object
+        self.pos_x           = 0 #Blit x position
+        self.pos_y           = 0 #Blit x position
+        self.map_x           = self.params["map_xy"][0] #Map x position
+        self.map_y           = self.params["map_xy"][1] #Map x position
+        self.map_path        = self.params["map_dir"] #The path to the map files
+        self.mw, self.mh     = self.params["map_wh"] #Map with in tiles
+        self.tile_list       = [self.params["bg_tiles"], self.params["gd_tiles"]] #A list with all tiles sorted by layer
         self.gw_x, self.gw_y = self.gw.get_size()
-        set_scale = 0
+        set_scale            = 0
         if self.gw_y > self.gw_x: set_scale = self.gw_x
         else: set_scale = self.gw_y
         self.scale = set_scale / self.mw

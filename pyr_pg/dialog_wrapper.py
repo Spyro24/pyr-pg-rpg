@@ -4,27 +4,26 @@ import time
 #@Dialog
 class dialog():
     def __init__(self, globconfig):
-        self.global_config = globconfig
-        self.blit_surface = self.global_config["pg_window"]
-        self.config = {"gridsize":(16,16), "blit_pos":(0,0), "tile_size":0}
+        self.global_config  = globconfig
+        self.blit_surface   = self.global_config["pg_window"]
+        self.config         = {"gridsize":(16,16), "blit_pos":(0,0), "tile_size":0}
         self.runtime_config = {"textbox":{"image":p.surface.Surface((1,1)),"pos":(0,0), "text_pos":(1,1), "lines":3}, "config_file":{}}
+        self.key_pressed    = False
         self.__setup_env()
-        self.key_pressed = False
     
     def parse(self, diascript):
         script_file = open(diascript,"r")
-        script = script_file.readlines()
-        script_file.close()
-        pointer = 0
+        script      = script_file.readlines()
+        pointer     = 0
         max_pointer = len(script)
-        print(script)
-        run = True
+        run         = True
+        script_file.close()
         while run:
             if pointer >= max_pointer:
                 break
-            cur_instruction = script[pointer].strip()
+            cur_instruction   = script[pointer].strip()
             instruction_table = cur_instruction.split("|")
-            instruction = instruction_table[0]
+            instruction       = instruction_table[0]
             print(cur_instruction)
             print(instruction_table)
             print(instruction)
@@ -46,8 +45,8 @@ class dialog():
                 print(box_config)
                 self.__create_textbox([box_config["position"],(16,5),(1,1),3], "./res/textboxes/gray_rounded.png")
             elif instruction == "dialog":
-                bx, by = self.config['blit_pos']
-                ts = self.config['tile_size']
+                bx, by   = self.config['blit_pos']
+                ts       = self.config['tile_size']
                 blit_pos = self.runtime_config['textbox']['pos']
                 self.blit_surface.blit(self.runtime_config['textbox']['image'], (bx + ts * blit_pos[0], by + ts * blit_pos[1]))
                 self.__draw_text(instruction_table[3], "box")
@@ -149,13 +148,11 @@ class dialog():
         
     def __draw_text(self, text, type_, more_opn=None):
         if type_ == "box":
-            print(str(text))
-            lines = str(text).rsplit("\\n")
-            print(lines)
-            x, y = self.runtime_config['textbox']['pos']
+            lines  = str(text).rsplit("\\n")
+            x, y   = self.runtime_config['textbox']['pos']
             ox, oy = self.runtime_config['textbox']['text_pos'] # X and Y offset
-            font = self.global_config['font']
-            size = self.config['tile_size']
+            font   = self.global_config['font']
+            size   = self.config['tile_size']
             bx, by = self.config['blit_pos']
             for n in range(len(lines)):
                 font.draw(lines[n], size / 10 * 9, (bx + ((x + ox) * size), by + ((y + oy + n) * size)))
@@ -163,21 +160,21 @@ class dialog():
                     break
         
     def __setup_env(self):
-        window_wh = self.blit_surface.get_size()
+        window_wh     = self.blit_surface.get_size()
         shortest_side = window_wh[1]
         if window_wh[0] < window_wh[1]:
             shortest_side = window_wh[0]
         blit_point = (0, 0)
-        midpoint = (window_wh[0]/2, window_wh[1]/2)
-        blit_point = (midpoint[0] - shortest_side/2, midpoint[1] - shortest_side/2)
-        self.config["blit_pos"] = blit_point
+        midpoint                 = (window_wh[0]/2, window_wh[1]/2)
+        blit_point               = (midpoint[0] - shortest_side/2, midpoint[1] - shortest_side/2)
+        self.config["blit_pos"]  = blit_point
         self.config["tile_size"] = int(shortest_side / self.config["gridsize"][0])
         
 if __name__ == "__main__":
     import font
     
-    _test_win = p.display.set_mode((800,16*32))
-    _test_font = font.font(_test_win, "./res/fonts/standard")
+    _test_win    = p.display.set_mode((800,16*32))
+    _test_font   = font.font(_test_win, "./res/fonts/standard")
     _test_config = {"font":_test_font, "pg_window":_test_win}
     _test_dialog = dialog(_test_config)
     #_test_dialog._create_textbox([(0,11),(16,5),(1,1),3], "./res/textboxes/gray_rounded.png")

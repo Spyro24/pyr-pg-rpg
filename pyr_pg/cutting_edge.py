@@ -22,24 +22,24 @@ class CuttingEdge():
         try:
             sprite_table_file = open(path + table, "r")
             sprite_table_raw  = sprite_table_file.readlines()
-            sprite_table_file.close()
             sprite_table_raw  = [line.strip() for line in sprite_table_raw]
+            max_count         = len(sprite_table_raw)
+            sprite_table_file.close()
             print(sprite_table_raw)
-            max_count = len(sprite_table_raw)
             count = 0
             tmp = sprite_table_raw[count].split("x")
             self.sheet_w = int(tmp[0])
             self.sheet_h = int(tmp[1])
-            count += 1
+            count       += 1
             tmp = sprite_table_raw[count].split(">")
-            count += 1
+            count       += 1
             execute = False
             if tmp[0] == "SPRITESHEET":
                 self.sprite_sheet = p.image.load(self.sprite_sheet_path + str(tmp[1]))
-                px_w, px_h = self.sprite_sheet.get_size()
-                tile_size = int(px_h /self.sheet_h)
-                self.tile_size = (tile_size, tile_size)
-                execute = True
+                px_w, px_h        = self.sprite_sheet.get_size()
+                tile_size         = int(px_h /self.sheet_h)
+                self.tile_size    = (tile_size, tile_size)
+                execute           = True
                 if self.debug == "shell":
                     print("Spritesheet '" + self.sprite_sheet_path + str(tmp[1]) + "' is loaded.")
                     print("Table Hight: " + str(px_h) + "px, Table tiles_size: " + str(self.tile_size))
@@ -75,7 +75,7 @@ class CuttingEdge():
         return self.sprite_table
     
     def return_resize_tile(self, tile, tile_size):
-        selected_tile = tile
+        selected_tile       = tile
         selected_tile_infos = self.property_table[tile]
 
 if __name__ == "__main__":
