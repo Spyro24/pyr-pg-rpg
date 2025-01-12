@@ -24,7 +24,7 @@ from map_pg import tile_handler
 class Main():
     def __init__(self):
         #---mapeditor configuration---
-        self.debug = True
+        self.debug     = True
         self.tiling_wh = (48,34)
         self.caption = "PYR_PG Map Editor V0.1"
         self.tiles_per_page = 12 * 6
