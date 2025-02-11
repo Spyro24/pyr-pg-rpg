@@ -4,7 +4,9 @@ minimal requirements
   CPU : Intel Atom N450 with 1,66 GHz
 
 Maptool controls:
-    CTRL + R = Reload the UI (you need this)
+* CTRL + R = Reload the UI (you need this)
+* Arrow Up or Down = Change Edit layer
+* WASD = Move to the next map
 
 V1.0 [pre release]
 pyr_pg (Makend) is available on Itch.(V0.0(External githube link))
