@@ -144,7 +144,7 @@ class main_class():
         run = True
         redraw = True
         #all main menu images
-        background = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowest_size,self.lowest_size))
+        background = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowestSize,self.lowestSize))
         title      = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menuSize * 4,self.menuSize * 2))
         settings   = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menuSize,self.menuSize))
         start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menuSize*3,self.menuSize))
@@ -200,7 +200,7 @@ class main_class():
         menu__setting__ = True
         redraw = True
         back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menuSize, self.menuSize))
-        background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
+        background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowestSize,self.lowestSize))
         seting_background = p.transform.scale(p.image.load("./images/main_menu/settings/settings_back.png"),(self.menuSize * 8, self.menuSize * 8))
         #setup rectangle buttons
         back = 0
@@ -231,7 +231,7 @@ class main_class():
         render = True
         redraw = True
         back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menuSize, self.menuSize))
-        background  = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
+        background  = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowestSize,self.lowestSize))
         arow_left   = p.transform.scale(p.image.load("./images/main_menu/char_selector/chose.png"),(self.menuSize,self.menuSize * 2))
         arow_right  = p.transform.rotate(arow_left, 180)
         ready  = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"),(self.menuSize, self.menuSize))
@@ -354,14 +354,11 @@ class main_class():
     
     def setup_env(self):
         w, h = self.game_win.get_size()
-        self.lowest_size = 0
-        if w > h:
-            self.lowest_size = h
-        else:
-            self.lowest_size = w
-        self.b_pos_x = (w / 2) - (self.lowest_size / 2)
-        self.b_pos_y = (h / 2) - (self.lowest_size / 2)
-        self.menuSize   = self.lowest_size / 10
+        self.lowestSize = w
+        if w > h: self.lowestSize = h
+        self.b_pos_x = (w / 2) - (self.lowestSize / 2)
+        self.b_pos_y = (h / 2) - (self.lowestSize / 2)
+        self.menuSize   = self.lowestSize / 10
         self.audioSetup = pyr_pg.sound.sound(self.game_win, "./music/")
                 
     def close_game(self) -> None:
