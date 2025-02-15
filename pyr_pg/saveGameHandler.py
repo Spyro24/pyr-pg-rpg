@@ -17,7 +17,12 @@ class saveFile():
         pass
     
     def loadFromFile(self, filePath: str) -> None:
-        saveFile = open
+        saveFile = open(filePath, "br")
+        saveData = saveFile.read()
+        saveFile.close()
+        #---Version Creation---
+        modulVersion = self.version.split(".")
+        saveDataVersion = int(modulVersion[0]) * 1000000 + int(modulVersion[1]) * 1000 + int(modulVersion[2])
     
     def saveToFile(self, filePath: str) -> None:
         saveData = b"\xF5" #initial Byte for recognition of a pyr_pg save
@@ -26,6 +31,7 @@ class saveFile():
             saveData += int(number).to_bytes()
         if len(saveData) != 4:
             raise ValueError("Save version write Failed!")
+        
         #---Write the save data in the save file---
         saveFile = open(filePath, "bw")
         saveFile.write(saveData)
