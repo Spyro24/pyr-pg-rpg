@@ -15,4 +15,23 @@ class saveFile():
         
     def injectRPGconfig(self, rpgConfigDict: dict) -> None:
         pass
-        
+    
+    def loadFromFile(self, filePath: str) -> None:
+        saveFile = open
+    
+    def saveToFile(self, filePath: str) -> None:
+        saveData = b"\xF5" #initial Byte for recognition of a pyr_pg save
+        version = self.version.split(".")
+        for number in version:
+            saveData += int(number).to_bytes()
+        if len(saveData) != 4:
+            raise ValueError("Save version write Failed!")
+        #---Write the save data in the save file---
+        saveFile = open(filePath, "bw")
+        saveFile.write(saveData)
+        saveFile.close()
+         
+if __name__ == "__main__": #In Module unit test
+    test = saveFile()
+    test.saveToFile("./testData/testSave")
+    
