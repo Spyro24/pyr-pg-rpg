@@ -391,7 +391,7 @@ class main_class():
             self.lowest_size = w
         self.b_pos_x = (w / 2) - (self.lowest_size / 2)
         self.b_pos_y = (h / 2) - (self.lowest_size / 2)
-        self.menu_size = self.lowest_size / 10
+        self.menu_size   = self.lowest_size / 10
         self.audio_setup = pyr_pg.sound.sound(self.game_win, "./music/")
                 
     def close_game(self):

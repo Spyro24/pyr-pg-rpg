@@ -5,7 +5,7 @@ import zlib
 class mapFileHandler():
     def __init__(self, mapWidth, mapHight, mapFilePath):
         self.mapAray        = []
-        self.mapBytesConfig = (2, 2, 2, 2, 2, 1) #Ground, Groundoverlay, overlay, shadows, oververlay, hitboxes
+        self.mapBytesConfig = (2, 2, 2, 2, 2, 1) #Ground, Groundoverlay, overlay, oververlay, shadows, hitboxes
         self.mapWidth       = mapWidth
         self.mapHight       = mapHight
         self.mapFilePath    = mapFilePath

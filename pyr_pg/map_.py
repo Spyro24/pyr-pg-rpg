@@ -1,4 +1,5 @@
 import pygame as p
+import zlib
 
 class map:
     def __init__(self, *settings):
@@ -10,8 +11,8 @@ class map:
         #---Add +settings to the parameter list
         for key in settings[0].keys(): #overwrite and add parameters to the map
             self.params[key] = settings[0][key]
-            self.debug_col   = self.params["debug_col"]["map_hitbox"]
         #---legacy code---
+        self.debug_col       = self.params["debug_col"]["map_hitbox"]
         self.layers          = self.params["layers"]
         self.tile_bytes      = self.params["map_byte_size"]
         self.gw              = self.params["window"] #Pygame window object
@@ -22,6 +23,8 @@ class map:
         self.map_path        = self.params["map_dir"] #The path to the map files
         self.mw, self.mh     = self.params["map_wh"] #Map with in tiles
         self.tile_list       = [self.params["bg_tiles"], self.params["gd_tiles"]] #A list with all tiles sorted by layer
+        self.byteConfig      = (2, 2, 2, 2, 2, 1) #Ground, Groundoverlay, overlay, oververlay, shadows, hitboxes
+        self.rawMap          = []
         self.gw_x, self.gw_y = self.gw.get_size()
         set_scale            = 0
         if self.gw_y > self.gw_x: set_scale = self.gw_x
@@ -33,10 +36,23 @@ class map:
         self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
         
     def load(self):
-        self.state["load"] = True
-        map_f = open(str(self.params["map_dir"]) + str(self.map_x) + "_" + str(self.map_y), "br")
-        map = []
-        for n in range(0,self.layers):
+        self.rawMap = []
+        mapFile     = open(str(self.params["map_dir"]) + str(self.map_x) + "_" + str(self.map_y), "br")
+        compMap     = mapFile.read()
+        decompMap   = zlib.decompress(compMap)
+        mapFile.close()
+        rawMap = []
+        for byteLenght in self.byteConfig:
+            rawMap.append([])
+            for n in range(self.mw * self.mh):
+                extractByte = b""
+                for n in range(byteLenght):
+                    extractByte += int.to_bytes(mapData[curBytePos])
+                    curBytePos  += 1
+                self.mapAray[layer].append(int.from_bytes(extractByte, "big"))
+        self.rawMap = rawMap
+        
+        for n in range(self.layers):
             map.append([])
             for tile in range(0,self.mw * self.mh):
                 #create the ground layer
@@ -71,6 +87,7 @@ class map:
                 n += 1
         self.map = map
         self.create_surface()
+        self.state["load"] = True
         
     
     def move(self,x,y):
