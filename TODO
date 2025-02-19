@@ -1,5 +1,12 @@
-- Free Movement
-- Better Movement
-- Teleport options in Editor
-- comment the entire code
-
+[ ] Makend
+ ├-[ ] MFF (MapFileFormat)
+ │  ├-[✓] MFFv1
+ │  ├-[✓] MFFv2
+ │  ├-[ ] MFFv3
+ │  │  ├-[✓] Compresion for Mapfiles
+ │  │  └-[✓] Variable layer count
+ │  ├-[ ] MMFv4
+ │  │  ├-[ ] Container for creator data
+ │  │  └-[ ] Mapfiles can hold more than a single map
+ │  └-[ ] MMFv5
+ ├-[ ] Maptool / Multieditor
