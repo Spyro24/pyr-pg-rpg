@@ -1,0 +1,10 @@
+-----Fatal Error-----
+Crash Time: 2025-02-19 19:25:39.670680
+Operating System: posix
+Game Name: pyr_pg_rpg
+Game Version: 1.0
+pyr_pg Version: 0.2.6
+Error: name 'rwaMap' is not defined
+------Error end------
+
+please report this to the developers if this is not a filepath error

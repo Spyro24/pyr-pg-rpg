@@ -147,7 +147,7 @@ class main_class():
         self.global_config["font"]      = self.font
         #-------------------------------------------------
         #This has to be configured after the env--------------
-        self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menu_size / 2), (self.b_pos_x, self.b_pos_y), (20,20))
+        self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menuSize / 2), (self.b_pos_x, self.b_pos_y), (20,20))
         self.options  = pyr_pg.options_menu.options_menu(self.global_config)
         self.options.create("./res/menus/options_menu.png")
         #-----------------------------------------------------
@@ -162,16 +162,16 @@ class main_class():
         redraw = True
         #all main menu images
         background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
-        title      = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menu_size * 4,self.menu_size * 2))
-        settings   = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menu_size,self.menu_size))
-        start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menu_size*3,self.menu_size))
-        continue_g = p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menu_size*3,self.menu_size))
-        info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menu_size,self.menu_size))
+        title      = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menuSize * 4,self.menuSize * 2))
+        settings   = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menuSize,self.menuSize))
+        start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menuSize*3,self.menuSize))
+        continue_g = p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menuSize*3,self.menuSize))
+        info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
         #button rectangles
-        set_rect  = self.game_win.blit(settings, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size *9)))
-        load_rect = self.game_win.blit(continue_g, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 8)))
-        new_rect  = self.game_win.blit(start_newg, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 6.5)))
-        info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
+        set_rect  = self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
+        load_rect = self.game_win.blit(continue_g, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 8)))
+        new_rect  = self.game_win.blit(start_newg, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 6.5)))
+        info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
         start_new_game = False
         while run: #main menu loop
@@ -188,7 +188,7 @@ class main_class():
                     self.menu_settings()
                     redraw = True                
                 if new_rect.collidepoint(m_pos):
-                    self.audio_setup.play("sfx_1", "menu_click")
+                    self.audioSetup.play("sfx_1", "menu_click")
                     run = False
                     start_new_game = True
                 if info_rect.collidepoint(m_pos):
@@ -196,11 +196,11 @@ class main_class():
                     redraw = True
             if redraw:
                 self.game_win.blit(background, (self.b_pos_x, self.b_pos_y))
-                self.game_win.blit(title, (self.b_pos_x + (self.menu_size * 3), self.b_pos_y + self.menu_size))
-                set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size *9)))
-                info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
-                self.game_win.blit(continue_g, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 8)))
-                self.game_win.blit(start_newg, (self.b_pos_x + (self.menu_size * 3.33), self.b_pos_y + (self.menu_size * 6.5)))
+                self.game_win.blit(title, (self.b_pos_x + (self.menuSize * 3), self.b_pos_y + self.menuSize))
+                set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
+                info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
+                self.game_win.blit(continue_g, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 8)))
+                self.game_win.blit(start_newg, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 6.5)))
                 redraw = False
                 render = True                
             if render:
@@ -216,9 +216,9 @@ class main_class():
         render = True
         menu__setting__ = True
         redraw = True
-        back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menu_size, self.menu_size))
+        back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menuSize, self.menuSize))
         background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
-        seting_background = p.transform.scale(p.image.load("./images/main_menu/settings/settings_back.png"),(self.menu_size * 8, self.menu_size * 8))
+        seting_background = p.transform.scale(p.image.load("./images/main_menu/settings/settings_back.png"),(self.menuSize * 8, self.menuSize * 8))
         #setup rectangle buttons
         back = 0
         while menu__setting__:
@@ -231,7 +231,7 @@ class main_class():
             if redraw:
                 self.game_win.blit(background,(self.b_pos_x, self.b_pos_y))
                 back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y))
-                self.game_win.blit(seting_background,(self.b_pos_x + self.menu_size, self.b_pos_y + self.menu_size))
+                self.game_win.blit(seting_background,(self.b_pos_x + self.menuSize, self.b_pos_y + self.menuSize))
                 if self.debug:
                     pass
                 render = True
@@ -247,15 +247,15 @@ class main_class():
         menu__create_character__ = True
         render = True
         redraw = True
-        back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menu_size, self.menu_size))
+        back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menuSize, self.menuSize))
         background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
-        arow_left = p.transform.scale(p.image.load("./images/main_menu/char_selector/chose.png"),(self.menu_size,self.menu_size * 2))
+        arow_left = p.transform.scale(p.image.load("./images/main_menu/char_selector/chose.png"),(self.menuSize,self.menuSize * 2))
         arow_right = p.transform.rotate(arow_left, 180)
-        ready = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"),(self.menu_size, self.menu_size))
+        ready = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"),(self.menuSize, self.menuSize))
         #setup rectangle buttons
-        back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
-        decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menu_size * 4)))
-        start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size * 9)))
+        back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
+        decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menuSize * 4)))
+        start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
         back_to_main = False
         start_game = False
@@ -275,9 +275,9 @@ class main_class():
                     menu__create_character__ = False                    
             if redraw:
                 self.game_win.blit(background,(self.b_pos_x, self.b_pos_y))
-                back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y + (self.menu_size * 9)))
-                decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menu_size * 4)))
-                start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menu_size * 9), self.b_pos_y + (self.menu_size * 9)))
+                back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
+                decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menuSize * 4)))
+                start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize * 9)))
                 render = True
                 redraw = False            
             if render:
@@ -391,8 +391,8 @@ class main_class():
             self.lowest_size = w
         self.b_pos_x = (w / 2) - (self.lowest_size / 2)
         self.b_pos_y = (h / 2) - (self.lowest_size / 2)
-        self.menu_size   = self.lowest_size / 10
-        self.audio_setup = pyr_pg.sound.sound(self.game_win, "./music/")
+        self.menuSize   = self.lowest_size / 10
+        self.audioSetup = pyr_pg.sound.sound(self.game_win, "./music/")
                 
     def close_game(self):
         p.quit()
@@ -401,7 +401,7 @@ class main_class():
     
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
-    runner = "User"
+    runner = "Dev"
     if runner == "User":
         try:
             game = main_class(LogSystem=logsys.insert)
@@ -415,12 +415,12 @@ if __name__ == "__main__":
             
             log = game.runtime_store[rs.LogSystem]
             log(1, "-----Fatal Error-----",
-                   "Crash Time: " + str(log_time),
+                   "Crash Time: "       + str(log_time),
                    "Operating System: " + str(os.name),
-                   "Game Name: " + str(game.game_name),
-                   "Game Version: " + str(game.game_version),
-                   "pyr_pg Version: " + str(pyr_pg.version),
-                   "Error: " + str(err),
+                   "Game Name: "        + str(game.game_name),
+                   "Game Version: "     + str(game.game_version),
+                   "pyr_pg Version: "   + str(pyr_pg.version),
+                   "Error: "            + str(err),
                    "------Error end------",
                    "\nplease report this to the developers if this is not a filepath error")
             logsys.WriteLog(path="./logs/")

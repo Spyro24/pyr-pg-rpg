@@ -25,6 +25,7 @@ class map:
         self.tile_list       = [self.params["bg_tiles"], self.params["gd_tiles"]] #A list with all tiles sorted by layer
         self.byteConfig      = (2, 2, 2, 2, 2, 1) #Ground, Groundoverlay, overlay, oververlay, shadows, hitboxes
         self.rawMap          = []
+        self.map             = None
         self.gw_x, self.gw_y = self.gw.get_size()
         set_scale            = 0
         if self.gw_y > self.gw_x: set_scale = self.gw_x
@@ -36,12 +37,13 @@ class map:
         self.in_y = (self.gw_y / 2) - ((self.mw / 2) * self.scale)
         
     def load(self):
-        self.rawMap = []
+        self.rawMap.clear()
         mapFile     = open(str(self.params["map_dir"]) + str(self.map_x) + "_" + str(self.map_y), "br")
         compMap     = mapFile.read()
-        decompMap   = zlib.decompress(compMap)
+        mapData     = zlib.decompress(compMap)
         mapFile.close()
         rawMap = []
+        curBytePos = 0
         for byteLenght in self.byteConfig:
             rawMap.append([])
             for n in range(self.mw * self.mh):
@@ -49,31 +51,32 @@ class map:
                 for n in range(byteLenght):
                     extractByte += int.to_bytes(mapData[curBytePos])
                     curBytePos  += 1
-                self.mapAray[layer].append(int.from_bytes(extractByte, "big"))
+                rawMap[-1].append(int.from_bytes(extractByte, "big"))
         self.rawMap = rawMap
         
-        for n in range(self.layers):
+        map = []
+        for n in range(len(self.rawMap)):
             map.append([])
-            for tile in range(0,self.mw * self.mh):
+            for tile in range(self.mw * self.mh):
                 #create the ground layer
                 if n == 0:
-                    test = int.from_bytes(map_f.read(self.tile_bytes), "big")
+                    test = self.rawMap[n][tile]
                     if test > 0:
                         tmp =(p.transform.scale(self.params["bg_tiles"][test - 1],(self.scale,self.scale)))
                         map[n].append(tmp.convert())
                     else:
                         map[n].append(0)
-                #create the hitboxes        
-                elif n == 1:
-                    map[n].append(int.from_bytes(map_f.read(self.tile_bytes), "big"))
                 #create the ground overlay layer
                 elif n == 2:
-                    test = int.from_bytes(map_f.read(self.tile_bytes), "big")
+                    test = self.rawMap[n][tile]
                     if test > 0:
-                        tmp =(p.transform.scale(self.tile_list[1][test - 1],(self.scale,self.scale)))
+                        tmp = (p.transform.scale(self.tile_list[1][test - 1],(self.scale,self.scale)))
                         map[n].append(tmp.convert_alpha())
                     else:
                         map[n].append(0)
+                #create the hitboxes        
+                elif n == 4:
+                    map[n].append(self.rawMap[n][tile])
         
         #---code for creating the hitboxes---
         #clear hitboxes
@@ -83,7 +86,7 @@ class map:
         for h in range(self.mh):
             self.map_raw_hitboxes.append([])
             for w in range(self.mw):
-                self.map_raw_hitboxes[h].append(map[1][n])
+                self.map_raw_hitboxes[h].append(map[4][n])
                 n += 1
         self.map = map
         self.create_surface()
