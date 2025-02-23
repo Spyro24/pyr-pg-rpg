@@ -27,11 +27,14 @@ class multi_editor():
         self.cur_layer        = 0
         self.cur_tilsesel_pos = 0
         self.main_menu_entrys = {"Settings":self.settings, "About":self.VOID, "Exit":self.end}
-        self.load_maped()
+        logo                  = p.image.load("./res/symbols/logo.png")
+        logo_scaled           = p.transform.scale(logo, (self.font_size, self.font_size))
+        self.images["splash"] = logo
+        self.images["logo_scaled"] = logo_scaled
+        self.progressBarLoadSplash([self.load_maped, self.cachingTiles, self.calculateUiRects, self.addTilesToMaped], self.colors[0])
         self.main_loop()
         
     def main_loop(self):
-        self.reload_ui()
         run = True
         update = True
         while run:
@@ -110,27 +113,25 @@ class multi_editor():
                 p.display.flip()
                 update = False
             
-    def load_maped(self):
-        logo = p.image.load("./res/symbols/logo.png")
-        self.images["splash"] = logo
-        logo_scaled = p.transform.scale(logo, (self.font_size, self.font_size))
-        self.images["logo_scaled"] = logo_scaled
-        self.buttons.append(self.window.blit(logo_scaled,(0,0)))
-        self.visible_rects.append(p.Rect((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size)))
-        self.buttons.append(self.visible_rects[0])
-        self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (0, self.font_size), 5, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[0], self.main_menu_entrys, mode="advance"))
-        self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (self.ui_size, self.ui_size * 5), 6, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[1], {"Mapeditor":self.set_mode_mapeditor, "Paintmode":self.set_mode_paint}, mode="advance"))
-        self.selectorButtonsTiles  = map_pg.tile_handler.tile_handler("./res/buttons/selector_bar.png", {"size":"6x1"}, mode="single")
-        self.listSelectButtons     = self.selectorButtonsTiles.return_tiles()
-        self.cachingTiles(1)
+    def load_maped(self, x):
+        if x == 0:
+            return "Load Mapeditor"
+        else:
+            self.buttons.append(self.window.blit(self.images["logo_scaled"],(0,0)))
+            self.visible_rects.append(p.Rect((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size)))
+            self.buttons.append(self.visible_rects[0])
+            self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (0, self.font_size), 5, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[0], self.main_menu_entrys, mode="advance"))
+            self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (self.ui_size, self.ui_size * 5), 6, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[1], {"Mapeditor":self.set_mode_mapeditor, "Paintmode":self.set_mode_paint}, mode="advance"))
+            self.selectorButtonsTiles = map_pg.tile_handler.tile_handler("./res/buttons/selector_bar.png", {"size":"6x1"}, mode="single")
+            self.listSelectButtons    = self.selectorButtonsTiles.return_tiles()
         
     def cachingTiles(self, x):
         if x == 0:
             return "Caching Tiles"
         else:
-            self.tilesGround           = map_pg.tile_handler.tile_handler("../tiles/ground", {"size":"12x6"}).return_tiles()
-            self.tilesGroundOverlay    = map_pg.tile_handler.tile_handler("../tiles/groundov", {"size":"12x6"})
-            self.tilesPlayerOverlay    = map_pg.tile_handler.tile_handler("../tiles/overlay", {"size":"12x6"})
+            self.tilesGround        = map_pg.tile_handler.tile_handler("../tiles/ground", {"size":"12x6"}).return_tiles()
+            self.tilesGroundOverlay = map_pg.tile_handler.tile_handler("../tiles/groundov", {"size":"12x6"})
+            self.tilesPlayerOverlay = map_pg.tile_handler.tile_handler("../tiles/overlay", {"size":"12x6"})
     
     def show_splash(self):
         win_w, win_h       = self.window.get_size()
@@ -151,18 +152,18 @@ class multi_editor():
         
     def reload_ui(self):
         self.logsys("[MAP_TOOL][UI](reload) Reload UI")
-        self.progressBarLoadSplash([self.calculateUiRects, self.rescale], (0,127,255))
+        self.progressBarLoadSplash([self.calculateUiRects, self.rescale], self.colors[0])
     
     def rescale(self, x):
         if x == 0:
-            pass
+            return "Rescaling"
         else:
             self.visible_rects[0].update((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size))
             self.menus[1].rescale(self.font_size, (self.ui_size, self.ui_size * 5), 6, self.buttons[1])
     
     def calculateUiRects(self, x):
         if x == 0:
-            return "Reloading UI"
+            return "Calculating UI"
         else:
             win_w, win_h = self.window.get_size()
             self.font_size         = self.ui_size - 2
@@ -188,19 +189,32 @@ class multi_editor():
         exit(0)
         
     def progressBarLoadSplash(self, functionList, color):
-        win_w, win_h = self.window.get_size()
+        winW, winH   = self.window.get_size()
         winXC, winYC = self.window.get_rect().center
         percentSteps = 1 / len(functionList)
+        emptyBar     = p.Rect((winW / 4, winH / 16 * 12),(winW / 4 * 2, winH / 16))
+        exeStep      = 0
+        fontSize     = winH / 16
         for function in functionList:
+            exeStep += 1
             displayText = function(0)
             self.window.fill((0,0,0))
             self.show_splash()
+            p.draw.rect(self.window, color, emptyBar, int(fontSize / 10))
+            p.draw.rect(self.window, color, ((winW / 4, winH / 16 * 12),((winW / 4 * 2) * (exeStep * percentSteps), winH / 16)))
+            self.font.draw(str(displayText), fontSize, (winW / 4, winH / 16 * 12 - fontSize))
             p.display.flip()
             function(1)
+            #time.sleep(1)
         
     
     def VOID(self):
         pass
+    
+    #---Loading Function Section---
+    def addTilesToMaped(self, x):
+        if x == 0:
+            return "Ading Tiles"
 
 if __name__ == "__main__":
     while True:

@@ -7,6 +7,7 @@ class mapEditor:
         self.tileSize   = 64
         self.mapWidth   = 16
         self.mapHigth   = 16
+        self.tiles      = {}
         
     def drawStack(self, posX, posY):
         pass
@@ -14,3 +15,5 @@ class mapEditor:
     def drawHitbox(self, posX, posY):
         pass
         
+    def addTiles(self, tileSet, tileSetName):
+        self.tiles[tileSetName] = tileSet
