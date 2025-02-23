@@ -18,49 +18,49 @@
     along with this program.
 """
 
-import pygame as p
+from random import randint
+import subprocess
 import os
 from pathlib import Path
-import subprocess
+import pygame as p
 import pyr_pg
-from random import randint
 #import time
 import runtime_store as rs
 
 class main_class():
     def __init__(self, LogSystem=print):
-        self.runtime_store = {}
+        self.runtimeStore = {}
         #----modify this section for your game if you use this runner----
-        self.runtime_store[rs.PlayerSpeed]  = 8
-        self.runtime_store[rs.ObjectLenght] = 2
-        self.runtime_store[rs.DefaultFps]   = 30
-        self.runtime_store[rs.LogSystem]    = LogSystem
+        self.runtimeStore[rs.PlayerSpeed]  = 8
+        self.runtimeStore[rs.ObjectLenght] = 2
+        self.runtimeStore[rs.DefaultFps]   = 30
+        self.runtimeStore[rs.LogSystem]    = LogSystem
         #----------------------------------------------------------------
-        self.random_title_text               = True #Set it to false if you don't want to use a sufix for the tiitle
-        self.player_speed                    = self.runtime_store[rs.PlayerSpeed]
-        self.debug                           = False
-        self.object_lenght                   = self.runtime_store[rs.ObjectLenght]
-        self.runtime_store[rs.MicroTiling]   = 16
-        self.default_FPS                     = 30
-        self.runtime_store[rs.TileSheetSize] = "12x6"
-        self.FPS_COUNTER                     = True
-        self.debug_console                   = True
-        self.standard_player_sprite          = "protogen_kem"
-        self.character_path                  = "./res/characters/"
-        self.main_FPS_count                  = 0
-        self.rendered_FPS_count              = 0
+        self.random_title_text              = True #Set it to false if you don't want to use a sufix for the tiitle
+        self.player_speed                   = self.runtimeStore[rs.PlayerSpeed]
+        self.debug                          = False
+        self.object_lenght                  = self.runtimeStore[rs.ObjectLenght]
+        self.runtimeStore[rs.MicroTiling]   = 16
+        self.default_FPS                    = 30
+        self.runtimeStore[rs.TileSheetSize] = "12x6"
+        self.fpsCounter                     = True
+        self.debug_console                  = True
+        self.standard_player_sprite         = "protogen_kem"
+        self.character_path                 = "./res/characters/"
+        self.main_FPS_count                 = 0
+        self.rendered_FPS_count             = 0
         self.global_config = {"pg_window":None,
                               "options"  :None}
         self.debug_colors  = {"player_hitbox":(0, 0, 255),
                               "map_hitbox":(0,127,255)}
-        self.map_config    = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/",    {"size":self.runtime_store[rs.TileSheetSize]}),
-                              "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/",   {"size":self.runtime_store[rs.TileSheetSize]}),
-                              "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":self.runtime_store[rs.TileSheetSize]}),
+        self.map_config    = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/",    {"size":self.runtimeStore[rs.TileSheetSize]}),
+                              "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/",   {"size":self.runtimeStore[rs.TileSheetSize]}),
+                              "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
                               "debug_col":self.debug_colors}
         self.main_config   = {"tiles_xy":(16,16),
                               "player_start_pos_xy":(0,0),
                               "debug_colors":self.debug_colors,
-                              "micro_tiling":self.runtime_store[rs.MicroTiling],
+                              "micro_tiling":self.runtimeStore[rs.MicroTiling],
                               "character_path":self.character_path,
                               "player_sprite":self.standard_player_sprite}
         self.player_speed = 1 / ((self.main_config["micro_tiling"] * self.player_speed))
@@ -78,8 +78,6 @@ class main_class():
         print("try to init game: " + self.game_name)
         print("[PYR-PG][Info] version " + pyr_pg.version)
         print(self.info_text)
-        
-        
         if self.platform == "posix": # init for a linux system
             #----- This code need some optimisation ----
             self.conf_path = str(Path.home()) + "/.config/pyr-pg/" + self.game_name
@@ -102,20 +100,12 @@ class main_class():
                     print("---Error---")
                     print("cannot configure the game.\nHere the Error: [ " + str(err) + " ]")
                     print("---Error---")
-        
-        #I have outcomment this section because i have no windows tester
-        #elif self.platform == "nt":
-        #    self.conf_path = str(os.environ['APPDATA'] + "/config/pyr-pg/" + self.game_name)
-        #    if not os.path.exists(self.conf_path):
-        #        os.makedirs(self.conf_path)
-        
         #general config if you use a generic system
         else:
             #----- You have to use linux in the 0.4 to x.0
             #but a simple config is here
             #(Please use the next time linux to run the game)
             self.conf_path = "./main_conf"
-            
         self.global_config_file = pyr_pg.config.config(self.conf_path + "/global_config")
         if not is_ready:
             get_wh = p.display.set_mode((0,0))
@@ -123,12 +113,11 @@ class main_class():
             self.global_config_file.add("win_w", w / 1.5)
             self.global_config_file.add("win_h", h / 1.5)
         self.global_config_file.save()
-        
     
     def play(self):
-        self.runtime_store[rs.WindowProperties]            = {}
-        self.runtime_store[rs.WindowProperties][rs.Window] = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
-        self.game_win                                      = self.runtime_store[rs.WindowProperties][rs.Window]
+        self.runtimeStore[rs.WindowProperties]            = {}
+        self.runtimeStore[rs.WindowProperties][rs.Window] = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
+        self.game_win                                      = self.runtimeStore[rs.WindowProperties][rs.Window]
         self.font                                          = pyr_pg.font.font(self.game_win, "./res/fonts/standard")
         self.map_config["window"]                          = self.game_win
         if self.random_title_text:
@@ -368,7 +357,7 @@ class main_class():
                 self.rendered_FPS_count += 1            
             #---end of game loop---
             self.main_FPS_count += 1 
-            if self.FPS_COUNTER:
+            if self.fpsCounter:
                 if (FPS_get + 1) < cur_frame_time:
                     FPS_get = cur_frame_time
                     print("RFPS: " + str(self.rendered_FPS_count))
@@ -410,8 +399,8 @@ if __name__ == "__main__":
             try:
                 import datetime
                 log_time = datetime.datetime.now()
-            except ImportError as err:
-                log_time = err
+            except ImportError as errTime:
+                log_time = errTime
             
             log = game.runtime_store[rs.LogSystem]
             log(1, "-----Fatal Error-----",

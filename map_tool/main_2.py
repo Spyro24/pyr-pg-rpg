@@ -95,11 +95,11 @@ class multi_editor():
                         c = 0
                         for y in range(12):
                             for x in range(6):
-                                self.window.blit(p.transform.scale(self.tiles_ground[c + (self.cur_tilsesel_pos * self.tile_sheetSize)], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * x), rct_py + (self.ui_size * y)))
+                                self.window.blit(p.transform.scale(self.tilesGround[c + (self.cur_tilsesel_pos * self.tile_sheetSize)], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * x), rct_py + (self.ui_size * y)))
                                 c += 1
                     rct_px, rct_py = tuple(self.tile_choser_rect.bottomleft)
                     for n in range(6):
-                        self.window.blit(p.transform.scale(self.list_sel_buttons[n], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * n), rct_py - self.ui_size))
+                        self.window.blit(p.transform.scale(self.listSelectButtons[n], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * n), rct_py - self.ui_size))
                     if self.debug:
                         self.tileselector_clgr.debug(self.window)
                         self.selector_buttons.debug(self.window)
@@ -114,28 +114,30 @@ class multi_editor():
         logo = p.image.load("./res/symbols/logo.png")
         self.images["splash"] = logo
         logo_scaled = p.transform.scale(logo, (self.font_size, self.font_size))
-        self.show_splash("Init MapED")
         self.images["logo_scaled"] = logo_scaled
         self.buttons.append(self.window.blit(logo_scaled,(0,0)))
         self.visible_rects.append(p.Rect((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size)))
         self.buttons.append(self.visible_rects[0])
         self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (0, self.font_size), 5, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[0], self.main_menu_entrys, mode="advance"))
         self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (self.ui_size, self.ui_size * 5), 6, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[1], {"Mapeditor":self.set_mode_mapeditor, "Paintmode":self.set_mode_paint}, mode="advance"))
-        self.show_splash("Loading Tiles")
-        self.tiles_ground        = map_pg.tile_handler.tile_handler("../tiles/ground", {"size":"12x6"}).return_tiles()
-        self.tiles_groundOverlay = map_pg.tile_handler.tile_handler("../tiles/groundov", {"size":"12x6"})
-        self.tiles_playerOverlay = map_pg.tile_handler.tile_handler("../tiles/overlay", {"size":"12x6"})
-        self.selector_buttons_ti = map_pg.tile_handler.tile_handler("./res/buttons/selector_bar.png", {"size":"6x1"}, mode="single")
-        self.list_sel_buttons    = self.selector_buttons_ti.return_tiles()
+        self.selectorButtonsTiles  = map_pg.tile_handler.tile_handler("./res/buttons/selector_bar.png", {"size":"6x1"}, mode="single")
+        self.listSelectButtons     = self.selectorButtonsTiles.return_tiles()
+        self.cachingTiles(1)
+        
+    def cachingTiles(self, x):
+        if x == 0:
+            return "Caching Tiles"
+        else:
+            self.tilesGround           = map_pg.tile_handler.tile_handler("../tiles/ground", {"size":"12x6"}).return_tiles()
+            self.tilesGroundOverlay    = map_pg.tile_handler.tile_handler("../tiles/groundov", {"size":"12x6"})
+            self.tilesPlayerOverlay    = map_pg.tile_handler.tile_handler("../tiles/overlay", {"size":"12x6"})
     
-    def show_splash(self, text):
+    def show_splash(self):
         win_w, win_h       = self.window.get_size()
         splash             = p.transform.scale(self.images["splash"], (int(win_h/2), int(win_h/2)))
         splash_w, splash_h = splash.get_size()
         self.window.fill((0, 0, 0))
         self.window.blit(splash, ((win_w / 2) - (splash_w / 2), 0))
-        self.font.draw(text, self.font_size, (win_w / 3, (win_h / 4) * 3))
-        p.display.flip()
         
     def settings(self):
         pass
@@ -149,16 +151,29 @@ class multi_editor():
         
     def reload_ui(self):
         self.logsys("[MAP_TOOL][UI](reload) Reload UI")
-        self.show_splash("Reloading UI")
-        win_w, win_h = self.window.get_size()
-        self.font_size         = self.ui_size - 2
-        self.tile_choser_rect  = p.Rect((win_w - (self.ui_size * 8), self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
-        self.tool_options_rect = p.Rect((0, self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
-        self.maped_rect        = p.Rect((self.ui_size * 8,self.ui_size * 3),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
-        rct_px, rct_py         = tuple(self.tile_choser_rect.topleft)
-        self.tileselector_clgr = map_pg.clickgrid.ClickGrid((6, 12), (rct_px + self.ui_size, rct_py, self.ui_size * 6, self.ui_size * 12))
-        rct_px, rct_py         = tuple(self.tile_choser_rect.bottomleft)
-        self.selector_buttons  = map_pg.clickgrid.ClickGrid((6, 1), (rct_px + self.ui_size, rct_py - self.ui_size, self.ui_size * 6, self.ui_size))
+        self.progressBarLoadSplash([self.calculateUiRects, self.rescale], (0,127,255))
+    
+    def rescale(self, x):
+        if x == 0:
+            pass
+        else:
+            self.visible_rects[0].update((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size))
+            self.menus[1].rescale(self.font_size, (self.ui_size, self.ui_size * 5), 6, self.buttons[1])
+    
+    def calculateUiRects(self, x):
+        if x == 0:
+            return "Reloading UI"
+        else:
+            win_w, win_h = self.window.get_size()
+            self.font_size         = self.ui_size - 2
+            self.tile_choser_rect  = p.Rect((win_w - (self.ui_size * 8), self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
+            self.tool_options_rect = p.Rect((0, self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
+            self.maped_rect        = p.Rect((self.ui_size * 8,self.ui_size * 3),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
+            rct_px, rct_py         = tuple(self.tile_choser_rect.topleft)
+            self.tileselector_clgr = map_pg.clickgrid.ClickGrid((6, 12), (rct_px + self.ui_size, rct_py, self.ui_size * 6, self.ui_size * 12))
+            rct_px, rct_py         = tuple(self.tile_choser_rect.bottomleft)
+            self.selector_buttons  = map_pg.clickgrid.ClickGrid((6, 1), (rct_px + self.ui_size, rct_py - self.ui_size, self.ui_size * 6, self.ui_size))
+        
         
     def set_mode_mapeditor(self):
         self.editor_md_tag = "Mapeditor"
@@ -171,6 +186,18 @@ class multi_editor():
     def end(self):
         p.quit()
         exit(0)
+        
+    def progressBarLoadSplash(self, functionList, color):
+        win_w, win_h = self.window.get_size()
+        winXC, winYC = self.window.get_rect().center
+        percentSteps = 1 / len(functionList)
+        for function in functionList:
+            displayText = function(0)
+            self.window.fill((0,0,0))
+            self.show_splash()
+            p.display.flip()
+            function(1)
+        
     
     def VOID(self):
         pass

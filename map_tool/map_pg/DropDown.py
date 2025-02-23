@@ -17,7 +17,6 @@ class drop_down():
         self.expand_rect = p.Rect(pos, (size * lenght, size * len(self.function_keys)))
         self.bg_col = color[0]
         self.fg_col = color[1]
-        self.option_grid = []
         self.create_option_grid()
     
     def set_mode(self):
@@ -33,6 +32,7 @@ class drop_down():
         y = self.begin_pos[1]
         x_end = self.end_pos[0]
         y_end = self.font_size
+        self.option_grid = []
         for option in range(len(self.function_keys)):
             self.option_grid.append(p.Rect(x, y, x_end, y_end))
             y += self.font_size
@@ -89,6 +89,16 @@ class drop_down():
     
     def close(self):
         pass
+    
+    def rescale(self, size, pos, lenght, activate):
+        self.font_size = size
+        self.activate = p.Rect(activate)
+        self.x_pos = pos[0]
+        self.begin_pos = pos
+        self.end_pos = (size * lenght, 0)
+        self.expand_rect = p.Rect(pos, (size * lenght, size * len(self.function_keys)))
+        self.option_grid = []
+        self.create_option_grid()
     
     def open(self, mpos):
         if self.activate.collidepoint(mpos):

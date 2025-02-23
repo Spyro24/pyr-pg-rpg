@@ -1,10 +1,13 @@
-V1.0 [pre release]
-pyr_pg (Makend) is available on Itch.(V0.0(External githube link))
-
 minimal requirements
   RAM : 2GB
   OS  : Linux
   CPU : Intel Atom N450 with 1,66 GHz
+
+Maptool controls:
+    CTRL + R = Reload the UI (you need this)
+
+V1.0 [pre release]
+pyr_pg (Makend) is available on Itch.(V0.0(External githube link))
 
 
     (pyr-pg-rpg) (A Python RPG Maker with a bultin rpg)
