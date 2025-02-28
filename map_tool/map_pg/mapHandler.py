@@ -38,7 +38,7 @@ class mapFileHandler():
             for n in range(self.mapHight * self.mapWidth):
                 extractByte = b""
                 for n in range(byteLenght):
-                    extractByte += int.to_bytes(mapData[curBytePos])
+                    extractByte += int.to_bytes(mapData[curBytePos], 1, "big")
                     curBytePos  += 1
                 self.mapAray[layer].append(int.from_bytes(extractByte, "big"))
             layer += 1
@@ -47,7 +47,7 @@ class mapFileHandler():
         mapData = b""
         for byteLenght in range(len(self.mapBytesConfig)):
             for n in range(self.mapHight * self.mapWidth):
-                mapData += int.to_bytes(self.mapAray[byteLenght][n], self.mapBytesConfig[byteLenght])
+                mapData += int.to_bytes(self.mapAray[byteLenght][n], self.mapBytesConfig[byteLenght], "big")
         mapFile = open(self.mapFilePath + "/" + str(self.mapX) + "_" + str(self.mapY), "bw")
         mapFile.write(zlib.compress(mapData,level=9))
         mapFile.close()

@@ -11,6 +11,7 @@ class mapEditor:
         self.tiles      = {"ground":None}
         self.aligRect   = alignRect
         self.clear()
+        self.editLayer  = 0
     
     def loadMapEditor(self, *x):
         if x[0] == 0:
@@ -53,6 +54,18 @@ class mapEditor:
             self.blitSize = rectDimension[0][1]
             self.blitX    = rectDimension[1][0] - round(self.blitSize / 2)
             self.blitY    = rectDimension[2]
+            self.createInputGrid()
+            
+    def createInputGrid(self):
+        self.inputGrid = map_pg.clickgrid.ClickGrid((self.mapWidth, self.mapHigth),(self.blitX,self.blitY,self.blitSize,self.blitSize))
+        
+    def blitTile(self, xY, tileNumber):
+        if self.editLayer == 0:
+            self.ground.blit(self.tiles["ground"][tileNumber], (self.tileSize * xY[0], self.tileSize * xY[1]))
+        
+    def changeTile(self, destination, tileNumber):
+        pass
+        
             
     def render(self):
         self.window.blit(p.transform.scale(self.ground, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))

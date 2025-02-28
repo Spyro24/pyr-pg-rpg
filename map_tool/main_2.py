@@ -88,7 +88,15 @@ class multi_editor():
                                 elif click_pos == 5:
                                     self.cur_tilsesel_pos += 1
                                     print(self.cur_tilsesel_pos)
-                            update = True
+                        elif self.mapEditorSystem.inputGrid.activate_rect.collidepoint(mpos):
+                            placePos  = self.mapEditorSystem.inputGrid.get_click(mpos)
+                            insertion = self.mapEditorSystem.inputGrid.return_number(mpos)
+                            if placePos != (-1, -1):
+                                self.mapEditorSystem.blitTile(placePos, self.tileselector_pos)
+                                if self.cur_layer == 0:
+                                    self.mapFileHandleSystem.mapAray[0].pop(insertion)
+                                    self.mapFileHandleSystem.mapAray[0].insert(insertion, self.tileselector_pos + 1)
+                        update = True
                 self.mouse_pressed = True
             else:
                 self.mouse_pressed = False
@@ -113,6 +121,7 @@ class multi_editor():
                     if self.debug:
                         self.tileselector_clgr.debug(self.window)
                         self.selector_buttons.debug(self.window)
+                        self.mapEditorSystem.inputGrid.debug(self.window)
                 elif self.editor_mode == 1:
                     self.font.draw("Coming Soon", self.font_size, (self.ui_size * 10, self.ui_size * 5))
                 self.left_side_menu()
@@ -172,6 +181,7 @@ class multi_editor():
         self.editor_mode   = 1
         
     def end(self):
+        self.mapFileHandleSystem.saveMap()
         p.quit()
         exit(0)
         
