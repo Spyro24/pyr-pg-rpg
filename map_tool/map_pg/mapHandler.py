@@ -9,7 +9,7 @@ class mapFileHandler():
         self.mapWidth       = mapWidth
         self.mapHight       = mapHight
         self.mapFilePath    = mapFilePath
-        self.mapX           = 1
+        self.mapX           = 0
         self.mapY           = 0
         
     def loadMap(self):
@@ -60,7 +60,10 @@ class mapFileHandler():
             for n in range(len(self.mapBytesConfig)):
                 self.mapAray.append([])
                 for x in range(self.mapHight * self.mapWidth):
-                    self.mapAray[n].append(0)
+                    if n == 0:
+                        self.mapAray[n].append(1)
+                    else:
+                        self.mapAray[n].append(0)
         
 if __name__ == "__main__":
     unitTest = mapFileHandler(16,16,"../../map")

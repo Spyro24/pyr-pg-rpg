@@ -6,3 +6,5 @@ import map_pg.map_
 import map_pg.font
 import map_pg.DropDown
 import map_pg.ToolBox
+import map_pg.mapHandler
+import map_pg.mapEditor

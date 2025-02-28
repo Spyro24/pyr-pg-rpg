@@ -1,0 +1,11 @@
+[LEFT]
+position=0,4
+size=6,6
+
+[RIGHT]
+position=10,4
+size=6,6
+
+[MIDDLE]
+position=5,4
+size=6,6

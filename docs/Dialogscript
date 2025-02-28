@@ -1,0 +1,11 @@
+Das ist die Dialogscript Dukomentation.
+Dialogscript macht nämlich das komplette system interaktiv und bietet sehrviel freiheit.
+Hier werden ALLE befehle und die args der Befehle aufgelistet sowie was die Befehle eventuel tun.
+Die Befehls Argumenete werden mit einem "|" (PIPE-Strich) getrent sowie je zeile nur ein Befehl zulässig ist.
+(Hier ein beispiel: textbox|./res/dialogscript/textbox/UP|./res/textboxes/gray_rounded.png)
+
+Variablen: (variablen müssen in {} geschrieben werden und sind in den internen code hardcodiert.)
+   player - Das spieler objekt mit allen eigenschaften.(nur Lesezugriff)
+
+Befehle:
+   textbox|pathToStyle|pathToTexture - Dies setzt die Textbox auf und platziert die auf dem Bildschirm.
