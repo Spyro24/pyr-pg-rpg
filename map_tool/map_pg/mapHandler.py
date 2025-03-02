@@ -64,6 +64,12 @@ class mapFileHandler():
                         self.mapAray[n].append(1)
                     else:
                         self.mapAray[n].append(0)
+                        
+    def moveMap(self, dir_):
+        self.saveMap()
+        self.mapX += dir_[0]
+        self.mapY += dir_[1]
+        self.failSafeLoadMap()
         
 if __name__ == "__main__":
     unitTest = mapFileHandler(16,16,"../../map")

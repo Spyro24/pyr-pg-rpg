@@ -11,7 +11,8 @@ class mapEditor:
         self.tiles      = {"ground":None}
         self.aligRect   = alignRect
         self.clear()
-        self.editLayer  = 0
+        self.editLayer  = 1
+        self.renderMode = 0
     
     def loadMapEditor(self, *x):
         if x[0] == 0:
@@ -23,6 +24,8 @@ class mapEditor:
         self.aligRect = alignRect
         
     def clear(self):
+        self.empty   = p.surface.Surface((self.tileSize, self.tileSize), flags=p.SRCALPHA)
+        self.empty.fill((255,255,255,255))
         self.ground  = p.surface.Surface((self.tileSize * self.mapWidth, self.tileSize * self.mapHigth))
         self.overlay = p.surface.Surface((self.tileSize * self.mapWidth, self.tileSize * self.mapHigth), flags=p.SRCALPHA)
         
@@ -32,6 +35,15 @@ class mapEditor:
         for groundTile in self.mapHandler.mapAray[0]:
             if groundTile != 0:
                 self.ground.blit(self.tiles["ground"][groundTile - 1], (self.tileSize * xPos, self.tileSize * yPos)) 
+            xPos += 1
+            if xPos >= self.mapWidth:
+                xPos = 0
+                yPos += 1
+        xPos = 0
+        yPos = 0
+        for groundOverlayTile in self.mapHandler.mapAray[1]:
+            if groundOverlayTile != 0:
+                self.overlay.blit(self.tiles["overlay"][groundOverlayTile - 1], (self.tileSize * xPos, self.tileSize * yPos)) 
             xPos += 1
             if xPos >= self.mapWidth:
                 xPos = 0
@@ -62,10 +74,17 @@ class mapEditor:
     def blitTile(self, xY, tileNumber):
         if self.editLayer == 0:
             self.ground.blit(self.tiles["ground"][tileNumber], (self.tileSize * xY[0], self.tileSize * xY[1]))
+        elif self.editLayer == 1:
+            self.overlay.blit(self.empty, (self.tileSize * xY[0], self.tileSize * xY[1]), special_flags=p.BLEND_RGBA_SUB)
+            self.overlay.blit(self.tiles["overlay"][tileNumber], (self.tileSize * xY[0], self.tileSize * xY[1]))
         
     def changeTile(self, destination, tileNumber):
         pass
         
             
     def render(self):
-        self.window.blit(p.transform.scale(self.ground, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))
+        if self.renderMode == 0:
+            if self.editLayer >= 0:
+                self.window.blit(p.transform.scale(self.ground, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))
+            if self.editLayer >= 1:
+                self.window.blit(p.transform.scale(self.overlay, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))

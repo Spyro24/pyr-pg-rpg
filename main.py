@@ -42,7 +42,7 @@ class main_class():
         self.object_lenght                  = self.runtimeStore[rs.ObjectLenght]
         self.runtimeStore[rs.MicroTiling]   = 16
         self.default_FPS                    = 30
-        self.runtimeStore[rs.TileSheetSize] = "12x6"
+        self.runtimeStore[rs.TileSheetSize] = "6x12"
         self.fpsCounter                     = True
         self.debug_console                  = True
         self.standard_player_sprite         = "protogen_kem"

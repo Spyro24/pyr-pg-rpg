@@ -23,8 +23,9 @@ class multi_editor():
         self.tile_sheetSize   = 12*6
         self.tileselector_pos = 0
         self.selected_tile    = 0
+        self.editigLayers     = ["Ground", "GroundOverlay", "PlayerOverlay", "OverOverlay", "Shadows"]
         self.mouse_pressed    = False
-        self.cur_layer        = 0
+        self.cur_layer        = 1
         self.cur_tilsesel_pos = 0
         self.main_menu_entrys = {"Settings":self.settings, "About":self.VOID, "Exit":self.end}
         logo                  = p.image.load("./res/symbols/logo.png")
@@ -38,6 +39,7 @@ class multi_editor():
                                     self.addTilesToMaped], #add the cached tiles to the mapedting system],
                                    self.colors[0])
         self.mapEditorSystem.createMap()
+        self.mapEditorSystem.editLayer = self.cur_layer
         self.main_loop()
         
     def main_loop(self):
@@ -61,6 +63,15 @@ class multi_editor():
                             self.ui_size -= 1
                             self.reload_ui()
                             update = True
+                    else:
+                        if key_ar[p.K_UP]:
+                            if self.cur_layer < 4:
+                                self.cur_layer += 1
+                                update = True
+                        elif key_ar[p.K_DOWN]:
+                            if self.cur_layer > 0:
+                                self.cur_layer -= 1
+                                update = True
             
             mpos   = p.mouse.get_pos()
             mclick = p.mouse.get_pressed()
@@ -93,15 +104,16 @@ class multi_editor():
                             insertion = self.mapEditorSystem.inputGrid.return_number(mpos)
                             if placePos != (-1, -1):
                                 self.mapEditorSystem.blitTile(placePos, self.tileselector_pos)
-                                if self.cur_layer == 0:
-                                    self.mapFileHandleSystem.mapAray[0].pop(insertion)
-                                    self.mapFileHandleSystem.mapAray[0].insert(insertion, self.tileselector_pos + 1)
+                                if 0 <= self.cur_layer <= 5:
+                                    self.mapFileHandleSystem.mapAray[self.cur_layer].pop(insertion)
+                                    self.mapFileHandleSystem.mapAray[self.cur_layer].insert(insertion, self.tileselector_pos + 1)
                         update = True
                 self.mouse_pressed = True
             else:
                 self.mouse_pressed = False
                 
             if update:
+                self.mapEditorSystem.editLayer = self.cur_layer # set the Mapedtool layer to the editing layer
                 self.window.fill("BLACK")
                 self.menu_bar()
                 if self.editor_mode == 0:
@@ -114,6 +126,14 @@ class multi_editor():
                             for x in range(6):
                                 self.window.blit(p.transform.scale(self.tilesGround[c + (self.cur_tilsesel_pos * self.tile_sheetSize)], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * x), rct_py + (self.ui_size * y)))
                                 c += 1
+                    elif self.cur_layer == 1:
+                        c = 0
+                        for y in range(12):
+                            for x in range(6):
+                                self.window.blit(p.transform.scale(self.tilesGroundOverlay[c + (self.cur_tilsesel_pos * self.tile_sheetSize)], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * x), rct_py + (self.ui_size * y)))
+                                c += 1
+                    elif self.cur_layer == 4:
+                        p.draw.rect(self.window, (255,255,255), self.tile_choser_rect)
                     rct_px, rct_py = tuple(self.tile_choser_rect.bottomleft)
                     for n in range(6):
                         self.window.blit(p.transform.scale(self.listSelectButtons[n], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * n), rct_py - self.ui_size))
@@ -214,13 +234,14 @@ class multi_editor():
             return "Ading Tiles"
         else:
             self.mapEditorSystem.addTiles(self.tilesGround, "ground")
+            self.mapEditorSystem.addTiles(self.tilesGroundOverlay, "overlay")
         
     def cachingTiles(self, x):
         if x == 0:
             return "Caching Tiles"
         else:
             self.tilesGround        = map_pg.tile_handler.tile_handler("../tiles/ground", {"size":"12x6"}).return_tiles()
-            self.tilesGroundOverlay = map_pg.tile_handler.tile_handler("../tiles/groundov", {"size":"12x6"})
+            self.tilesGroundOverlay = map_pg.tile_handler.tile_handler("../tiles/groundov", {"size":"12x6"}).return_tiles()
             self.tilesPlayerOverlay = map_pg.tile_handler.tile_handler("../tiles/overlay", {"size":"12x6"})
             
     def load_maped(self, x):
