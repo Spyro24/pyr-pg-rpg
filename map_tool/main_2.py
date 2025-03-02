@@ -20,12 +20,13 @@ class multi_editor():
         self.visible_rects    = []
         self.editor_mode      = 0
         self.editor_md_tag    = "Mapeditor"
+        self.tilesConfig      = {"size":"6x12"}
         self.tile_sheetSize   = 12*6
         self.tileselector_pos = 0
         self.selected_tile    = 0
         self.editigLayers     = ["Ground", "GroundOverlay", "PlayerOverlay", "OverOverlay", "Shadows"]
         self.mouse_pressed    = False
-        self.cur_layer        = 1
+        self.cur_layer        = 0
         self.cur_tilsesel_pos = 0
         self.main_menu_entrys = {"Settings":self.settings, "About":self.VOID, "Exit":self.end}
         logo                  = p.image.load("./res/symbols/logo.png")
@@ -72,6 +73,8 @@ class multi_editor():
                             if self.cur_layer > 0:
                                 self.cur_layer -= 1
                                 update = True
+                        elif key_ar[p.K_e]:
+                            self.cur_tilsesel_pos = 0
             
             mpos   = p.mouse.get_pos()
             mclick = p.mouse.get_pressed()
@@ -89,7 +92,7 @@ class multi_editor():
                     if self.mouse_pressed == False:
                         if self.tile_choser_rect.collidepoint(mpos):
                             if self.tileselector_clgr.activate_rect.collidepoint(mpos):
-                                self.tileselector_pos = self.tileselector_clgr.return_number(mpos) + (self.tile_sheetSize * self.cur_tilsesel_pos)
+                                self.tileselector_pos = self.tileselector_clgr.return_number(mpos) + (self.tile_sheetSize * self.cur_tilsesel_pos) + 1
                             elif self.selector_buttons.activate_rect.collidepoint(mpos):
                                 click_pos = self.selector_buttons.return_number(mpos)
                                 if click_pos == 0:
@@ -104,9 +107,9 @@ class multi_editor():
                             insertion = self.mapEditorSystem.inputGrid.return_number(mpos)
                             if placePos != (-1, -1):
                                 self.mapEditorSystem.blitTile(placePos, self.tileselector_pos)
-                                if 0 <= self.cur_layer <= 5:
+                                if 0 <= self.cur_layer <= 4:
                                     self.mapFileHandleSystem.mapAray[self.cur_layer].pop(insertion)
-                                    self.mapFileHandleSystem.mapAray[self.cur_layer].insert(insertion, self.tileselector_pos + 1)
+                                    self.mapFileHandleSystem.mapAray[self.cur_layer].insert(insertion, self.tileselector_pos)
                         update = True
                 self.mouse_pressed = True
             else:
@@ -119,21 +122,13 @@ class multi_editor():
                 if self.editor_mode == 0:
                     p.draw.rect(self.window, (100,100,100), self.tile_choser_rect, 3)
                     p.draw.rect(self.window, (100,100,100), self.maped_rect, 3)
-                    rct_px, rct_py = tuple(self.tile_choser_rect.topleft)
                     if self.cur_layer == 0:
-                        c = 0
-                        for y in range(12):
-                            for x in range(6):
-                                self.window.blit(p.transform.scale(self.tilesGround[c + (self.cur_tilsesel_pos * self.tile_sheetSize)], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * x), rct_py + (self.ui_size * y)))
-                                c += 1
+                        self.blitToTileSelector(self.tilesGround)
                     elif self.cur_layer == 1:
-                        c = 0
-                        for y in range(12):
-                            for x in range(6):
-                                self.window.blit(p.transform.scale(self.tilesGroundOverlay[c + (self.cur_tilsesel_pos * self.tile_sheetSize)], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * x), rct_py + (self.ui_size * y)))
-                                c += 1
+                        self.blitToTileSelector(self.tilesGroundOverlay)
                     elif self.cur_layer == 4:
                         p.draw.rect(self.window, (255,255,255), self.tile_choser_rect)
+                        self.blitToTileSelector(self.tilesShadow)
                     rct_px, rct_py = tuple(self.tile_choser_rect.bottomleft)
                     for n in range(6):
                         self.window.blit(p.transform.scale(self.listSelectButtons[n], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * n), rct_py - self.ui_size))
@@ -228,6 +223,21 @@ class multi_editor():
     def VOID(self):
         pass
     
+    #---repeating functions--------
+    def blitToTileSelector(self, tileSet):
+        rct_px, rct_py = tuple(self.tile_choser_rect.topleft)
+        c = 0
+        try:
+            for y in range(12):
+                for x in range(6):
+                    self.window.blit(p.transform.scale(tileSet[c + (self.cur_tilsesel_pos * self.tile_sheetSize)], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * x), rct_py + (self.ui_size * y)))
+                    c += 1
+        except IndexError as err:
+            if self.cur_tilsesel_pos <= 0:
+                pass
+            else:
+                self.cur_tilsesel_pos -= 1
+                self.blitToTileSelector(tileSet)
     #---Loading Function Section---
     def addTilesToMaped(self, x):
         if x == 0:
@@ -235,14 +245,16 @@ class multi_editor():
         else:
             self.mapEditorSystem.addTiles(self.tilesGround, "ground")
             self.mapEditorSystem.addTiles(self.tilesGroundOverlay, "overlay")
+            self.mapEditorSystem.addTiles(self.tilesShadow, "shadow")
         
     def cachingTiles(self, x):
         if x == 0:
             return "Caching Tiles"
         else:
-            self.tilesGround        = map_pg.tile_handler.tile_handler("../tiles/ground", {"size":"12x6"}).return_tiles()
-            self.tilesGroundOverlay = map_pg.tile_handler.tile_handler("../tiles/groundov", {"size":"12x6"}).return_tiles()
-            self.tilesPlayerOverlay = map_pg.tile_handler.tile_handler("../tiles/overlay", {"size":"12x6"})
+            self.tilesGround        = map_pg.tile_handler.tile_handler("../tiles/ground",   self.tilesConfig).return_tiles()
+            self.tilesGroundOverlay = map_pg.tile_handler.tile_handler("../tiles/groundov", self.tilesConfig).return_tiles()
+            self.tilesPlayerOverlay = map_pg.tile_handler.tile_handler("../tiles/overlay",  self.tilesConfig).return_tiles()
+            self.tilesShadow        = map_pg.tile_handler.tile_handler("../tiles/shadows",  self.tilesConfig).return_tiles()
             
     def load_maped(self, x):
         if x == 0:

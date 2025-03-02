@@ -22,17 +22,22 @@ class ClickGrid():
         return_cor = (-1,-1)
         x = 0
         y = 0
+        xBreak = False
+        yBreak = False
         if self.activate_rect.collidepoint(mpos):
-            for _ in range(self._x_grid):
-                if self._x_rects[_].collidepoint(mpos):
+            for n in range(self._x_grid):
+                if self._x_rects[n].collidepoint(mpos):
+                    xBreak = True
                     break
                 x += 1
             
-            for _ in range(self._y_grid):
-                if self._y_rects[_].collidepoint(mpos):
+            for n in range(self._y_grid):
+                if self._y_rects[n].collidepoint(mpos):
+                    yBreak = True
                     break
                 y += 1
-            return (x,y)
+            if xBreak and yBreak:
+                return (x,y)
         return return_cor
     
     def return_number(self, mpos): #-> int
