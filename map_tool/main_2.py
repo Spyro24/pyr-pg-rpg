@@ -65,16 +65,28 @@ class multi_editor():
                             self.reload_ui()
                             update = True
                     else:
-                        if key_ar[p.K_UP]:
-                            if self.cur_layer < 4:
-                                self.cur_layer += 1
+                        if self.editor_mode == 0:
+                            checkForUpdate = True
+                            if key_ar[p.K_UP]:
+                                if self.cur_layer < 4:
+                                    self.cur_layer += 1
+                            elif key_ar[p.K_DOWN]:
+                                if self.cur_layer > 0:
+                                    self.cur_layer -= 1
+                            elif key_ar[p.K_w]:
+                                self.mapEditorSystem.moveMap((0,-1))
+                            elif key_ar[p.K_s]:
+                                self.mapEditorSystem.moveMap((0,1))
+                            elif key_ar[p.K_a]:
+                                self.mapEditorSystem.moveMap((-1,0))
+                            elif key_ar[p.K_d]:
+                                self.mapEditorSystem.moveMap((1,0))
+                            elif key_ar[p.K_e]:
+                                self.tileselector_pos = 0
+                            else:
+                                checkForUpdate = False
+                            if checkForUpdate:
                                 update = True
-                        elif key_ar[p.K_DOWN]:
-                            if self.cur_layer > 0:
-                                self.cur_layer -= 1
-                                update = True
-                        elif key_ar[p.K_e]:
-                            self.cur_tilsesel_pos = 0
             
             mpos   = p.mouse.get_pos()
             mclick = p.mouse.get_pressed()
@@ -91,9 +103,8 @@ class multi_editor():
                 if self.editor_mode == 0:
                     if self.mouse_pressed == False:
                         if self.tile_choser_rect.collidepoint(mpos):
-                            if self.tileselector_clgr.activate_rect.collidepoint(mpos):
-                                self.tileselector_pos = self.tileselector_clgr.return_number(mpos) + (self.tile_sheetSize * self.cur_tilsesel_pos) + 1
-                            elif self.selector_buttons.activate_rect.collidepoint(mpos):
+                            self.tileselector_pos = self.tileselector_clgr.return_number(mpos) + (self.tile_sheetSize * self.cur_tilsesel_pos) + 1
+                            if self.selector_buttons.activate_rect.collidepoint(mpos):
                                 click_pos = self.selector_buttons.return_number(mpos)
                                 if click_pos == 0:
                                     if self.cur_tilsesel_pos > 0:
@@ -102,14 +113,14 @@ class multi_editor():
                                 elif click_pos == 5:
                                     self.cur_tilsesel_pos += 1
                                     print(self.cur_tilsesel_pos)
-                        elif self.mapEditorSystem.inputGrid.activate_rect.collidepoint(mpos):
-                            placePos  = self.mapEditorSystem.inputGrid.get_click(mpos)
-                            insertion = self.mapEditorSystem.inputGrid.return_number(mpos)
-                            if placePos != (-1, -1):
-                                self.mapEditorSystem.blitTile(placePos, self.tileselector_pos)
-                                if 0 <= self.cur_layer <= 4:
-                                    self.mapFileHandleSystem.mapAray[self.cur_layer].pop(insertion)
-                                    self.mapFileHandleSystem.mapAray[self.cur_layer].insert(insertion, self.tileselector_pos)
+                    if self.mapEditorSystem.inputGrid.activate_rect.collidepoint(mpos):
+                        placePos  = self.mapEditorSystem.inputGrid.get_click(mpos)
+                        insertion = self.mapEditorSystem.inputGrid.return_number(mpos)
+                        if placePos != (-1, -1):
+                            self.mapEditorSystem.blitTile(placePos, self.tileselector_pos)
+                            if 0 <= self.cur_layer <= 4:
+                                self.mapFileHandleSystem.mapAray[self.cur_layer].pop(insertion)
+                                self.mapFileHandleSystem.mapAray[self.cur_layer].insert(insertion, self.tileselector_pos)
                         update = True
                 self.mouse_pressed = True
             else:
@@ -122,6 +133,9 @@ class multi_editor():
                 if self.editor_mode == 0:
                     p.draw.rect(self.window, (100,100,100), self.tile_choser_rect, 3)
                     p.draw.rect(self.window, (100,100,100), self.maped_rect, 3)
+                    p.draw.rect(self.window, (100,100,100), self.statusRect, 3)
+                    rectX, rectY = self.statusRect.topleft
+                    self.font.draw("CurMap=" + str(self.mapFileHandleSystem.mapX) + "_" + str(self.mapFileHandleSystem.mapY), self.font_size, (rectX + self.ui_size,rectY + self.ui_size))
                     if self.cur_layer == 0:
                         self.blitToTileSelector(self.tilesGround)
                     elif self.cur_layer == 1:
@@ -171,21 +185,6 @@ class multi_editor():
         else:
             self.visible_rects[0].update((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size))
             self.menus[1].rescale(self.font_size, (self.ui_size, self.ui_size * 5), 6, self.buttons[1])
-    
-    def calculateUiRects(self, x):
-        if x == 0:
-            return "Calculating UI"
-        else:
-            win_w, win_h = self.window.get_size()
-            self.font_size         = self.ui_size - 2
-            self.tile_choser_rect  = p.Rect((win_w - (self.ui_size * 8), self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
-            self.tool_options_rect = p.Rect((0, self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
-            self.maped_rect        = p.Rect((self.ui_size * 8,self.ui_size * 3),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
-            rct_px, rct_py         = tuple(self.tile_choser_rect.topleft)
-            self.tileselector_clgr = map_pg.clickgrid.ClickGrid((6, 12), (rct_px + self.ui_size, rct_py, self.ui_size * 6, self.ui_size * 12))
-            rct_px, rct_py         = tuple(self.tile_choser_rect.bottomleft)
-            self.selector_buttons  = map_pg.clickgrid.ClickGrid((6, 1), (rct_px + self.ui_size, rct_py - self.ui_size, self.ui_size * 6, self.ui_size))
-        
         
     def set_mode_mapeditor(self):
         self.editor_md_tag = "Mapeditor"
@@ -268,7 +267,7 @@ class multi_editor():
             self.selectorButtonsTiles = map_pg.tile_handler.tile_handler("./res/buttons/selector_bar.png", {"size":"6x1"}, mode="single")
             self.listSelectButtons    = self.selectorButtonsTiles.return_tiles()
             self.mapFileHandleSystem  = map_pg.mapHandler.mapFileHandler(16,16,"../map")
-            self.mapFileHandleSystem.loadMap()
+            self.mapFileHandleSystem.failSafeLoadMap()
             
     def setupMapeditor(self, x):
         if x == 0:
@@ -282,6 +281,22 @@ class multi_editor():
             return "Replace objects"
         else:
             self.mapEditorSystem.reload(self.maped_rect)
+            
+    def calculateUiRects(self, x):
+        if x == 0:
+            return "Calculating UI"
+        else:
+            win_w, win_h = self.window.get_size()
+            self.font_size         = self.ui_size - 2
+            self.tile_choser_rect  = p.Rect((win_w - (self.ui_size * 8), self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
+            self.tool_options_rect = p.Rect((0, self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
+            self.maped_rect        = p.Rect((self.ui_size * 8,self.ui_size * 3),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
+            rct_px, rct_py         = tuple(self.tile_choser_rect.topleft)
+            self.tileselector_clgr = map_pg.clickgrid.ClickGrid((6, 12), (rct_px + self.ui_size, rct_py, self.ui_size * 6, self.ui_size * 12))
+            rct_px, rct_py         = tuple(self.tile_choser_rect.bottomleft)
+            self.selector_buttons  = map_pg.clickgrid.ClickGrid((6, 1), (rct_px + self.ui_size, rct_py - self.ui_size, self.ui_size * 6, self.ui_size))
+            rct_px, rct_py         = tuple(self.maped_rect.bottomleft)
+            self.statusRect        = p.Rect((rct_px, rct_py),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
 
 if __name__ == "__main__":
     while True:

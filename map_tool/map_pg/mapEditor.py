@@ -14,6 +14,12 @@ class mapEditor:
         self.editLayer  = 1
         self.renderMode = 0
     
+    def moveMap(self, dir_):
+        self.mapHandler.moveMap(dir_)
+        self.clear()
+        self.createMap()
+        
+        
     def loadMapEditor(self, *x):
         if x[0] == 0:
             return "Load Mapeditor"
