@@ -136,6 +136,7 @@ class multi_editor():
                     p.draw.rect(self.window, (100,100,100), self.statusRect, 3)
                     rectX, rectY = self.statusRect.topleft
                     self.font.draw("CurMap=" + str(self.mapFileHandleSystem.mapX) + "_" + str(self.mapFileHandleSystem.mapY), self.font_size, (rectX + self.ui_size,rectY + self.ui_size))
+                    self.font.draw(self.editigLayers[self.cur_layer], self.font_size, (rectX + self.ui_size,rectY + self.ui_size * 2))
                     if self.cur_layer == 0:
                         self.blitToTileSelector(self.tilesGround)
                     elif self.cur_layer == 1:
@@ -250,10 +251,11 @@ class multi_editor():
         if x == 0:
             return "Caching Tiles"
         else:
-            self.tilesGround        = map_pg.tile_handler.tile_handler("../tiles/ground",   self.tilesConfig).return_tiles()
-            self.tilesGroundOverlay = map_pg.tile_handler.tile_handler("../tiles/groundov", self.tilesConfig).return_tiles()
-            self.tilesPlayerOverlay = map_pg.tile_handler.tile_handler("../tiles/overlay",  self.tilesConfig).return_tiles()
-            self.tilesShadow        = map_pg.tile_handler.tile_handler("../tiles/shadows",  self.tilesConfig).return_tiles()
+            self.tilesGround               = map_pg.tile_handler.tile_handler("../tiles/ground",   self.tilesConfig).return_tiles()
+            self.tilesGroundOverlay        = map_pg.tile_handler.tile_handler("../tiles/groundov", self.tilesConfig).return_tiles()
+            self.tilesPlayerOverlay        = map_pg.tile_handler.tile_handler("../tiles/overlay",  self.tilesConfig).return_tiles()
+            self.tilesShadow               = map_pg.tile_handler.tile_handler("../tiles/shadows",  self.tilesConfig).return_tiles()
+            self.tilesPlayerOverlayOverlay = map_pg.tile_handler.tile_handler("../tiles/overoverlay",  self.tilesConfig).return_tiles()
             
     def load_maped(self, x):
         if x == 0:
