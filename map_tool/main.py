@@ -1,228 +1,314 @@
-"""
-    The map editor for pyr_pg(this is included in the pyr_pg package folder)
-    Copyright (C) 2024 Spyro24
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
 import pygame as p
-import time
-from time import sleep
 import map_pg
-from map_pg import tile_handler
+import time
+from multiprocessing import Pool
 
-class Main():
-    def __init__(self):
-        #---mapeditor configuration---
-        self.debug     = True
-        self.tiling_wh = (48,34)
-        self.caption = "PYR_PG Map Editor V0.1"
-        self.tiles_per_page = 12 * 6
-        #-----------------------------
-        self.init_window()
-        self.load_tiles()
-        #---internal vars (DO NOT CHANGE)---
-        self.font = map_pg.font.font(self.editor_display, "./symbols/standard")
-        self.map_size_tiles = (16,16)
-        self.settings = {"window":self.editor_display, "bg_tiles":self.ground_tiles.retun_tiles(), "gd_tiles":self.overlay_tiles.retun_tiles(), "ov_tiles":[]}
-        self.quit = False
-        self.editor_tile_sheet_pos = 0
-        self.cur_selected_tile = 0
-        self.edit_mode = 0
-        self.tile_editor_action_bar = map_pg.clickgrid.ClickGrid((12,2),(0, 26*self.tiling_size, 48*self.tiling_size, 8*self.tiling_size))
-        self.tile_choser_tile_selector = map_pg.clickgrid.ClickGrid((12,6),(0, 2*self.tiling_size, 48*self.tiling_size, 24*self.tiling_size))
-        self.map_manipulator_grid = map_pg.clickgrid.ClickGrid(self.map_size_tiles,(16 * self.tiling_size, 2 *self.tiling_size, 16 * self.tiling_size, 16 * self.tiling_size))
-        self.bg_col = (0,0,0)
-        self.menu_colors = {"fg_ddm":(0, 100, 0),"bg_ddm":(0, 0, 255)}
-        self.menu_list = [map_pg.DropDown.drop_down(self.editor_display, self.tiling_size, (0,self.tiling_size), 4, self.font, [self.menu_colors["bg_ddm"], self.menu_colors['fg_ddm']], (0,0,2*self.tiling_size,self.tiling_size), {"Exit":self.quit_editor}, mode="advance")]
-        #-----------------------------------
-        #---loading images---
-        self.tile_selctor_menu_bar = p.image.load("./symbols/menu_bar_tile_selector.png")
-        self.editor_images_dict = {"no_tile":p.transform.scale(p.image.load("./symbols/no_tile.png"),(4*self.tiling_size, 4*self.tiling_size))}
-        #--------------------
-        #---activatoren---
-        self.in_menu_bar_activate = [p.Rect(0, 0,self.tiling_size * 2, self.tiling_size)]
-        self.menubar_activator = p.Rect(0,0,self.tiling_size * self.tiling_wh[0],self.tiling_size)
-        #-----------------
-        self.create_map_obj(self.settings)
-        self.editor_loop()
-    
-    def test_menu_bar(self):
-        mpos = p.mouse.get_pos()
-        for activator in range(len(self.in_menu_bar_activate)):
-            if self.in_menu_bar_activate[activator].collidepoint(mpos):
-                self.menu_list[activator].open(mpos)
-            
+class multi_editor():
+    def __init__(self, log=print):
+        log("[MAP_TOOL](INIT) init map tool")
+        self.debug            = False
+        self.logsys           = log
+        self.window           = p.display.set_mode((720,480), flags=p.RESIZABLE)
+        self.ui_size          = 30
+        self.font_size        = self.ui_size - 2
+        self.font             = map_pg.font.font(self.window, "./res/fonts/standard")
+        self.colors           = [(0, 133, 255), (100,100,100)]
+        self.global_config    = {}
+        self.images           = {}
+        self.buttons          = []
+        self.menus            = []
+        self.visible_rects    = []
+        self.editor_mode      = 0
+        self.editor_md_tag    = "Mapeditor"
+        self.tilesConfig      = {"size":"6x12"}
+        self.tile_sheetSize   = 12*6
+        self.tileselector_pos = 0
+        self.selected_tile    = 0
+        self.editigLayers     = ["Ground", "GroundOverlay", "PlayerOverlay", "OverOverlay", "Shadows"]
+        self.mouse_pressed    = False
+        self.cur_layer        = 0
+        self.cur_tilsesel_pos = 0
+        self.main_menu_entrys = {"Settings":self.settings, "About":self.VOID, "Exit":self.end}
+        logo                  = p.image.load("./res/symbols/logo.png")
+        logo_scaled           = p.transform.scale(logo, (self.font_size, self.font_size))
+        self.images["splash"] = logo
+        self.images["logo_scaled"] = logo_scaled
+        self.progressBarLoadSplash([self.load_maped, #load the mapeditor env
+                                    self.cachingTiles, #loading and caching tilessets
+                                    self.calculateUiRects, # calculate the position of the UI Rectangles
+                                    self.setupMapeditor, #setup the mapediting system
+                                    self.addTilesToMaped], #add the cached tiles to the mapedting system],
+                                   self.colors[0])
+        self.mapEditorSystem.createMap()
+        self.mapEditorSystem.editLayer = self.cur_layer
+        self.main_loop()
         
-    def load_tiles(self): #Load all tile sheets
-        self.ground_tiles = tile_handler.tile_handler("../tiles/ground", {"size":"12x6"})
-        self.overlay_tiles = tile_handler.tile_handler("../tiles/overlay", {"size":"12x6"})
-        self.ground_tiles.add_gw(self.editor_display)
-        self.overlay_tiles.add_gw(self.editor_display)
-        
-    def create_map_obj(self, param_dict):
-        self.map_object = map_pg.map_.map(param_dict)
-        self.map_object.load()
-        
-    def init_window(self):
-        self.create_config()
-        p.display.set_caption(self.caption)
-    
-    def create_config(self):
-        get_size_win = p.display.set_mode()
-        win_size = get_size_win.get_size()
-        win_w, win_h = win_size
-        self.tiling_size = 0
-        if win_w > win_h:
-            self.tiling_size = int(win_h / self.tiling_wh[0])
-        else:
-            self.tiling_size = int(win_w / self.tiling_wh[1])
-        self.editor_display = p.display.set_mode((self.tiling_size * self.tiling_wh[0], self.tiling_size * self.tiling_wh[1]))
-        
-    def render_map(self):
-        if self.edit_mode == 0: #Ground Edit
-            self.map_object.render(0, (16 * self.tiling_size, 2 *self.tiling_size), (16 * self.tiling_size, 16 * self.tiling_size))
-        elif self.edit_mode == 1: #Map Overlay Edit
-            self.map_object.render(0, (16 * self.tiling_size, 2 *self.tiling_size), (16 * self.tiling_size, 16 * self.tiling_size))
-    
-    def option_bar(self):
-        self.font.draw("File", self.tiling_size, (0,0))
-        
-    def show_single_tile(self, pos, size, tile):
-        if self.edit_mode == 0:
-            self.editor_display.blit(p.transform.scale(self.settings["bg_tiles"][tile], size), pos)
-            
-    def show_tile_sheet(self):
-        if self.edit_mode == 0:
-            self.ground_tiles.draw_map(self.editor_tile_sheet_pos, (0,2*self.tiling_size), 24*self.tiling_size)
-        if self.edit_mode == 1:
-            self.overlay_tiles.draw_map(self.editor_tile_sheet_pos, (0,2*self.tiling_size), 24*self.tiling_size)
-    
-    def show_debug_grid(self):
-        for w in range(self.tiling_wh[0]):
-            p.draw.line(self.editor_display, (0, 255, 0), (self.tiling_size * w, 0), (self.tiling_size * w, self.tiling_size * self.tiling_wh[1]))
-            
-        for h in range(self.tiling_wh[1]):
-            p.draw.line(self.editor_display, (0, 255, 255), (0, self.tiling_size * h), (self.tiling_size * self.tiling_wh[0], self.tiling_size * h))
-        
-    def tile_selector(self):
+    def main_loop(self):
         run = True
         update = True
-        redraw = True
-        clicked = False
         while run:
-            if redraw:
-                self.editor_display.fill(self.bg_col)
-                self.option_bar()
-                self.show_tile_sheet()
-                self.editor_display.blit(map_pg.image_helper.scale_on_h(self.tile_selctor_menu_bar, 8 * self.tiling_size), (0, 26*self.tiling_size))
-                if self.cur_selected_tile > 0:
-                        self.show_single_tile((self.tiling_size * 8, self.tiling_size * 30), (self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
-                redraw = False
-                update = True
+            key_ar = p.key.get_pressed()
             for event in p.event.get():
                 if event.type == p.QUIT:
-                    run = False
-                    self.quit = True
-            mpos = p.mouse.get_pos()
-            mclick = p.mouse.get_pressed()
-            if (not clicked) and (mclick[0] == True):
-                clicked = True
-                action_bar_pos = self.tile_editor_action_bar.get_click(mpos)
-                selected_tile_pos = self.tile_choser_tile_selector.get_click(mpos)
-                selected_tile_num = self.tile_choser_tile_selector.return_number(mpos)
-                print(selected_tile_num)
-                print(action_bar_pos)
-                if action_bar_pos == (1, 1):
-                    run = False
-                elif action_bar_pos == (6, 1):
-                    self.editor_tile_sheet_pos = 0
-                    self.cur_selected_tile = 0
-                    redraw = True
-                elif action_bar_pos == (4, 1):
-                    self.editor_tile_sheet_pos += 1
-                    try:
-                        self.show_tile_sheet()
-                        redraw = True
-                    except:
-                        self.editor_tile_sheet_pos -= 1
-                elif action_bar_pos == (3, 1):
-                    if self.editor_tile_sheet_pos > 0:
-                        self.editor_tile_sheet_pos -= 1
-                        redraw = True
-            elif mclick[0] == False:
-                clicked = False
-            if (selected_tile_num + 1) > 0:
-                self.cur_selected_tile = (self.editor_tile_sheet_pos * self.tiles_per_page) + (selected_tile_num + 1)
-                if self.cur_selected_tile > 0:
-                    self.show_single_tile((self.tiling_size * 8, self.tiling_size * 30), (self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
-                    update = True
-            if update:
-                p.display.flip()
+                    self.end()
+                if event.type == p.KEYDOWN or event.type == p.KEYUP:
+                    if event.mod & p.KMOD_CTRL:
+                        if key_ar[114]:
+                            self.reload_ui()
+                            update = True
+                        elif key_ar[43]:
+                            self.ui_size += 1
+                            self.reload_ui()
+                            update = True
+                        elif key_ar[45]:
+                            self.ui_size -= 1
+                            self.reload_ui()
+                            update = True
+                    else:
+                        if self.editor_mode == 0:
+                            checkForUpdate = True
+                            if key_ar[p.K_UP]:
+                                if self.cur_layer < 4:
+                                    self.cur_layer += 1
+                            elif key_ar[p.K_DOWN]:
+                                if self.cur_layer > 0:
+                                    self.cur_layer -= 1
+                            elif key_ar[p.K_w]:
+                                self.mapEditorSystem.moveMap((0,-1))
+                            elif key_ar[p.K_s]:
+                                self.mapEditorSystem.moveMap((0,1))
+                            elif key_ar[p.K_a]:
+                                self.mapEditorSystem.moveMap((-1,0))
+                            elif key_ar[p.K_d]:
+                                self.mapEditorSystem.moveMap((1,0))
+                            elif key_ar[p.K_e]:
+                                self.tileselector_pos = 0
+                            else:
+                                checkForUpdate = False
+                            if checkForUpdate:
+                                update = True
             
-    def change_tile(self, pos):
-        if self.edit_mode == 0:
-            self.map_object.change_tile(pos, 0, self.cur_selected_tile)
-        
-    def editor_loop(self):
-        update = True
-        redraw = True
-        selector_activate = self.editor_display.blit(self.editor_images_dict["no_tile"],(self.tiling_size * 16, self.tiling_size * 19))
-        while not self.quit:
-            if redraw:
-                self.editor_display.fill(self.bg_col)
-                self.option_bar()
-                self.render_map()
-                if self.cur_selected_tile == 0:
-                    self.editor_display.blit(self.editor_images_dict["no_tile"],(self.tiling_size * 16, self.tiling_size * 19))
-                else:
-                    self.show_single_tile((self.tiling_size * 16, self.tiling_size * 19),(self.tiling_size * 4, self.tiling_size * 4), self.cur_selected_tile - 1)
-                #self.show_debug_grid()
-                redraw = False
-                update = True
-            for event in p.event.get():
-                if event.type == p.QUIT:
-                    run = False
-                    self.quit = True
-            mpos = p.mouse.get_pos()
+            mpos   = p.mouse.get_pos()
             mclick = p.mouse.get_pressed()
+            '''
+            for key in range(0, len(key_ar)):
+                if key_ar[key]:
+                    print(key)
+            '''
+            
             if mclick[0] == True:
-                if selector_activate.collidepoint(mpos):
-                    self.tile_selector()
-                    redraw = True
-                    
-                elif self.menubar_activator.collidepoint(mpos):
-                    self.test_menu_bar()
-                    redraw = True
-                    
-                elif self.map_manipulator_grid.activate_rect.collidepoint(mpos):
-                    change_tile_coords = self.map_manipulator_grid.get_click(mpos)
-                    print(change_tile_coords)
-                    self.change_tile(change_tile_coords)
-                    redraw = True
+                self.menus[0].open(mpos)
+                self.menus[1].open(mpos)
+                update = True
+                if self.editor_mode == 0:
+                    if self.mouse_pressed == False:
+                        if self.tile_choser_rect.collidepoint(mpos):
+                            self.tileselector_pos = self.tileselector_clgr.return_number(mpos) + (self.tile_sheetSize * self.cur_tilsesel_pos) + 1
+                            if self.selector_buttons.activate_rect.collidepoint(mpos):
+                                click_pos = self.selector_buttons.return_number(mpos)
+                                if click_pos == 0:
+                                    if self.cur_tilsesel_pos > 0:
+                                        self.cur_tilsesel_pos -= 1
+                                        print(self.cur_tilsesel_pos)
+                                elif click_pos == 5:
+                                    self.cur_tilsesel_pos += 1
+                                    print(self.cur_tilsesel_pos)
+                    if self.mapEditorSystem.inputGrid.activate_rect.collidepoint(mpos):
+                        placePos  = self.mapEditorSystem.inputGrid.get_click(mpos)
+                        insertion = self.mapEditorSystem.inputGrid.return_number(mpos)
+                        if placePos != (-1, -1):
+                            self.mapEditorSystem.blitTile(placePos, self.tileselector_pos)
+                            if 0 <= self.cur_layer <= 4:
+                                self.mapFileHandleSystem.mapAray[self.cur_layer].pop(insertion)
+                                self.mapFileHandleSystem.mapAray[self.cur_layer].insert(insertion, self.tileselector_pos)
+                        update = True
+                self.mouse_pressed = True
+            else:
+                self.mouse_pressed = False
+                
             if update:
+                self.mapEditorSystem.editLayer = self.cur_layer # set the Mapedtool layer to the editing layer
+                self.window.fill("BLACK")
+                self.menu_bar()
+                if self.editor_mode == 0:
+                    p.draw.rect(self.window, self.colors[1], self.tile_choser_rect, 3)
+                    p.draw.rect(self.window, self.colors[1], self.maped_rect, 3)
+                    p.draw.rect(self.window, self.colors[1], self.statusRect, 3)
+                    rectX, rectY = self.statusRect.topleft
+                    self.font.draw("CurMap=" + str(self.mapFileHandleSystem.mapX) + "_" + str(self.mapFileHandleSystem.mapY), self.font_size, (rectX + self.ui_size,rectY + self.ui_size))
+                    self.font.draw(self.editigLayers[self.cur_layer], self.font_size, (rectX + self.ui_size,rectY + self.ui_size * 2))
+                    if self.cur_layer == 0:
+                        self.blitToTileSelector(self.tilesGround)
+                    elif self.cur_layer == 1:
+                        self.blitToTileSelector(self.tilesGroundOverlay)
+                    elif self.cur_layer == 2:
+                        self.blitToTileSelector(self.tilesPlayerOverlay)
+                    elif self.cur_layer == 3:
+                        self.blitToTileSelector(self.tilesPlayerOverlayOverlay)
+                    elif self.cur_layer == 4:
+                        p.draw.rect(self.window, (255,255,255), self.tile_choser_rect)
+                        self.blitToTileSelector(self.tilesShadow)
+                    rct_px, rct_py = tuple(self.tile_choser_rect.bottomleft)
+                    for n in range(6):
+                        self.window.blit(p.transform.scale(self.listSelectButtons[n], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * n), rct_py - self.ui_size))
+                    self.mapEditorSystem.render()
+                    if self.debug:
+                        self.tileselector_clgr.debug(self.window)
+                        self.selector_buttons.debug(self.window)
+                        self.mapEditorSystem.inputGrid.debug(self.window)
+                elif self.editor_mode == 1:
+                    self.font.draw("Coming Soon", self.font_size, (self.ui_size * 10, self.ui_size * 5))
+                self.left_side_menu()
+                p.draw.rect(self.window, (100,100,100), self.tool_options_rect, 3)
                 p.display.flip()
-            
-    def quit_editor(self):
-        self.map_object.save_map()
+                update = False
+    
+    def show_splash(self):
+        win_w, win_h       = self.window.get_size()
+        splash             = p.transform.scale(self.images["splash"], (int(win_h/2), int(win_h/2)))
+        splash_w, splash_h = splash.get_size()
+        self.window.fill((0, 0, 0))
+        self.window.blit(splash, ((win_w / 2) - (splash_w / 2), 0))
+        
+    def settings(self):
+        pass
+    
+    def menu_bar(self):
+        self.window.blit(self.images["logo_scaled"],(0,0))
+        
+    def left_side_menu(self):
+        p.draw.rect(self.window, self.colors[0], self.visible_rects[0])
+        self.font.draw(self.editor_md_tag, self.font_size, self.visible_rects[0].topleft)
+        
+    def reload_ui(self):
+        self.logsys("[MAP_TOOL][UI](reload) Reload UI")
+        self.progressBarLoadSplash([self.calculateUiRects, self.rescale, self.replaceObjects, self.mapEditorSystem.calcPos], self.colors[0])
+    
+    def rescale(self, x):
+        if x == 0:
+            return "Rescaling"
+        else:
+            self.visible_rects[0].update((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size))
+            self.menus[1].rescale(self.font_size, (self.ui_size, self.ui_size * 5), 6, self.buttons[1])
+        
+    def set_mode_mapeditor(self):
+        self.editor_md_tag = "Mapeditor"
+        self.editor_mode   = 0
+    
+    def set_mode_paint(self):
+        self.editor_md_tag = "Paintmode"
+        self.editor_mode   = 1
+        
+    def end(self):
+        self.mapFileHandleSystem.saveMap()
         p.quit()
         exit(0)
+        
+    def progressBarLoadSplash(self, functionList, color):
+        winW, winH   = self.window.get_size()
+        winXC, winYC = self.window.get_rect().center
+        percentSteps = 1 / len(functionList)
+        emptyBar     = p.Rect((winW / 4, winH / 16 * 12),(winW / 4 * 2, winH / 16))
+        exeStep      = 0
+        fontSize     = winH / 16
+        for function in functionList:
+            exeStep += 1
+            displayText = function(0)
+            self.window.fill((0,0,0))
+            self.show_splash()
+            p.draw.rect(self.window, color, emptyBar, int(fontSize / 10))
+            p.draw.rect(self.window, color, ((winW / 4, winH / 16 * 12),((winW / 4 * 2) * (exeStep * percentSteps), winH / 16)))
+            self.font.draw(str(displayText), fontSize, (winW / 4, winH / 16 * 12 - fontSize))
+            p.display.flip()
+            function(1)
+            #time.sleep(1)
+        
+    
+    def VOID(self):
+        pass
+    
+    #---repeating functions--------
+    def blitToTileSelector(self, tileSet):
+        rct_px, rct_py = tuple(self.tile_choser_rect.topleft)
+        c = 0
+        try:
+            for y in range(12):
+                for x in range(6):
+                    self.window.blit(p.transform.scale(tileSet[c + (self.cur_tilsesel_pos * self.tile_sheetSize)], (self.ui_size, self.ui_size)), (rct_px + self.ui_size + (self.ui_size * x), rct_py + (self.ui_size * y)))
+                    c += 1
+        except IndexError as err:
+            if self.cur_tilsesel_pos <= 0:
+                pass
+            else:
+                self.cur_tilsesel_pos -= 1
+                self.blitToTileSelector(tileSet)
+    #---Loading Function Section---
+    def addTilesToMaped(self, x):
+        if x == 0:
+            return "Ading Tiles"
+        else:
+            self.mapEditorSystem.addTiles(self.tilesGround, "ground")
+            self.mapEditorSystem.addTiles(self.tilesGroundOverlay, "overlay")
+            self.mapEditorSystem.addTiles(self.tilesPlayerOverlay, "playerOverlay")
+            self.mapEditorSystem.addTiles(self.tilesPlayerOverlayOverlay, "playerOverlayOverlay")
+            self.mapEditorSystem.addTiles(self.tilesShadow, "shadow")
+        
+    def cachingTiles(self, x):
+        if x == 0:
+            return "Caching Tiles"
+        else:
+            self.tilesGround               = map_pg.tile_handler.tile_handler("../tiles/ground",   self.tilesConfig).return_tiles()
+            self.tilesGroundOverlay        = map_pg.tile_handler.tile_handler("../tiles/groundov", self.tilesConfig).return_tiles()
+            self.tilesPlayerOverlay        = map_pg.tile_handler.tile_handler("../tiles/overlay",  self.tilesConfig).return_tiles()
+            self.tilesShadow               = map_pg.tile_handler.tile_handler("../tiles/shadows",  self.tilesConfig).return_tiles()
+            self.tilesPlayerOverlayOverlay = map_pg.tile_handler.tile_handler("../tiles/overoverlay",  self.tilesConfig).return_tiles()
+            
+    def load_maped(self, x):
+        if x == 0:
+            return "Load Mapeditor"
+        else:
+            self.buttons.append(self.window.blit(self.images["logo_scaled"],(0,0)))
+            self.visible_rects.append(p.Rect((self.ui_size, self.ui_size * 4),(self.ui_size * 6, self.ui_size)))
+            self.buttons.append(self.visible_rects[0])
+            self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (0, self.font_size), 5, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[0], self.main_menu_entrys, mode="advance"))
+            self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (self.ui_size, self.ui_size * 5), 6, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[1], {"Mapeditor":self.set_mode_mapeditor, "Paintmode":self.set_mode_paint}, mode="advance"))
+            self.selectorButtonsTiles = map_pg.tile_handler.tile_handler("./res/buttons/selector_bar.png", {"size":"6x1"}, mode="single")
+            self.listSelectButtons    = self.selectorButtonsTiles.return_tiles()
+            self.mapFileHandleSystem  = map_pg.mapHandler.mapFileHandler(16,16,"../map")
+            self.mapFileHandleSystem.failSafeLoadMap()
+            
+    def setupMapeditor(self, x):
+        if x == 0:
+            pass
+        else:
+            self.mapEditorSystem  = map_pg.mapEditor.mapEditor(self.window, self.mapFileHandleSystem, self.maped_rect)
+            self.mapEditorSystem.calcPos(1)
+    
+    def replaceObjects(self, x):
+        if x == 0:
+            return "Replace objects"
+        else:
+            self.mapEditorSystem.reload(self.maped_rect)
+            
+    def calculateUiRects(self, x):
+        if x == 0:
+            return "Calculating UI"
+        else:
+            win_w, win_h = self.window.get_size()
+            self.font_size         = self.ui_size - 2
+            self.tile_choser_rect  = p.Rect((win_w - (self.ui_size * 8), self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
+            self.tool_options_rect = p.Rect((0, self.ui_size * 3),(self.ui_size * 8, win_h - self.ui_size * 3))
+            self.maped_rect        = p.Rect((self.ui_size * 8,self.ui_size * 3),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
+            rct_px, rct_py         = tuple(self.tile_choser_rect.topleft)
+            self.tileselector_clgr = map_pg.clickgrid.ClickGrid((6, 12), (rct_px + self.ui_size, rct_py, self.ui_size * 6, self.ui_size * 12))
+            rct_px, rct_py         = tuple(self.tile_choser_rect.bottomleft)
+            self.selector_buttons  = map_pg.clickgrid.ClickGrid((6, 1), (rct_px + self.ui_size, rct_py - self.ui_size, self.ui_size * 6, self.ui_size))
+            rct_px, rct_py         = tuple(self.maped_rect.bottomleft)
+            self.statusRect        = p.Rect((rct_px, rct_py),(win_w - (self.ui_size * 16),(win_h - self.ui_size * 3) / 2))
 
 if __name__ == "__main__":
-    #try:
-        Editor = Main()
-    #except BaseException as err:
-    #    print(err)
-    #finally:
-        Editor.quit_editor()
-        
+    while True:
+        #try:
+            multi_editor()
+        #except:
+            #exit(1)

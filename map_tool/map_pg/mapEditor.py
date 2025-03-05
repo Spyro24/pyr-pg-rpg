@@ -31,14 +31,18 @@ class mapEditor:
         
     def clear(self):
         self.empty   = p.surface.Surface((self.tileSize, self.tileSize), flags=p.SRCALPHA)
-        self.empty.fill((255,255,255,255))
         self.ground  = p.surface.Surface((self.tileSize * self.mapWidth, self.tileSize * self.mapHigth))
         self.overlay = p.surface.Surface((self.tileSize * self.mapWidth, self.tileSize * self.mapHigth), flags=p.SRCALPHA)
         self.shadow  = p.surface.Surface((self.tileSize * self.mapWidth, self.tileSize * self.mapHigth), flags=p.SRCALPHA)
+        self.playerOverlay  = p.surface.Surface((self.tileSize * self.mapWidth, self.tileSize * self.mapHigth), flags=p.SRCALPHA)
+        self.playerOverlayOverlay  = p.surface.Surface((self.tileSize * self.mapWidth, self.tileSize * self.mapHigth), flags=p.SRCALPHA)
+        self.empty.fill((255,255,255,255))
         
     def createMap(self):
         self.createSurface(self.mapHandler.mapAray[0], self.ground,  "ground")
         self.createSurface(self.mapHandler.mapAray[1], self.overlay, "overlay")
+        self.createSurface(self.mapHandler.mapAray[2], self.playerOverlay, "playerOverlay")
+        self.createSurface(self.mapHandler.mapAray[3], self.playerOverlayOverlay, "playerOverlayOverlay")
         self.createSurface(self.mapHandler.mapAray[4], self.shadow,  "shadow")
     
     def createSurface(self, data, surface, tileSetName):
@@ -84,6 +88,14 @@ class mapEditor:
             self.overlay.blit(self.empty, (self.tileSize * xY[0], self.tileSize * xY[1]), special_flags=p.BLEND_RGBA_SUB)
             if tileNumber > 0:
                 self.overlay.blit(self.tiles["overlay"][tileNumber - 1], (self.tileSize * xY[0], self.tileSize * xY[1]))
+        elif self.editLayer == 2:
+            self.playerOverlay.blit(self.empty, (self.tileSize * xY[0], self.tileSize * xY[1]), special_flags=p.BLEND_RGBA_SUB)
+            if tileNumber > 0:
+                self.playerOverlay.blit(p.transform.scale(self.tiles["playerOverlay"][tileNumber - 1], (self.tileSize, self.tileSize)), (self.tileSize * xY[0], self.tileSize * xY[1]))
+        elif self.editLayer == 3:
+            self.playerOverlayOverlay.blit(self.empty, (self.tileSize * xY[0], self.tileSize * xY[1]), special_flags=p.BLEND_RGBA_SUB)
+            if tileNumber > 0:
+                self.playerOverlayOverlay.blit(p.transform.scale(self.tiles["playerOverlayOverlay"][tileNumber - 1], (self.tileSize, self.tileSize)), (self.tileSize * xY[0], self.tileSize * xY[1]))
         elif self.editLayer == 4:
             self.shadow.blit(self.empty, (self.tileSize * xY[0], self.tileSize * xY[1]), special_flags=p.BLEND_RGBA_SUB)
             if tileNumber > 0:
@@ -95,6 +107,10 @@ class mapEditor:
                 self.window.blit(p.transform.scale(self.ground, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))
             if self.editLayer >= 1:
                 self.window.blit(p.transform.scale(self.overlay, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))
+            if self.editLayer >= 2:
+                self.window.blit(p.transform.scale(self.playerOverlay, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))
+            if self.editLayer >= 3:
+                self.window.blit(p.transform.scale(self.playerOverlayOverlay, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))
             if self.editLayer >= 4:
                 self.window.blit(p.transform.scale(self.shadow, (self.blitSize, self.blitSize)), (self.blitX, self.blitY))
                 
