@@ -26,10 +26,12 @@ import pygame as p
 import pyr_pg
 #import time
 import runtime_store as rs
+import modding
 
 class main_class():
     def __init__(self, LogSystem=print):
         self.runtimeStore = {}
+        self.modSupport   = modding.mod(self.runtimeStore)
         #----modify this section for your game if you use this runner----
         self.runtimeStore[rs.PlayerSpeed]  = 8
         self.runtimeStore[rs.ObjectLenght] = 2
@@ -114,6 +116,7 @@ class main_class():
             self.global_config_file.add("win_w", w / 1.5)
             self.global_config_file.add("win_h", h / 1.5)
         self.global_config_file.save()
+        self.modSupport._on_ready()
     
     def play(self):
         self.runtimeStore[rs.WindowProperties]            = {}
@@ -295,7 +298,7 @@ class main_class():
         debug_console = self.debug_console
         from time import time as time_get
         FPS_get = time_get()
-        FPSmax = 60
+        FPSmax = self.runtimeStore[rs.DefaultFps]
         FPS_c = 0
         KT = time_get()
         ms = 0.001

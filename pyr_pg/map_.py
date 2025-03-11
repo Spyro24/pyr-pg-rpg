@@ -49,7 +49,7 @@ class map:
             for n in range(self.mw * self.mh):
                 extractByte = b""
                 for n in range(byteLenght):
-                    extractByte += int.to_bytes(mapData[curBytePos])
+                    extractByte += int.to_bytes(mapData[curBytePos], 1)
                     curBytePos  += 1
                 rawMap[-1].append(int.from_bytes(extractByte, "big"))
         self.rawMap = rawMap
@@ -119,11 +119,11 @@ class map:
         self.g_layer = tmp0.convert()
         self.gov_layer = tmp1.convert_alpha()
     
-    def get_dia(self):
+    def get_dia(self) -> list:
         return self.map[2]
     
-    def get_pos(self):
-        return 0,0 #self.map_x,self.map_y
+    def get_pos(self) -> tuple:
+        return self.map_x,self.map_y
     
     def get_raw(x,y): #-> bool
         pass
@@ -137,7 +137,7 @@ class map:
         return hb
     
     
-    def render(self): #-> None
+    def render(self) -> None:
        self.gw.blit(self.g_layer,(self.in_x, self.in_y))
        self.gw.blit(self.gov_layer,(self.in_x, self.in_y))
     
