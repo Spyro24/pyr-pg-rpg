@@ -31,17 +31,17 @@ import modding
 class main_class():
     def __init__(self, LogSystem=print):
         self.runtimeStore = {}
+        self.cache        = {}
         self.modSupport   = modding.mod(self.runtimeStore)
         #----modify this section for your game if you use this runner----
         self.runtimeStore[rs.PlayerSpeed]  = 8
-        self.runtimeStore[rs.ObjectLenght] = 2
         self.runtimeStore[rs.DefaultFps]   = 30
         self.runtimeStore[rs.LogSystem]    = LogSystem
         #----------------------------------------------------------------
+        self.runtimeStore[rs.PlayerName]    = "Default"
         self.random_title_text              = True #Set it to false if you don't want to use a sufix for the tiitle
         self.player_speed                   = self.runtimeStore[rs.PlayerSpeed]
         self.debug                          = False
-        self.object_lenght                  = self.runtimeStore[rs.ObjectLenght]
         self.runtimeStore[rs.MicroTiling]   = 16
         self.default_FPS                    = 30
         self.runtimeStore[rs.TileSheetSize] = "6x12"
@@ -148,13 +148,17 @@ class main_class():
         self.global_config['options']   = self.options
         #-----------------------------------------------------
         self.main_menu() #Open the main menu and start the game
-        
+    
+    def cacheImages(self) -> None:
+        self.cache["mainMenu"]       = {}
+        self.cache["mainMenu"]["bg"] = p.image.load("./images/main_menu/back.png"
+                                                    
     def main_menu(self):
         render = True
         run = True
         redraw = True
         #all main menu images
-        background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
+        background = p.transform.scale(self.cache["mainMenu"]["bg"]),(self.lowest_size,self.lowest_size))
         title      = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menuSize * 4,self.menuSize * 2))
         settings   = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menuSize,self.menuSize))
         start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menuSize*3,self.menuSize))
@@ -310,12 +314,7 @@ class main_class():
             for event in p.event.get():
                 if event.type == p.QUIT:
                     run = False            
-            key_ar = p.key.get_pressed()            
-            '''
-            for n in range(0, len(key_ar)):
-                if key_ar[n]:
-                    print(n)
-            '''            
+            key_ar = p.key.get_pressed()              
             if (cur_frame_time - self.player_speed) > KT:
                 if key_ar[p.K_w]:
                     self.player.set_facing("UP")
