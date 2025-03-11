@@ -2,7 +2,7 @@
 
 """
     main class to run a pyr_pg based rpg
-    Copyright (C) 2024 Spyro24
+    Copyright (C) 2024-2025 Spyro24
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ class main_class():
         self.game_config  = pyr_pg.config.config("./game.rpg")
         self.game_name    = self.game_config.get("name")
         self.game_version = self.game_config.get("version")
+        self.NPCs         = []
         is_ready          = False
         print("try to init game: " + self.game_name)
         print("[PYR-PG][Info] version " + pyr_pg.version)
@@ -237,10 +238,10 @@ class main_class():
         render = True
         redraw = True
         back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menuSize, self.menuSize))
-        background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
-        arow_left = p.transform.scale(p.image.load("./images/main_menu/char_selector/chose.png"),(self.menuSize,self.menuSize * 2))
-        arow_right = p.transform.rotate(arow_left, 180)
-        ready = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"),(self.menuSize, self.menuSize))
+        background  = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowest_size,self.lowest_size))
+        arow_left   = p.transform.scale(p.image.load("./images/main_menu/char_selector/chose.png"),(self.menuSize,self.menuSize * 2))
+        arow_right  = p.transform.rotate(arow_left, 180)
+        ready  = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"),(self.menuSize, self.menuSize))
         #setup rectangle buttons
         back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
         decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menuSize * 4)))
@@ -313,16 +314,16 @@ class main_class():
                     print(n)
             '''            
             if (cur_frame_time - self.player_speed) > KT:
-                if key_ar[119]:
+                if key_ar[p.K_w]:
                     self.player.set_facing("UP")
                     self.player.move(0,-1)
-                if key_ar[100]:
+                if key_ar[p.K_d]:
                     self.player.set_facing("RIGHT")
                     self.player.move(1,0)              
-                if key_ar[115]:
+                if key_ar[p.K_s]:
                     self.player.set_facing("DOWN")
                     self.player.move(0,1)
-                if key_ar[97]:
+                if key_ar[p.K_a]:
                     self.player.set_facing("LEFT")
                     self.player.move(-1,0)
                 if self.player.get_state(0):
