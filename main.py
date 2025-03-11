@@ -126,7 +126,7 @@ class main_class():
         self.map_config["window"]                          = self.game_win
         if self.random_title_text:
             text_list     = open("./pyr_pg/random_tittle_texts","r")
-            random_line   = text_list.readlines() #read every line from the configuration file
+            random_line   = text_list.readlines() #read every line from the random tiltle text file
             random_line   = [line.strip() for line in random_line]
             chosen_tiitle = randint(0, len(random_line) - 1)
             text_list.close() #close the configuration nfile
@@ -177,7 +177,7 @@ class main_class():
             if m_click[0]:
                 if set_rect.collidepoint(m_pos):
                     print("open settings menu")
-                    self.audio_setup.play("sfx_1", "menu_click")
+                    self.audioSetup.play("sfx_1", "menu_click")
                     self.menu_settings()
                     redraw = True                
                 if new_rect.collidepoint(m_pos):
@@ -387,7 +387,7 @@ class main_class():
         self.menuSize   = self.lowest_size / 10
         self.audioSetup = pyr_pg.sound.sound(self.game_win, "./music/")
                 
-    def close_game(self):
+    def close_game(self) -> None:
         p.quit()
         exit(0)
     

@@ -1,3 +1,10 @@
+'''
+    PYR_PG is a python RPG libary for making custom RPGs.
+    PYR_PG supports modding(pyr-pg-rpg) custom scripts and more.
+    it also contains a mapmaking system for the mapFile System.
+    Lincense: GPLv3
+    (c) 2023-2025 Spyro24
+'''
 import pyr_pg.config
 import pyr_pg.sound
 import pyr_pg.map_
@@ -10,10 +17,12 @@ import pyr_pg.font
 import pyr_pg.dialog_wrapper
 import pyr_pg.options_menu
 import pyr_pg.log_system
+import pyr_pg.npc
+import pyr_pg.npc_handler
 
-version = "0.2.6"
+version = "0.3.7"
 
-def splash(win, splash_duration):
+def splash(win, splash_duration) -> None:
     #create the pyr_pg splash(no images are used.)
     import base64
     import zlib
