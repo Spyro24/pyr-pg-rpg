@@ -9,6 +9,7 @@ import pygame as p
 class DialogScript():
     def __init__(self, runtimeStore):
         self.rs       = runtimeStore
+        self.cache    = {"configData":{}}
         self.commands = {"exec":self.cExec,
                          "break":self.cBreak,
                          "execstack":self.NULL,
@@ -50,6 +51,38 @@ class DialogScript():
     
     def NULL(self, argList) -> None:
         pass
+    
+    def configLookUp(self, file, KEY) -> tuple or int:
+        return_ = {}
+        try:
+            return_ = self.cache["configData"][file][KEY]
+        except KeyError:
+            conf = open(file, "r")
+            config_file = conf.readlines()
+            conf.close()
+            cur_key = ""
+            cur_file = file
+            self.runtime_config["configData"][cur_file] = {}
+            for line in config_file:
+                cur_line = line.strip()
+                if cur_line == "":
+                    pass
+                elif cur_line[0] == "[":
+                    cur_key = cur_line.strip("[]")
+                    self.runtime_config["configData"][cur_file][cur_key] = {}
+                elif cur_line != "":
+                    data = cur_line.split("=")
+                    values = data[1].split(",")
+                    values_int = []
+                    for val in values:
+                        values_int.append(int(val))
+                    if len(values_int) > 1:
+                        self.runtime_config["configData"][cur_file][cur_key][data[0]] = tuple(values_int)
+                    else:
+                        self.runtime_config["configData"][cur_file][cur_key][data[0]] = values_int[0]
+            print(self.runtime_config["config_file"])
+            return_ = self.runtime_config["configData"][file][KEY]
+        return return_
     
 if __name__ == "__main__":
     import font
