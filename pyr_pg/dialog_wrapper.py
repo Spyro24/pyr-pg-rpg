@@ -58,15 +58,9 @@ class dialog():
         wait = True
         while wait:
             time.sleep(0.01)
-            pressed = False
-            p.event.get()
-            keys = p.key.get_pressed()
-            for key in keys:
-                if key:
-                    pressed = True
-            if not self.key_pressed and pressed:
-                wait = False
-            self.key_pressed = pressed
+            for event in p.event.get():
+                if event.type == p.KEYDOWN:
+                    wait = False
             
     def parse_config_file(self, file, KEY):
         return_ = {}

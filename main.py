@@ -151,14 +151,14 @@ class main_class():
     
     def cacheImages(self) -> None:
         self.cache["mainMenu"]       = {}
-        self.cache["mainMenu"]["bg"] = p.image.load("./images/main_menu/back.png"
-                                                    
-    def main_menu(self):
+        self.cache["mainMenu"]["bg"] = p.image.load("./images/main_menu/back.png")
+    
+    def main_menu(self) -> None:
         render = True
         run = True
         redraw = True
         #all main menu images
-        background = p.transform.scale(self.cache["mainMenu"]["bg"]),(self.lowest_size,self.lowest_size))
+        background = p.transform.scale(self.cache["mainMenu"]["bg"]),(self.lowest_size,self.lowest_size)
         title      = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menuSize * 4,self.menuSize * 2))
         settings   = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menuSize,self.menuSize))
         start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menuSize*3,self.menuSize))
