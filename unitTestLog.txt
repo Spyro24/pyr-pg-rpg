@@ -1,3 +1,5 @@
 [unitTest] DialogSystem unit test...
 [DialogHandler]The logger is working
+[DialogHandler]jmp is correct working
+[DialogHandler]dls execution works fine
 [unitTest] DialogSystem unit test [PASS]

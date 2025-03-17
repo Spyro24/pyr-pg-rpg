@@ -16,6 +16,8 @@ class DialogScript():
                          "execstack":self.NULL,
                          "jmp":self.cJMP,
                          "log":self.cLog,
+                         "killgame":self.cExcept,
+                         "store":self.cStore,
                          }
     
     def execDialogScript(self, diascript: str) -> None:
@@ -48,6 +50,19 @@ class DialogScript():
                 pass 
             
             pc += 1 #increment the programm counter
+            
+    def cStore(self, argList: list) -> tuple:
+        value   = argList[3]
+        path    = argList[1]
+        valType = argList[2]
+        if valType == "string":
+            value = str(value)
+        elif valType == "float":
+            value = float(value)
+        elif valType == "int":
+            value = int(value)
+        return (0, 0)
+    
     def cJMP(self, argList):
         return (1, int(argList[1]))
     
@@ -61,6 +76,10 @@ class DialogScript():
     def cExec(self, argList: list) -> tuple:
         self.execDialogScript(argList[1])
         return (0, 0)
+    
+    def cExcept(self, argList: list) -> None:
+        """Never ever use this function! (its only for unit testing)"""
+        raise BaseException
     
     def NULL(self, argList: list) -> None:
         pass
