@@ -14,7 +14,7 @@ import pyr_pg.tile_handler
 import pyr_pg.cutting_edge
 import pyr_pg.infobox
 import pyr_pg.font
-import pyr_pg.dialog_wrapper
+import pyr_pg.DialogHandler
 import pyr_pg.options_menu
 import pyr_pg.log_system
 import pyr_pg.npc

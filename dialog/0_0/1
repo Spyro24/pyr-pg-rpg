@@ -1,6 +1,0 @@
-auto_clear
-set_box;0
-{player};BlaBlaBlub;{player_sprite};speak;left;synth:test_1
-wait_enter
-lol;Fuck_you.mp3;{player_sprite};speak;right;synth:test_1
-wait_enter

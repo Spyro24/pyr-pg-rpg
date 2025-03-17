@@ -1,0 +1,3 @@
+[unitTest] DialogSystem unit test...
+[DialogHandler]The logger is working
+[unitTest] DialogSystem unit test [PASS]

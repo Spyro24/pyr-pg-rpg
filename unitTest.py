@@ -1,0 +1,36 @@
+"""
+    This is the unit test system.
+    It contains the unit test for every PYR_PG module
+    (c) 2025 Spyro24
+"""
+import pygame as p
+import pyr_pg
+import runtime_store as rs
+
+class testing:
+    def __init__(self, pygameWindow, logSystem):
+        self.runtimeStore = {}
+        self.runtimeStore[rs.LogSystem] = logSystem
+        self.runtimeStore[rs.Window] = pygameWindow
+        self.log = logSystem
+        
+    def runTests(self) -> bool:
+        self.testDialogSystem()
+    
+    def testDialogSystem(self) -> bool:
+        self.log(1, "[unitTest] DialogSystem unit test...") 
+        try:
+            testElement = pyr_pg.DialogHandler.DialogScript(self.runtimeStore)
+            testElement.execDialogScript("./res/unitTests/unitTest.dls")
+        except BaseException as err:
+            self.log(1, "[unitTest] DialogSystem unit test [FAIL]", err)
+            return False
+        self.log(1, "[unitTest] DialogSystem unit test [PASS]")
+        return True
+
+if __name__ == "__main__":
+    testWindow = p.display.set_mode((1080, 720))
+    logSystem  = pyr_pg.log_system.log()
+    testSystem = testing(testWindow, logSystem.insert)
+    testSystem.runTests()
+    logSystem.WriteLog(name="unitTestLog.txt")
