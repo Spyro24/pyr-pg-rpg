@@ -3,6 +3,7 @@ jmp|3
 
 log|1|jmp is correct working
 exec|./res/unitTests/testexec.dls
+exec|./res/unitTests/textboxAndDialogTest.dls
 break
 log|1|break has failed
 killgame

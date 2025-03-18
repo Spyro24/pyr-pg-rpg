@@ -8,10 +8,12 @@ import pyr_pg
 import runtime_store as rs
 
 class testing:
-    def __init__(self, pygameWindow, logSystem):
+    def __init__(self, pygameWindow, logSystem, font):
         self.runtimeStore = {}
+        self.runtimeStore[rs.FontSystem] = font
         self.runtimeStore[rs.LogSystem] = logSystem
         self.runtimeStore[rs.Window] = pygameWindow
+        self.font = font
         self.log = logSystem
         
     def runTests(self) -> bool:
@@ -31,6 +33,7 @@ class testing:
 if __name__ == "__main__":
     testWindow = p.display.set_mode((1080, 720))
     logSystem  = pyr_pg.log_system.log()
-    testSystem = testing(testWindow, logSystem.insert)
+    fontSystem = pyr_pg.font.font(testWindow, "./res/fonts/standard")
+    testSystem = testing(testWindow, logSystem.insert, fontSystem)
     testSystem.runTests()
     logSystem.WriteLog(name="unitTestLog.txt")

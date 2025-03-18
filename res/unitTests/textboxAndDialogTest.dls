@@ -1,0 +1,6 @@
+textbox|./res/dialogscript/textbox/UP|./res/textboxes/gray_rounded.png
+dialog|{player}|{player}|Das ist ein Test|./res/dialogscript/picturepos/LEFT
+dialog|{player}|{player}|Dies ist ein Zeilen\nUmbruch|./res/dialogscript/picturepos/LEFT
+dialog|{player}|{player}|Drei zeilen\ngehen\nauch|./res/dialogscript/picturepos/LEFT
+dialog|{player}|{player}|\nMittig\n|./res/dialogscript/picturepos/LEFT
+log|1|textboxes are working corectly

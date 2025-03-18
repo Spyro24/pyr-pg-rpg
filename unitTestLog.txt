@@ -2,4 +2,5 @@
 [DialogHandler]The logger is working
 [DialogHandler]jmp is correct working
 [DialogHandler]dls execution works fine
+[DialogHandler]textboxes are working corectly
 [unitTest] DialogSystem unit test [PASS]
