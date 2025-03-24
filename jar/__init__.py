@@ -3,6 +3,7 @@
     (c) 2025 Spyro24
 """
 import jar.hitbox
+import jar.controller
 import jar.camera
 
 __version__ = 0.0
