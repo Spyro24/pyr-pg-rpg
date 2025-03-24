@@ -9,7 +9,6 @@ import pyr_pg.config
 import pyr_pg.sound
 import pyr_pg.map_
 import pyr_pg.player
-import pyr_pg.dialog_
 import pyr_pg.tile_handler
 import pyr_pg.cutting_edge
 import pyr_pg.infobox
@@ -20,9 +19,9 @@ import pyr_pg.log_system
 import pyr_pg.npc
 import pyr_pg.npc_handler
 
-version = "0.3.7"
+version = "0.3.8"
 
-def splash(win, splash_duration) -> None:
+def splash(win, splash_duration: float) -> None:
     #create the pyr_pg splash(no images are used.)
     import base64
     import zlib

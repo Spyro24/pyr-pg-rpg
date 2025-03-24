@@ -18,6 +18,18 @@ class testing:
         
     def runTests(self) -> bool:
         self.testDialogSystem()
+        self.testFont()
+    
+    def testFont(self) -> bool:
+        self.log(1, "[unitTest] Font unit test...")
+        try:
+            testElement = self.font
+            testElement.draw("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 1234567890", 10, (0,0))
+        except BaseException as err:
+            self.log(1, "[unitTest] Font unit test [FAIL]", err)
+            return False
+        self.log(1, "[unitTest] Font unit test [PASS]")
+        return True
     
     def testDialogSystem(self) -> bool:
         self.log(1, "[unitTest] DialogSystem unit test...") 
@@ -37,3 +49,4 @@ if __name__ == "__main__":
     testSystem = testing(testWindow, logSystem.insert, fontSystem)
     testSystem.runTests()
     logSystem.WriteLog(name="unitTestLog.txt")
+    p.display.flip()

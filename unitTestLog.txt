@@ -4,3 +4,5 @@
 [DialogHandler]dls execution works fine
 [DialogHandler]textboxes are working corectly
 [unitTest] DialogSystem unit test [PASS]
+[unitTest] Font unit test...
+[unitTest] Font unit test [PASS]

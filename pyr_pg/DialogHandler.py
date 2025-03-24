@@ -12,6 +12,7 @@ class DialogScript():
         self.logsys   = self.rs[9]
         self.font     = self.rs[15]
         self.window   = self.rs[13]
+        self.env      = {"waitEnter":True, "notWorking":()}
         self.config   = {"gridsize":(16,16), "blit_pos":(0,0), "tile_size":0}
         self.cache    = {"configData":{}, "textbox":{"image":p.surface.Surface((1,1)),"pos":(0,0), "text_pos":(1,1), "lines":3}, "config_file":{}}
         self.__setup_env()
@@ -24,6 +25,7 @@ class DialogScript():
                          "store":self.cStore,
                          "textbox":self.cTextbox,
                          "dialog":self.cDialog,
+                         "env":self.cChangeEnv,
                          }
     
     def execDialogScript(self, diascript: str) -> None:
@@ -57,6 +59,18 @@ class DialogScript():
             
             pc += 1 #increment the programm counter
     
+    def cChangeEnv(self, arglist: list) -> tuple:
+        objType = self.env[arglist[1]].__class__
+        if objType == bool:
+            self.env[arglist[1]] = bool(int(arglist[2]))
+        elif objType == int:
+            self.env[arglist[1]] = int(arglist[2])
+        elif objType == str:
+            self.env[arglist[1]] = str(arglist[2])
+        else:
+            self.logsys(0, "[Error] " + str(arglist[1]) + " is from type " + str(objType) + " and not compatible with ChangeEnv")
+        return (0, 0)
+        
     def cTextbox(self, argList: list) -> tuple:
         text_box_config = argList[1]
         text_box_config = text_box_config.split("/")
@@ -161,7 +175,7 @@ class DialogScript():
                 if n >= self.cache["textbox"]["lines"]:
                     break
     
-    def __create_textbox(self, config, png):
+    def __create_textbox(self, config, png: str):
         tileSize = self.config['tile_size']
         self.cache['textbox']['pos'] = config[0]
         box_tilesheet = p.image.load(png)

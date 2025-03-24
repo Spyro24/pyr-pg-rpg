@@ -147,6 +147,7 @@ class main_class():
         #---Export all other important vars to self.global_config---
         self.global_config['options']   = self.options
         #-----------------------------------------------------
+        self.cacheImages()
         self.main_menu() #Open the main menu and start the game
     
     def cacheImages(self) -> None:
@@ -158,7 +159,7 @@ class main_class():
         run = True
         redraw = True
         #all main menu images
-        background = p.transform.scale(self.cache["mainMenu"]["bg"]),(self.lowest_size,self.lowest_size)
+        background = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowest_size,self.lowest_size))
         title      = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menuSize * 4,self.menuSize * 2))
         settings   = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menuSize,self.menuSize))
         start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menuSize*3,self.menuSize))
@@ -330,17 +331,9 @@ class main_class():
                     self.player.move(-1,0)
                 if self.player.get_state(0):
                     KT = time_get()
-                    self.player.reset_state(0)            
-            if key_ar[60]:
-                if debug_console:
-                    console = input(">>> ")
-                    console = console.split(" ")
-                    print(console)
-                    if console[0] == "set":
-                        if console[1] == "player":
-                            if console[2] == "speed":
-                                self.player_speed = 1 / ((self.main_config["micro_tiling"] * float(console[3])))
-            if key_ar[27]:
+                    self.player.reset_state(0)
+            #put here the DEV menu code
+            if key_ar[p.K_ESCAPE]:
                 if not mb_pressed:
                     self.options.open()
                 mb_pressed = True

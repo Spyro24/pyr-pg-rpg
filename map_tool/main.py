@@ -53,14 +53,14 @@ class multi_editor():
                     self.end()
                 if event.type == p.KEYDOWN or event.type == p.KEYUP:
                     if event.mod & p.KMOD_CTRL:
-                        if key_ar[114]:
+                        if key_ar[p.K_r]:
                             self.reload_ui()
                             update = True
-                        elif key_ar[43]:
+                        elif key_ar[p.K_PLUS]:
                             self.ui_size += 1
                             self.reload_ui()
                             update = True
-                        elif key_ar[45]:
+                        elif key_ar[p.K_MINUS]:
                             self.ui_size -= 1
                             self.reload_ui()
                             update = True
