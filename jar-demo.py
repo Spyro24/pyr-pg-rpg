@@ -13,9 +13,10 @@ class jarRun():
         self.camera = jar.camera.Camera(self.window)
         self.testHitboxen = [jar.hitbox.hitbox((0,3),(1,0)), jar.hitbox.hitbox((1,1),(3,0)), jar.hitbox.hitbox((3,0),(4,3))]
         self.bound = jar.hitbox.hitbox((0,0),(10,10))
-        self.camera.zoom = 40
+        #self.camera.zoom = 40
         self.camera.setPos((5,5))
         self.joystick = jar.controller.controller()
+        self.compare = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
         
     def mainLoop(self) -> None:
         update = True
@@ -23,6 +24,7 @@ class jarRun():
         self.run = True
         zoomTime = time.time()
         timing = []
+        timing.append(time.time())
         timing.append(time.time())
         while self.run:
             frameTime = time.time()
@@ -36,9 +38,20 @@ class jarRun():
                     timing[0] = frameTime
                     self.camera.move(pressedButtons[0])
                     update = True
+            
+            if pressedButtons[2] != self.compare:
+                if timing[1] + 0.01 < frameTime:
+                    if pressedButtons[2][6]:
+                        self.camera.zoom += 1 
+                    if pressedButtons[2][7]:
+                        self.camera.zoom -= 1
+                    timing[1] = frameTime
+                    update = True
                     
             if update:
                 self.window.fill((0,0,0))
+                if self.camera.zoom < 1:
+                    self.camera.zoom = 1
                 for hitbox in self.testHitboxen:
                     self.camera.renderRect(hitbox,(255,0,255))
                 self.camera.renderRect(self.bound,(0,255,0))

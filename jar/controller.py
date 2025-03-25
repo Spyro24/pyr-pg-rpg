@@ -26,7 +26,7 @@ class controller():
         if self.__type == 0:
             pass
         if self.__type == 1:
-            return (self.getDpadPS4(), self.getAllAxisPS4())
+            return (self.getDpadPS4(), self.getAllAxisPS4(), self.getAllButtonsPS4())
         
 if __name__ == "__main__":
     import time
@@ -35,4 +35,4 @@ if __name__ == "__main__":
     while True:
         time.sleep(0.01)
         p.event.get()
-        print(test.getDpadPS4())
+        print(test.getAllButtonsPS4())

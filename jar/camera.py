@@ -10,16 +10,19 @@ class Camera():
         self.__zero = pygameWindow.get_rect().center
         self.__windowSize = pygameWindow.get_size()
     
+    def __calcVertexPosOnScreen(self, vertexX: int, vertexY: int) -> int:
+        return ((vertexX - self.__posX) * self.zoom + self.__zero[0], -((vertexY - self.__posY) * self.zoom) + self.__zero[1])
+    
     def renderRect(self, hitboxObj: jar.hitbox.hitbox, color: tuple) -> None:
         lines = hitboxObj.renderRectOnCamera()
         #lines = (lines[0], lines[1], lines[3], lines[2])
-        topLeft = ((lines[0] * self.zoom) - self.__posX, (lines[2] * self.zoom) - self.__posY)
-        buttomLeft = ((lines[0] * self.zoom) - self.__posX, (lines[3] * self.zoom) - self.__posY)
-        topRight = ((lines[1] * self.zoom) - self.__posX, (lines[2] * self.zoom) - self.__posY)
-        buttomRight = ((lines[1] * self.zoom) - self.__posX, (lines[3] * self.zoom) - self.__posY)
+        topLeft = self.__calcVertexPosOnScreen(lines[0], lines[2])
+        buttomLeft = self.__calcVertexPosOnScreen(lines[0], lines[3])
+        topRight = self.__calcVertexPosOnScreen(lines[1], lines[2])
+        buttomRight = self.__calcVertexPosOnScreen(lines[1], lines[3])
         #we don't need to render the lines outside the window
-        topLeftOnCamera = (0,0) < topLeft < self.__windowSize
-        topRightOnCamera = (0,0) < topRight < self.__windowSize
+        topLeftOnCamera = 0 < topLeft[0] < self.__windowSize[0] and 0 < topLeft[1] < self.__windowSize[1]
+        topRightOnCamera = 0 < topRight[0] < self.__windowSize[0] and 0 < topRight[1] < self.__windowSize[1]
         buttomLeftOnCamera = (0,0) < buttomLeft < self.__windowSize
         buttomRightOnCamera = (0,0) < buttomRight < self.__windowSize
         if topLeftOnCamera or buttomRightOnCamera:
@@ -38,8 +41,8 @@ class Camera():
         self.__posY = position[1]
     
     def move(self, direction: tuple) -> None:
-        self.__posX += direction[0]
-        self.__posY += direction[1]
+        self.__posX += direction[0] / self.zoom
+        self.__posY += direction[1] / self.zoom
         
     def debug(self):
         print(self.__zero)
