@@ -35,4 +35,4 @@ if __name__ == "__main__":
     while True:
         time.sleep(0.01)
         p.event.get()
-        print(test.getAllButtonsPS4())
+        print(test.getEvents())

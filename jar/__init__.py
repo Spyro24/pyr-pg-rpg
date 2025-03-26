@@ -4,7 +4,7 @@
 """
 import jar.hitbox
 import jar.controller
-import jar.player
 import jar.camera
+import jar.player
 
 __version__ = 0.1

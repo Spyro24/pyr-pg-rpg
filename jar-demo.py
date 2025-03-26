@@ -8,55 +8,45 @@ import time
 
 class jarRun():
     def __init__(self, pygameWindow: p.display.set_mode, debug=False):
+        self.FPS = 60
         self.debug = debug
         self.window = pygameWindow
         self.camera = jar.camera.Camera(self.window)
-        self.testHitboxen = [jar.hitbox.hitbox((0,3),(1,0)), jar.hitbox.hitbox((1,1),(3,0)), jar.hitbox.hitbox((3,0),(4,3))]
         self.bound = jar.hitbox.hitbox((0,0),(10,10))
         #self.camera.zoom = 40
-        self.camera.setPos((5,5))
+        #self.camera.setPos((5,5))
         self.joystick = jar.controller.controller()
-        self.compare = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+        self.hitnoxManager = jar.hitbox.hitboxManager()
+        self.hitnoxManager.addENV(self.camera)
+        self.hitnoxManager.addHitbox((-20,-20), (40,1))
+        self.player = jar.player.player(self.camera, self.hitnoxManager, debug=True)
+        self.windowMidpoint = self.window.get_rect().center
         
     def mainLoop(self) -> None:
         update = True
         self.camera.debug()
         self.run = True
-        zoomTime = time.time()
-        timing = []
-        timing.append(time.time())
-        timing.append(time.time())
+        frameTime = 1/self.FPS
+        lastFrame = 0
         while self.run:
-            frameTime = time.time()
+            curTime = time.time()
             for event in p.event.get():
                 if event.type == p.QUIT:
                     p.quit()
-            
-            pressedButtons = self.joystick.getEvents()
-            if pressedButtons[0] != (0, 0):
-                if timing[0] + 0.01 < frameTime:
-                    timing[0] = frameTime
-                    self.camera.move(pressedButtons[0])
-                    update = True
-            
-            if pressedButtons[2] != self.compare:
-                if timing[1] + 0.01 < frameTime:
-                    if pressedButtons[2][6]:
-                        self.camera.zoom += 1 
-                    if pressedButtons[2][7]:
-                        self.camera.zoom -= 1
-                    timing[1] = frameTime
-                    update = True
-                    
-            if update:
+            joyEvents = self.joystick.getEvents()
+            #physics and render loop (I need to split this in 2 parts in the future)
+            if lastFrame + frameTime < time.time():
+                lastFrame = curTime
+                self.player.tick(joyEvents)
+                #render the stuff
                 self.window.fill((0,0,0))
-                if self.camera.zoom < 1:
-                    self.camera.zoom = 1
-                for hitbox in self.testHitboxen:
-                    self.camera.renderRect(hitbox,(255,0,255))
-                self.camera.renderRect(self.bound,(0,255,0))
+                self.window.set_at(self.windowMidpoint, (255,255,255))
+                self.player.onRender()
+                self.hitnoxManager.debug()
                 p.display.flip()
-                update = False
+                
+                
+            
         
 if __name__ == "__main__":
     testWindow = p.display.set_mode((1280, 720))
