@@ -28,6 +28,8 @@ class hitboxManager():
         self.__ENVINIT = False
         self.__defaultHitboxes = []
         self.__triggerHitboxes = []
+        self.__deathBoxes = []
+        self.lastHitbox: hitbox
     
     def addENV(self, camera) -> None:
         self.__camera = camera
@@ -35,9 +37,17 @@ class hitboxManager():
         
     def addHitbox(self, begin: tuple, size: tuple)-> None:
         self.__defaultHitboxes.append(hitbox(begin, size))
+        self.lastHitbox = self.__defaultHitboxes[-1]
         
     def checkHit(self, point: tuple) -> bool:
         for hitbox in self.__defaultHitboxes:
+            if hitbox.collidePoint(point):
+                self.lastHitbox = hitbox
+                return True
+        return False
+    
+    def checkDeath(self, point: tuple) -> bool:
+        for hitbox in self.__deathBoxes:
             if hitbox.collidePoint(point):
                 return True
         return False
@@ -45,3 +55,5 @@ class hitboxManager():
     def debug(self):
         for hitbox in self.__defaultHitboxes:
             self.__camera.renderRect(hitbox, (255,0, 255))
+        for hitbox in self.__deathBoxes:
+            self.__camera.renderRect(hitbox, (255,0, 0))
