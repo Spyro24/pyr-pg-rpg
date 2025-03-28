@@ -18,9 +18,14 @@ class jarRun():
         self.joystick = jar.controller.controller()
         self.hitnoxManager = jar.hitbox.hitboxManager()
         self.hitnoxManager.addENV(self.camera)
-        self.hitnoxManager.addHitbox((-20,-20), (40,1))
+        self.hitnoxManager.addHitbox((-20,-20), (40,2))
+        self.hitnoxManager.addHitbox((-22, 20), (2,40))
+        self.hitnoxManager.addHitbox((-10, -5), (20,2))
+        self.hitnoxManager.addDeathbox((-40, 1),(15,1))
         self.player = jar.player.player(self.camera, self.hitnoxManager, debug=True)
         self.windowMidpoint = self.window.get_rect().center
+        self.camera.zoom = 15
+        self.player.calcFrameStuff(self.FPS)
         
     def mainLoop(self) -> None:
         update = True
@@ -44,6 +49,8 @@ class jarRun():
                 self.player.onRender()
                 self.hitnoxManager.debug()
                 p.display.flip()
+                finishTime = time.time()
+                print(frameTime - (finishTime - curTime)) 
                 
                 
             

@@ -28,6 +28,7 @@ class hitboxManager():
         self.__ENVINIT = False
         self.__defaultHitboxes = []
         self.__triggerHitboxes = []
+        self.__directionalHitboxes = [[],[],[],[]]
         self.__deathBoxes = []
         self.lastHitbox: hitbox
     
@@ -39,7 +40,16 @@ class hitboxManager():
         self.__defaultHitboxes.append(hitbox(begin, size))
         self.lastHitbox = self.__defaultHitboxes[-1]
         
-    def checkHit(self, point: tuple) -> bool:
+    def addDeathbox(self, begin: tuple, size: tuple)-> None:
+        self.__deathBoxes.append(hitbox(begin, size))
+        self.lastHitbox = self.__defaultHitboxes[-1]
+        
+    def addDirectionalHitbox(self, begin: tuple, size: tuple, direction: int)-> None:
+        self.__directionalHitboxes[direction].append(hitbox(begin, size))
+        self.lastHitbox = self.__defaultHitboxes[-1]
+        
+    def checkHit(self, point: tuple, hitMaker=(0,0)) -> bool:
+        point = (point[0] + hitMaker[0], point[1] + hitMaker[1])
         for hitbox in self.__defaultHitboxes:
             if hitbox.collidePoint(point):
                 self.lastHitbox = hitbox

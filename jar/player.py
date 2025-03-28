@@ -5,24 +5,43 @@ class player():
         self.debug = debug
         self.__camera = camera
         self.__hitboxManager = hitboxManager
-        self.__onGround = False #State True if the Player is touching the ground
-        self.__falling = True
-        self.__jump = False
-        self.__canJump = True
-        self.__moveSpeed = 20
-        self.__fallSpeed = 20
-        self.__jumpHight = 10
+        self.__moveSpeed = 12
+        self.__jumpHight = 4
+        self.__fallSpeed = self.__jumpHight / 0.35
+        self.__climbingSpeed = 6
+        self.__curentJumpHight = 0
         self.__respawnPos = (0,0)
-        self.__hitboxOffset = (-1,2)
-        self.__hitboxSize = (2,2)
+        self.__hitboxOffset = (-1,3)
+        self.__hitboxSize = (2,3)
         self.__posX = 0
         self.__posY = 0
         self.__hitbox = jar.hitbox.hitbox((self.__hitboxOffset[0], self.__hitboxOffset[1]),(self.__hitboxSize[0], self.__hitboxSize[1]))
+        self.__makeStateMachineReady()
         self.calcFrameStuff(60)
+        self.__hitMakers = ((0, 0), #Ground detection
+                            (0, 3), #Roof detection
+                            (0,-1), #Snapy
+                            (-1,0), (-1,1), (-1,2), (-1,3), #left checks
+                            (1, 0), (1, 1), (1, 2), (1, 3), #Right checks
+                            (0, 0), #climbing hitboxes
+                            )
+     
+    def __makeStateMachineReady(self) -> None:
+        self.__jump = False #the player is jumping
+        self.__canJump = True #the player can jump but not now
+        self.__falling = True #the player is falling
+        self.__onGround = False #State True if the Player is touching the ground
+        self.__jumpReady = True #the player can now jump
+        self.__lookingDir = 0 #looking direction of the player
+        self.__climbing = False
+        self.__canMove = True
+        self.__onGround = False
         
     def calcFrameStuff(self, FPS: int) -> None:
-        self.__frameMoveSpeed = self.__moveSpeed / FPS
-        self.__frameFallSpeed = self.__fallSpeed / FPS
+        self.__frameMoveSpeed = self.__moveSpeed * 2 / FPS
+        self.__frameFallSpeed = self.__fallSpeed * 2 / FPS
+        self.__maxJumpHight   = self.__jumpHight * 2
+        self.__frameClimbingSpeed = self.__climbingSpeed * 2 / FPS
         
     def respawn(self) -> None:
         self.__posX = self.__respawnPos[0]
@@ -36,21 +55,59 @@ class player():
     
     def tick(self, controllerStuff: tuple) -> None:
         buttons = controllerStuff[2]
+        #climbing
+        if self.__climbing:
+            self.__curentJumpHight = 0
+            self.__canJump = True
+            if controllerStuff[0][1] != 0:
+                self.movePlayer((0, self.__frameClimbingSpeed * controllerStuff[0][1]))
+        else:
+            self.__canMove = True
+        #moving left and right
         if controllerStuff[0][0] != 0:
-            self.movePlayer((self.__frameMoveSpeed * controllerStuff[0][0], 0))
-        #falling and jumping
-        if (buttons[0] and self.__canJump):
-            self.movePlayer((0, self.__frameFallSpeed * 1.3))
+            self.__lookingDir = controllerStuff[0][0]
+            if self.__canMove:
+                self.movePlayer((self.__frameMoveSpeed * controllerStuff[0][0], 0))
+                self.__falling = True
+                if controllerStuff[0][0] < -0.2 and (self.__hitboxManager.checkHit((self.__posX , self.__posY), self.__hitMakers[4])):
+                    self.movePlayer((self.__hitboxManager.lastHitbox.renderRectOnCamera()[1] - self.__posX -self.__hitboxOffset[0] , 0))
+                elif controllerStuff[0][0] > 0.2 and (self.__hitboxManager.checkHit((self.__posX , self.__posY), self.__hitMakers[8])):
+                    self.movePlayer((self.__hitboxManager.lastHitbox.renderRectOnCamera()[0] - self.__posX + self.__hitboxOffset[0] , 0))
+        #activate climbing
+        if buttons[6] and self.__hitboxManager.checkHit((self.__posX , self.__posY), (self.__lookingDir * 1.5, 1.5)):
+            if self.__lookingDir == 1:
+                self.movePlayer((self.__hitboxManager.lastHitbox.renderRectOnCamera()[0] - self.__posX + self.__hitboxOffset[0], 0))
+            if self.__lookingDir == -1:
+                self.movePlayer((self.__hitboxManager.lastHitbox.renderRectOnCamera()[1] - self.__posX -self.__hitboxOffset[0] , 0))
+            self.__climbing = True
+            self.__canMove = False
+            self.__falling = False
+        else:
+            self.__climbing = False
             self.__falling = True
+        #falling and jumping
+        if buttons[0] and self.__canJump and self.__jumpReady:
+            self.movePlayer((0, self.__frameFallSpeed))
+            self.__curentJumpHight += self.__frameFallSpeed
+            self.__falling = True
+            if self.__curentJumpHight >= self.__maxJumpHight:
+                self.__canJump = False
+                self.__jumpReady = False
         else:
             if self.__falling:
                 self.__canJump = False
-                self.movePlayer((0, -self.__frameMoveSpeed))
-                if self.__hitboxManager.checkHit((self.__posX, self.__posY)):
+                self.movePlayer((0, - (self.__frameMoveSpeed + (self.__frameMoveSpeed / 4) * (controllerStuff[0][1] < 0 and not self.__onGround))))
+                if self.__hitboxManager.checkHit((self.__posX , self.__posY), self.__hitMakers[0]): #check if the player is on ground
                     self.movePlayer((0, self.__hitboxManager.lastHitbox.renderRectOnCamera()[2] - self.__posY))
                     self.__falling = False
+                    self.__onGround = True
+                    self.__curentJumpHight = 0
                     self.__canJump = True
-        if self.__posY < -50:
+                else:
+                    self.__onGround = False
+        if not buttons[0]:
+            self.__jumpReady = True
+        if self.__posY < -50 or self.__hitboxManager.checkDeath((self.__posX, self.__posY)):
             self.respawn()
                     
     def onRender(self):
