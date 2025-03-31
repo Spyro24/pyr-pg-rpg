@@ -49,8 +49,8 @@ class jarRun():
                 self.player.onRender()
                 self.hitnoxManager.debug()
                 p.display.flip()
-                finishTime = time.time()
-                print(frameTime - (finishTime - curTime)) 
+                #finishTime = time.time()
+                #print(frameTime - (finishTime - curTime)) 
                 
                 
             

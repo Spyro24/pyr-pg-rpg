@@ -20,6 +20,14 @@ class hitbox():
             return True
         return False
     
+    def collideLine(self, vertex1: tuple, vertex2: tuple) -> bool:
+        if (self.left < vertex1[0] < self.right and self.top > vertex1[1] > self.buttom) or (self.left < vertex2[0] < self.right and self.top > vertex2[1] > self.buttom):
+            return True
+        return False
+    
+    def getVertices(self) -> tuple:
+        return ((self.left, self.top), (self.right, self.top), (self.left, self.buttom), (self.right, self.buttom))
+    
     def renderRectOnCamera(self) -> tuple:
         return (self.left,self.right,self.top,self.buttom)
     
@@ -54,6 +62,15 @@ class hitboxManager():
             if hitbox.collidePoint(point):
                 self.lastHitbox = hitbox
                 return True
+        return False
+    
+    def checkMultiHit(self, point: tuple, hitMakers=((0,0),(0,0))) -> bool:
+        for hitmaker in hitMakers:
+            point = (point[0] + hitmaker[0], point[1] + hitmaker[1])
+            for hitbox in self.__defaultHitboxes:
+                if hitbox.collidePoint(point):
+                    self.lastHitbox = hitbox
+                    return True
         return False
     
     def checkDeath(self, point: tuple) -> bool:
