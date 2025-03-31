@@ -18,12 +18,6 @@ class player():
         self.__hitbox = jar.hitbox.hitbox((self.__hitboxOffset[0], self.__hitboxOffset[1]),(self.__hitboxSize[0], self.__hitboxSize[1]))
         self.__makeStateMachineReady()
         self.calcFrameStuff(60)
-        self.__hitMakers = (((0, 0),(1,0),(-1,0)), #Ground detection
-                            ((0, 3),(-1, 3), (1, 3)), #Roof detection
-                            ((-1,0), (-1,1), (-1,2), (-1,3)), #left checks
-                            ((1, 0), (1, 1), (1, 2), (1, 3)), #Right checks
-                            ((0,0)), #climbing hitboxes
-                            )
      
     def __makeStateMachineReady(self) -> None:
         self.__jump = False #the player is jumping
@@ -68,9 +62,9 @@ class player():
             if self.__canMove:
                 self.movePlayer((self.__frameMoveSpeed * controllerStuff[0][0], 0))
                 self.__falling = True
-                if controllerStuff[0][0] < -0.2 and (self.__hitboxManager.checkMultiHit((self.__posX , self.__posY), self.__hitMakers[3])):
+                if controllerStuff[0][0] < -0.2 and self.__hitboxManager.checkHitpointList(self.__hitbox.getHitPoints(2)):
                     self.movePlayer((self.__hitboxManager.lastHitbox.renderRectOnCamera()[1] - self.__posX -self.__hitboxOffset[0] , 0))
-                elif controllerStuff[0][0] > 0.2 and (self.__hitboxManager.checkMultiHit((self.__posX , self.__posY), self.__hitMakers[3])):
+                elif controllerStuff[0][0] > 0.2 and self.__hitboxManager.checkHitpointList(self.__hitbox.getHitPoints(0)):
                     self.movePlayer((self.__hitboxManager.lastHitbox.renderRectOnCamera()[0] - self.__posX + self.__hitboxOffset[0] , 0))
         #activate climbing
         if buttons[6] and self.__hitboxManager.checkHit((self.__posX , self.__posY), (self.__lookingDir * 1.5, 1.5)):
@@ -96,7 +90,7 @@ class player():
             if self.__falling:
                 self.__canJump = False
                 self.movePlayer((0, - (self.__frameMoveSpeed + (self.__frameMoveSpeed / 4) * (controllerStuff[0][1] < 0 and not self.__onGround))))
-                if self.__hitboxManager.checkMultiHit((self.__posX , self.__posY), self.__hitMakers[0]): #check if the player is on ground
+                if self.__hitboxManager.checkHitpointList(self.__hitbox.getHitPoints(1)): #check if the player is on ground
                     self.movePlayer((0, self.__hitboxManager.lastHitbox.renderRectOnCamera()[2] - self.__posY))
                     self.__falling = False
                     self.__onGround = True
@@ -108,6 +102,8 @@ class player():
             self.__jumpReady = True
         if self.__posY < -50 or self.__hitboxManager.checkDeath((self.__posX, self.__posY)):
             self.respawn()
+        if not self.__camera.collidePoint((self.__posX, self.__posY), 10):
+            self.__camera.setPos((self.__posX, self.__posY))
                     
     def onRender(self):
         if self.debug:

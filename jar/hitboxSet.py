@@ -8,6 +8,7 @@ class hitbox():
         self.right = beginX + endX
         self.top = beginY
         self.buttom = beginY - endY
+        self.hitSet = set()
     
     def moveInPlace(self, move: tuple) -> None:
         self.left += move[0]
@@ -16,37 +17,42 @@ class hitbox():
         self.buttom += move[1]
     
     def collidePoint(self, point: tuple) -> bool:
-        return self.left < point[0] < self.right and self.buttom < point[1] < self.top
+        if self.left < point[0] < self.right and self.buttom < point[1] < self.top:
+            return True
+        return False
+    
+    def collideLine(self, vertex1: tuple, vertex2: tuple) -> bool:
+        if (self.left < vertex1[0] < self.right and self.top > vertex1[1] > self.buttom) or (self.left < vertex2[0] < self.right and self.top > vertex2[1] > self.buttom):
+            return True
+        return False
     
     def getVertices(self) -> tuple:
         return ((self.left, self.top), (self.right, self.top), (self.left, self.buttom), (self.right, self.buttom))
     
     def getHitPoints(self, side: int, offset=0, stepSize=1) -> list:
-        pointList = []
-        if side == 0: #left
+        self.hitSet.clear()
+        pointList = self.hitSet
+        if side == 0:
             x = self.right + offset
             y = self.buttom
             while y < self.top:
-                pointList.append((x,y))
+                pointList.add((x,y))
                 y += stepSize
-            if pointList[-1][1] < self.top:
-                pointList.append((x,self.top))
+            pointList.add((x,self.top))
         elif side == 2:
             x = self.left - offset
             y = self.buttom
             while y < self.top:
-                pointList.append((x,y))
+                pointList.add((x,y))
                 y += stepSize
-            if pointList[-1][1] < self.top:
-                pointList.append((x,self.top))
-        elif side == 1: #buttom
+            pointList.add((x,self.top))
+        elif side == 1:
             x = self.left
             y = self.buttom - offset
             while x < self.right:
-                pointList.append((x,y))
+                pointList.add((x,y))
                 x += stepSize
-            if pointList[-1][0] < self.right:
-                pointList.append((self.right, y))
+            pointList.add((self.right, y))
         return pointList
     
     def renderRectOnCamera(self) -> tuple:
@@ -95,16 +101,12 @@ class hitboxManager():
         return False
     
     def checkHitpointList(self, hitPointList: list[tuple]) -> bool:
-        hit = False
         for hitPoint in hitPointList:
             for hitbox in self.__defaultHitboxes:
                 if hitbox.collidePoint(hitPoint):
                     self.lastHitbox = hitbox
-                    hit = True
-                    break
-            if hit:
-                break
-        return hit
+                    return True
+        return False
     
     def checkDeath(self, point: tuple) -> bool:
         for hitbox in self.__deathBoxes:

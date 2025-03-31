@@ -35,10 +35,16 @@ class Camera():
             p.draw.line(self.__window, color, topLeft, buttomLeft)
         if topRightOnCamera or buttomRightOnCamera:
             p.draw.line(self.__window, color, topRight, buttomRight)
+            
+    def collidePoint(self, point: tuple, size: int) -> bool:
+        return self.__posX - size < point[0] < self.__posX + size and self.__posY - size < point[1] < self.__posY + size
     
     def setPos(self, position: tuple) -> None:
         self.__posX = position[0]
         self.__posY = position[1]
+        
+    def goto(self, position: tuple, speed: int) -> bool:
+        pass
     
     def move(self, direction: tuple) -> None:
         self.__posX += direction[0] / self.zoom

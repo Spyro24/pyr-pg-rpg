@@ -81,34 +81,19 @@ class main_class():
         print("try to init game: " + self.game_name)
         print("[PYR-PG][Info] version " + pyr_pg.version)
         print(self.info_text)
-        if self.platform == "posix": # init for a linux system
-            #----- This code need some optimisation ----
-            self.conf_path = str(Path.home()) + "/.config/pyr-pg/" + self.game_name
+        self.conf_path = p.system.get_pref_path("pyr-pg","makend")
+        try:
+            is_configured = open(self.conf_path + "/CONFIGURED", "r")
+            is_ready = True
+            is_configured.close()
+        except:
             try:
-                is_configured = open(self.conf_path + "/CONFIGURED", "r")
-                is_ready = True
+                is_configured = open(self.conf_path + "/CONFIGURED", "w")
                 is_configured.close()
-            except:
-                try:
-                    test_if_pyr_pg_configured = subprocess.run(["ls", str(Path.home()) + "/.config/pyr-pg/"],stderr=subprocess.PIPE)
-                    if test_if_pyr_pg_configured.stderr != b"":
-                        print("[Missing the config dir]")
-                        subprocess.run(["mkdir", str(Path.home()) + "/.config/pyr-pg/"])
-                        print("[config dir created]")
-                    subprocess.run(["mkdir", self.conf_path])
-                    subprocess.run(["cp","-r","./config/.", self.conf_path])
-                    is_configured = open(self.conf_path + "/CONFIGURED", "w")
-                    is_configured.close()
-                except BaseException as err:
-                    print("---Error---")
-                    print("cannot configure the game.\nHere the Error: [ " + str(err) + " ]")
-                    print("---Error---")
-        #general config if you use a generic system
-        else:
-            #----- You have to use linux in the 0.4 to x.0
-            #but a simple config is here
-            #(Please use the next time linux to run the game)
-            self.conf_path = "./main_conf"
+            except BaseException as err:
+                print("---Error---")
+                print("cannot configure the game.\nHere the Error: [ " + str(err) + " ]")
+                print("---Error---")
         self.global_config_file = pyr_pg.config.config(self.conf_path + "/global_config")
         if not is_ready:
             get_wh = p.display.set_mode((0,0))

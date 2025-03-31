@@ -31,6 +31,7 @@ class jarRun():
         update = True
         self.camera.debug()
         self.run = True
+        getTimeStatus = time.time()
         frameTime = 1/self.FPS
         lastFrame = 0
         while self.run:
@@ -48,9 +49,11 @@ class jarRun():
                 self.window.set_at(self.windowMidpoint, (255,255,255))
                 self.player.onRender()
                 self.hitnoxManager.debug()
-                p.display.flip()
-                #finishTime = time.time()
-                #print(frameTime - (finishTime - curTime)) 
+                p.display.update()
+                if curTime - 1 > getTimeStatus:
+                    getTimeStatus = curTime
+                    finishTime = time.time()
+                    print((finishTime - curTime) / frameTime * 100) #
                 
                 
             
