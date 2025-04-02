@@ -1,3 +1,4 @@
+#!/bin/python3
 """
     This is the jar demo (unit and gameplay test)
     (c) 2025 Spyro24
