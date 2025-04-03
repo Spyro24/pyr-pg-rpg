@@ -29,6 +29,7 @@ class player():
         self.__climbing = False
         self.__canMove = True
         self.__onGround = False
+        self.__cameraMove = False
         
     def calcFrameStuff(self, FPS: int) -> None:
         self.__frameMoveSpeed = self.__moveSpeed * 2 / FPS
@@ -102,8 +103,18 @@ class player():
             self.__jumpReady = True
         if self.__posY < -50 or self.__hitboxManager.checkDeath((self.__posX, self.__posY)):
             self.respawn()
-        if not self.__camera.collidePoint((self.__posX, self.__posY), 10):
-            self.__camera.setPos((self.__posX, self.__posY))
+        #camera Stuff
+        camPos = self.__camera.getPos()
+        if not self.__camera.collidePoint((self.__posX, self.__posY), 0.5):
+            self.__camera.goto((self.__posX, self.__posY), ((camPos[0] - self.__posX)**2 + (camPos[1] - self.__posY)**2)**0.5)
+            self.__cameraMove = True
+        elif (((camPos[0] - self.__posX)**2 + (camPos[1] - self.__posY)**2)**0.5) < 0.2:
+            self.__camera.deactivateLerp()
+            self.__cameraMove = False
+        if self.__cameraMove:
+            self.__camera.goto((self.__posX, self.__posY), ((camPos[0] - self.__posX)**2 + (camPos[1] - self.__posY)**2)**0.5 * 3)
+        #else:
+            #self.__camera.deactivateLerp()
                     
     def onRender(self):
         if self.debug:

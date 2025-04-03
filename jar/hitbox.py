@@ -8,8 +8,13 @@ class hitbox():
         self.right = beginX + endX
         self.top = beginY
         self.buttom = beginY - endY
+        self.__vertices = ((self.left, self.top), (self.right, self.top), (self.left, self.buttom), (self.right, self.buttom))
+        self.__midPoint = (int((self.right - self.left) / 2 + self.left), int((self.top - self.buttom) / 2 + self.buttom))
+        self.__posTuple = (self.left,self.right,self.top,self.buttom)
+        self.__hasMoved = False
     
     def moveInPlace(self, move: tuple) -> None:
+        self.__hasMoved = True
         self.left += move[0]
         self.right += move[0]
         self.top += move[1]
@@ -19,6 +24,8 @@ class hitbox():
         return self.left < point[0] < self.right and self.buttom < point[1] < self.top
     
     def getVertices(self) -> tuple:
+        if not self.__hasMoved:
+            return self.__vertices
         return ((self.left, self.top), (self.right, self.top), (self.left, self.buttom), (self.right, self.buttom))
     
     def getHitPoints(self, side: int, offset=0, stepSize=1) -> list:
@@ -49,7 +56,14 @@ class hitbox():
                 pointList.append((self.right, y))
         return pointList
     
+    def getMidpoint(self) -> bool:
+        if not self.__hasMoved:
+            return self.__midPoint
+        return (int((self.right - self.left) / 2 + self.left), int((self.top - self.buttom) / 2 + self.buttom))
+    
     def renderRectOnCamera(self) -> tuple:
+        if not self.__hasMoved:
+            return self.__posTuple
         return (self.left,self.right,self.top,self.buttom)
     
 class hitboxManager():
