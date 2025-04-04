@@ -1,3 +1,4 @@
+#!/bin/python3
 '''
     PYR_PG is a python RPG libary for making custom RPGs.
     PYR_PG supports modding(pyr-pg-rpg) custom scripts and more.
