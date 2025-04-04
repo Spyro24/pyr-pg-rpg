@@ -1,4 +1,8 @@
 #!/bin/python3
+"""
+    Camera System for JAR.
+    (c) 2025 Spyro24
+"""
 import pygame as p
 import jar
 
@@ -69,6 +73,15 @@ class Camera():
         print(self.__zero)
         
 class cameraBox:
+    '''This is NOT a Hitbox. MIP and many hitbox functions are not available for cameraboxes.
+        Its for grouping large amount of objects to protect the entire system from slowing down.
+    '''
     def __init__(self, begin: tuple, end: tuple):
         self.__hitBoxes = []
-        
+        self.__bounds = (begin, end)
+    
+    def __calcVertices(self) -> None:
+        self.__topLeft = self.__bounds[0]
+        self.__topRight =
+        self.__buttomLeft =
+        self.__buttomRight =self.__bounds[1]
