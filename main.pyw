@@ -38,6 +38,7 @@ class main_class():
         self.runtimeStore[rs.DefaultFps]   = 30
         self.runtimeStore[rs.LogSystem]    = LogSystem
         #----------------------------------------------------------------
+        self.autoSave                       = False
         self.runtimeStore[rs.PlayerName]    = "Default"
         self.random_title_text              = True #Set it to false if you don't want to use a sufix for the tiitle
         self.player_speed                   = self.runtimeStore[rs.PlayerSpeed]

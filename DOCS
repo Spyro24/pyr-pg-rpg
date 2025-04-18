@@ -12,6 +12,6 @@ Internal
 
 External
 |-Pygame
-| |-pygame.Surface((width, height), flags=0, depth=0, masks=None) -> Pygame Surface obj »flags=pygame.HWSURFACE, pygame.SRCALPHA«
+| |-pygame.Surface((width, height), flags=0, depth=0, masks=None) -> Pygame Surface obj »flags=pygame.HWSURFACE, pygame.SRCALPHA
 | | |-{Surface_var}.blit({Surface obj}, (dest_x, dest_y), area=None, special_flags=0) -> Pygame Rect obj »area=pygame.Rect«
 

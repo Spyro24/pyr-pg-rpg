@@ -4,13 +4,15 @@
 """
 
 import pygame as p
+import map_pg
 
 class keyboard:
     def __init__(self):
-        self.keyToStr = {p.K_0: "0", p.K_1: "1", p.K_2: "2", p.K_LESS: "<"}
+        self.keyToStr = {p.K_0: "0", p.K_1: "1", p.K_2: "2", p.K_3:"3", p.K_4:"4", p.K_5:"5", p.K_6:"6", p.K_7:"7", p.K_8:"8", p.K_9:"9",
+                         p.K_SPACE: " ", p.K_LESS: "<"}
         self.modAltGr = {p.K_LESS: "|"}
     
-    def returnString(self) -> str:
+    def standeloneInputBox(self, font: map_pg.font.font, inputBoxSettings: tuple) -> str:
         pass
     
     def returnSingleChar(self, key: int, mod) -> str or None:
