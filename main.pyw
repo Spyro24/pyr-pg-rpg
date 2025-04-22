@@ -29,7 +29,7 @@ import runtime_store as rs
 import modding
 
 class main_class():
-    def __init__(self, LogSystem=print):
+    def __init__(self, LogSystem=print, debug=False):
         self.runtimeStore = {}
         self.cache        = {}
         self.modSupport   = modding.mod(self.runtimeStore)
@@ -42,7 +42,7 @@ class main_class():
         self.runtimeStore[rs.PlayerName]    = "Default"
         self.random_title_text              = True #Set it to false if you don't want to use a sufix for the tiitle
         self.player_speed                   = self.runtimeStore[rs.PlayerSpeed]
-        self.debug                          = False
+        self.debug                          = debug
         self.runtimeStore[rs.MicroTiling]   = 16
         self.default_FPS                    = 30
         self.runtimeStore[rs.TileSheetSize] = "6x12"
@@ -103,10 +103,19 @@ class main_class():
             self.global_config_file.add("win_h", h / 1.5)
         self.global_config_file.save()
         self.modSupport._on_ready()
+        self.setupBeforeStartup()
+         #---Setup Menu Objects---
+        self.playerCharacterSelector = pyr_pg.characterSelector.characterSelector("./res/characters", self.runtimeStore, debug=debug)
+        #------------------------
     
-    def play(self):
+    def setupBeforeStartup(self) -> None:
         self.runtimeStore[rs.WindowProperties]            = {}
         self.runtimeStore[rs.WindowProperties][rs.Window] = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
+        
+    def loadInCacheOnStartup(self) -> None:
+        pass
+    
+    def play(self):
         self.game_win                                      = self.runtimeStore[rs.WindowProperties][rs.Window]
         self.font                                          = pyr_pg.font.font(self.game_win, "./res/fonts/standard")
         self.map_config["window"]                          = self.game_win
@@ -241,37 +250,13 @@ class main_class():
         decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menuSize * 4)))
         start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
-        back_to_main = False
-        start_game = False
-        while menu__create_character__:
-            for event in p.event.get():
-                if event.type == p.QUIT:
-                    menu__setting__ = False
-                    self.close_game()            
-            m_click = p.mouse.get_pressed()
-            m_pos = p.mouse.get_pos()            
-            if m_click[0]:
-                if back.collidepoint(m_pos):
-                    back_to_main = True
-                    menu__create_character__ = False                
-                if start_b.collidepoint(m_pos):
-                    start_game = True
-                    menu__create_character__ = False                    
-            if redraw:
-                self.game_win.blit(background,(self.b_pos_x, self.b_pos_y))
-                back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
-                decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menuSize * 4)))
-                start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize * 9)))
-                render = True
-                redraw = False            
-            if render:
-                p.display.flip()
-                render = False
+        chosenPlayer = self.playerCharacterSelector.openSelector({"bg": background})
         
-        if back_to_main:
+        if chosenPlayer[2]:
+            self.close_game()
+        if not chosenPlayer[1]:
             self.main_menu()
-        
-        if start_game:
+        else:
             self.setup_player("create")
     
     def setup_player(self, option):
@@ -381,7 +366,7 @@ if __name__ == "__main__":
             except ImportError as errTime:
                 log_time = errTime
             
-            log = game.runtime_store[rs.LogSystem]
+            log = game.runtimeStore[rs.LogSystem]
             log(1, "-----Fatal Error-----",
                    "Crash Time: "       + str(log_time),
                    "Operating System: " + str(os.name),
@@ -394,7 +379,7 @@ if __name__ == "__main__":
             logsys.WriteLog(path="./logs/")
         p.quit()
     elif runner == "Dev":
-        game = main_class()
+        game = main_class(debug=True)
         game.play()
         p.quit()
     else:

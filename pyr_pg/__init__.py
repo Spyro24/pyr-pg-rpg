@@ -20,6 +20,7 @@ import pyr_pg.log_system
 import pyr_pg.npc
 import pyr_pg.npc_handler
 import pyr_pg.speechSynth
+import pyr_pg.characterSelector
 
 version = "0.3.8"
 
