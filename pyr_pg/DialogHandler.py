@@ -11,7 +11,7 @@ class DialogScript():
         self.rs       = runtimeStore
         self.logsys   = self.rs[9]
         self.font     = self.rs[15]
-        self.window   = self.rs[13]
+        self.window   = self.rs[10][13]
         self.env      = {"waitEnter":True, "notWorking":()}
         self.config   = {"gridsize":(16,16), "blit_pos":(0,0), "tile_size":0}
         self.cache    = {"configData":{}, "textbox":{"image":p.surface.Surface((1,1)),"pos":(0,0), "text_pos":(1,1), "lines":3}, "config_file":{}}

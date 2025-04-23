@@ -52,8 +52,8 @@ class options_menu():
         blit_obj     = self.blit_surface
         menu_bg      = self.runtime_config['menu_bg']
         selector     = self.runtime_config['selector']
-        selector_bx  = by + tile_size
-        selector_by  = bx + tile_size
+        selector_bx  = bx + tile_size
+        selector_by  = by + tile_size
         selector_pos = 0
         update       = True
         run          = True

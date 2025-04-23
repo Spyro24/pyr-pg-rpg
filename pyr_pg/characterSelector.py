@@ -14,6 +14,7 @@ class characterSelector:
         self.runtimeStore = runtimeStore
         self.__envReady()
         self.debug = debug
+        self.DebugRects = []
         
     def __envReady(self) -> None:
         winW, winH = self.window.get_size()
@@ -26,9 +27,13 @@ class characterSelector:
         
     def __debug(self) -> None:
         p.draw.rect(self.window, (0, 255, 0), self.virtWindow, width=3)
+        p.draw.rect(self.window, (128, 128, 0), self.DebugRects[0], width=3)
     
     def openSelector(self, assets: dict) -> tuple:#[characterPathForLoader: str, forward: bool, exit: bool]:
         self.backgroud = p.transform.scale(assets["bg"], (self.lowestSize, self.lowestSize))
+        self.fdButtonTexture = p.transform.scale(assets["forward"], (self.tileSize, self.tileSize))
+        fdButton = self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
+        self.DebugRects.append(fdButton)
         run = True
         renderTime = 1 / self.runtimeStore[2] #rs.DefaultFps
         lastFrame = 0
@@ -37,19 +42,22 @@ class characterSelector:
             for event in p.event.get():
                 if event.type == p.QUIT:
                     return (None, False, True)
+                if event.type == p.MOUSEBUTTONDOWN:
+                    mouseKeys = p.mouse.get_pressed()
+                    mousePos = p.mouse.get_pos()
+                    if mouseKeys[0]:
+                        if fdButton.collidepoint(mousePos):
+                            run = False
+                            
             if frameTime - renderTime > lastFrame:
                 lastFrame = frameTime
                 self.render()
+        return (None, True, False)
         
     def render(self) -> None:
         self.window.fill((0, 0, 0))
         self.window.blit(self.backgroud, self.virtWindow.topleft)
+        self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
         if self.debug:
             self.__debug()
         p.display.flip()
-            
-if __name__ == "__main__": #Unit test
-    window = p.display.set_mode((400, 300))
-    test = characterSelector(window, "./", debug=True)
-    test.render()
-    p.display.flip()

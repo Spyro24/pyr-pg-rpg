@@ -35,7 +35,7 @@ class main_class():
         self.modSupport   = modding.mod(self.runtimeStore)
         #----modify this section for your game if you use this runner----
         self.runtimeStore[rs.PlayerSpeed]  = 8
-        self.runtimeStore[rs.DefaultFps]   = 30
+        self.runtimeStore[rs.DefaultFps]   = 60
         self.runtimeStore[rs.LogSystem]    = LogSystem
         #----------------------------------------------------------------
         self.autoSave                       = False
@@ -111,14 +111,15 @@ class main_class():
     def setupBeforeStartup(self) -> None:
         self.runtimeStore[rs.WindowProperties]            = {}
         self.runtimeStore[rs.WindowProperties][rs.Window] = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
+        self.runtimeStore[rs.FontSystem]    = pyr_pg.font.font(self.runtimeStore[rs.WindowProperties][rs.Window], "./res/fonts/standard")
         
     def loadInCacheOnStartup(self) -> None:
         pass
     
     def play(self):
-        self.game_win                                      = self.runtimeStore[rs.WindowProperties][rs.Window]
-        self.font                                          = pyr_pg.font.font(self.game_win, "./res/fonts/standard")
-        self.map_config["window"]                          = self.game_win
+        self.game_win             = self.runtimeStore[rs.WindowProperties][rs.Window]
+        self.font                 = self.runtimeStore[rs.FontSystem]
+        self.map_config["window"] = self.game_win
         if self.random_title_text:
             text_list     = open("./pyr_pg/random_tittle_texts","r")
             random_line   = text_list.readlines() #read every line from the random tiltle text file
@@ -242,7 +243,7 @@ class main_class():
         redraw = True
         back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menuSize, self.menuSize))
         background  = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowestSize,self.lowestSize))
-        arow_left   = p.transform.scale(p.image.load("./images/main_menu/char_selector/chose.png"),(self.menuSize,self.menuSize * 2))
+        arow_left   = p.image.load("./images/main_menu/char_selector/chose.png")
         arow_right  = p.transform.rotate(arow_left, 180)
         ready  = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"),(self.menuSize, self.menuSize))
         #setup rectangle buttons
@@ -250,7 +251,7 @@ class main_class():
         decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menuSize * 4)))
         start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
-        chosenPlayer = self.playerCharacterSelector.openSelector({"bg": background})
+        chosenPlayer = self.playerCharacterSelector.openSelector({"bg": background, "forward": p.image.load("./images/main_menu/char_selector/start.png")})
         
         if chosenPlayer[2]:
             self.close_game()
@@ -264,7 +265,7 @@ class main_class():
         self.map_config["window"] = self.game_win
         self.map                  = pyr_pg.map_.map(self.map_config)
         self.main_config["map"]   = self.map
-        self.dialog               = pyr_pg.dialog_wrapper.dialog(self.global_config)#(self.game_win, "./dialog/", "./players/",  self.player_env, self.audio_setup)
+        self.dialog               = pyr_pg.DialogHandler.DialogScript(self.runtimeStore)
         self.player               = pyr_pg.player.player(self.game_win, self.main_config)
         self.map.load()
         self.play_game()
@@ -327,8 +328,7 @@ class main_class():
             if self.fpsCounter:
                 if (FPS_get + 1) < cur_frame_time:
                     FPS_get = cur_frame_time
-                    print("RFPS: " + str(self.rendered_FPS_count))
-                    print(" FPS: " + str(self.main_FPS_count))
+                    print(int(self.rendered_FPS_count), int(self.main_FPS_count))
                     self.main_FPS_count = 0
                     self.rendered_FPS_count = 0                    
         
