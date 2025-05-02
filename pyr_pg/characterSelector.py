@@ -28,11 +28,19 @@ class characterSelector:
     def __debug(self) -> None:
         p.draw.rect(self.window, (0, 255, 0), self.virtWindow, width=3)
         p.draw.rect(self.window, (128, 128, 0), self.DebugRects[0], width=3)
+        for rect in self.charactersPlacerRects:
+            p.draw.rect(self.window, (128, 0, 0), rect, width=3)
     
     def openSelector(self, assets: dict) -> tuple:#[characterPathForLoader: str, forward: bool, exit: bool]:
         self.backgroud = p.transform.scale(assets["bg"], (self.lowestSize, self.lowestSize))
         self.fdButtonTexture = p.transform.scale(assets["forward"], (self.tileSize, self.tileSize))
+        self.textBoxBG = self.__create_textbox(self.tileSize, "./res/textboxes/gray_rounded_playerSelectort.png")
         fdButton = self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
+        self.charactersPlacerRects = [p.rect.Rect((self.zeroPos[0], self.zeroPos[1] + self.tileSize / 2 * 3), (self.tileSize, self.tileSize)),
+                                      p.rect.Rect((self.zeroPos[0] + self.tileSize, self.zeroPos[1] + self.tileSize),(self.tileSize * 2, self.tileSize * 2)),
+                                      p.rect.Rect((self.zeroPos[0] + self.tileSize * 3, self.zeroPos[1]),(self.tileSize * 4, self.tileSize * 4)),
+                                      p.rect.Rect((self.zeroPos[0] + self.tileSize * 7, self.zeroPos[1] + self.tileSize),(self.tileSize * 2, self.tileSize * 2)),
+                                      p.rect.Rect((self.zeroPos[0] + self.tileSize * 9, self.zeroPos[1] + self.tileSize / 2 * 3), (self.tileSize, self.tileSize))]
         self.DebugRects.append(fdButton)
         run = True
         renderTime = 1 / self.runtimeStore[2] #rs.DefaultFps
@@ -58,6 +66,39 @@ class characterSelector:
         self.window.fill((0, 0, 0))
         self.window.blit(self.backgroud, self.virtWindow.topleft)
         self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
+        self.window.blit(self.textBoxBG,(self.virtWindow.left + self.tileSize, self.virtWindow.bottom - self.tileSize * 5))
         if self.debug:
             self.__debug()
         p.display.flip()
+        
+    #---Internal Helper Functions---
+    def __create_textbox(self, tileSize: int, png: str) -> p.surface.Surface:
+        box_tilesheet = p.image.load(png)
+        textBoxSize = (8,5)
+        textbox_tile_list = []
+        box_tilesize = box_tilesheet.get_size()[0] / 3
+        for x_tile in range(3):
+            for y_tile in range(3):
+                cur_tile = p.surface.Surface((box_tilesize,box_tilesize), flags=p.SRCALPHA)
+                cur_tile.blit(box_tilesheet,(-(x_tile * box_tilesize), -(y_tile * box_tilesize)))
+                textbox_tile_list.append(p.transform.scale(cur_tile,(tileSize, tileSize)))
+                
+        textbox = p.surface.Surface((textBoxSize[0] * tileSize, textBoxSize[1] * tileSize), flags=p.SRCALPHA)
+        textbox.blit(textbox_tile_list[0],(0,0))
+        textbox.blit(textbox_tile_list[8],((textBoxSize[0] - 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+        textbox.blit(textbox_tile_list[6],((textBoxSize[0] - 1) * tileSize,0))
+        textbox.blit(textbox_tile_list[2],(0,(textBoxSize[1] - 1) * tileSize))
+        if textBoxSize[0] > 2:
+            if textBoxSize[1] > 2:
+                for x in range(textBoxSize[0] - 2):
+                    textbox.blit(textbox_tile_list[3],((x + 1) * tileSize,0))
+                for y in range(textBoxSize[1] - 2):
+                    textbox.blit(textbox_tile_list[1],(0,(y + 1) * tileSize))
+                for x in range(textBoxSize[0] - 2):
+                    textbox.blit(textbox_tile_list[5],((x + 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+                for y in range(textBoxSize[1] - 2):
+                    textbox.blit(textbox_tile_list[7],((textBoxSize[0] - 1) * tileSize,(y + 1) * tileSize))
+                for x in range(textBoxSize[0] - 2):
+                    for y in range(textBoxSize[1] - 2):
+                        textbox.blit(textbox_tile_list[4],((x + 1) * tileSize,(y + 1) * tileSize))
+        return textbox
