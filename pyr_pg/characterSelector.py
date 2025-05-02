@@ -6,6 +6,7 @@
 import os
 import pygame as p
 import time
+import pyr_pg
 
 class characterSelector:
     def __init__(self, characterPath: str, runtimeStore: dict, debug=False):
@@ -32,6 +33,7 @@ class characterSelector:
             p.draw.rect(self.window, (128, 0, 0), rect, width=3)
     
     def openSelector(self, assets: dict) -> tuple:#[characterPathForLoader: str, forward: bool, exit: bool]:
+        self.__load_sprites()
         self.backgroud = p.transform.scale(assets["bg"], (self.lowestSize, self.lowestSize))
         self.fdButtonTexture = p.transform.scale(assets["forward"], (self.tileSize, self.tileSize))
         self.textBoxBG = self.__create_textbox(self.tileSize, "./res/textboxes/gray_rounded_playerSelectort.png")
@@ -72,6 +74,27 @@ class characterSelector:
         p.display.flip()
         
     #---Internal Helper Functions---
+    def __load_sprites(self) -> None:
+        spritePath = "./res/characters"
+        allData = os.listdir(spritePath)
+        playableChars = []
+        for string in allData:
+            if string.endswith(".desc"):
+                playableChars.append(string)
+        if self.debug:
+            print(playableChars)
+        self.playableCharacters = []
+        for desc in playableChars:
+            self.playableCharacters.append({"Name":None, "Desc":None, "cutingEdge":None})
+            descFile = open(os.path.join(spritePath, desc), "r")
+            descContent = descFile.read().splitlines()
+            descFile.close()
+            self.playableCharacters[-1]["Name"] = descContent[0]
+            self.playableCharacters[-1]["Desc"] = descContent[1]
+            self.playableCharacters[-1]["cutingEdge"] = pyr_pg.cutting_edge.CuttingEdge(descContent[2], spritePath, debug=self.debug).return_sprite_table()
+        if self.debug:
+            print(self.playableCharacters)
+        
     def __create_textbox(self, tileSize: int, png: str) -> p.surface.Surface:
         box_tilesheet = p.image.load(png)
         textBoxSize = (8,5)

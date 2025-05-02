@@ -1,7 +1,10 @@
 import pygame as p
+import os
 
 class CuttingEdge():
     def __init__(self, table, path, debug=None, debug_output=None):
+        if path[-1] != "/":
+            path += "/"
         self.debug             = debug
         self.debug_output      = debug_output
         self.sprite_sheet_path = path
@@ -16,7 +19,7 @@ class CuttingEdge():
     def load_table(self, path, table):
         debug      = False
         debug_type = None
-        if self.debug == "shell":
+        if self.debug:
             debug      = True
             debug_type = "shell"
         try:
