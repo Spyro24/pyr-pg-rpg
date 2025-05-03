@@ -1,7 +1,7 @@
 Das ist die Dialogscript Dukomentation.
-Dialogscript macht nämlich das komplette system interaktiv und bietet sehrviel freiheit.
+Dialogscript macht nämlich das komplette system interaktiv und bietet sehr viel freiheit.
 Hier werden ALLE befehle und die args der Befehle aufgelistet sowie was die Befehle eventuel tun.
-Die Befehls Argumenete werden mit einem "|" (PIPE-Strich) getrent sowie je zeile nur ein Befehl zulässig ist.
+Die Befehls Argumenete werden mit einem "|" (PIPE-Strich) getrent sowie ist je Zeile nur ein Befehl zulässig ist.
 (Hier ein beispiel: textbox|./res/dialogscript/textbox/UP|./res/textboxes/gray_rounded.png)
 
 Variablen: (variablen müssen in {} geschrieben werden und sind in den internen code hardcodiert.)

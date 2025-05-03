@@ -32,7 +32,11 @@ class characterSelector:
         for rect in self.charactersPlacerRects:
             p.draw.rect(self.window, (128, 0, 0), rect, width=3)
     
-    def openSelector(self, assets: dict) -> tuple:#[characterPathForLoader: str, forward: bool, exit: bool]:
+    def openSelector(self, assets: dict) -> tuple:#[characterConfForLoader: str, forward: bool, exit: bool]:
+        self.selectedCharacter = 0
+        FPS = 0
+        RFPS = 0
+        plotTime = 0
         self.__load_sprites()
         self.backgroud = p.transform.scale(assets["bg"], (self.lowestSize, self.lowestSize))
         self.fdButtonTexture = p.transform.scale(assets["forward"], (self.tileSize, self.tileSize))
@@ -58,17 +62,32 @@ class characterSelector:
                     if mouseKeys[0]:
                         if fdButton.collidepoint(mousePos):
                             run = False
+                if event.type == p.KEYDOWN:
+                    if event.key == p.K_LEFT or event.key == p.K_a:
+                        self.selectedCharacter -= 1
+                        if self.selectedCharacter < 0:
+                            self.selectedCharacter = self.maxAvailablePlayableChars - 1
                             
             if frameTime - renderTime > lastFrame:
                 lastFrame = frameTime
                 self.render()
-        return (None, True, False)
+                RFPS += 1
+            FPS += 1
+            if self.debug:
+                if plotTime + 1 < frameTime:
+                    plotTime = frameTime
+                    print("FPS:", FPS, "RFPS:", RFPS)
+                    FPS = 0; RFPS = 0
+        return (self.playableCharacters[self.selectedCharacter]['charDescFile'], True, False)
         
     def render(self) -> None:
         self.window.fill((0, 0, 0))
         self.window.blit(self.backgroud, self.virtWindow.topleft)
         self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
         self.window.blit(self.textBoxBG,(self.virtWindow.left + self.tileSize, self.virtWindow.bottom - self.tileSize * 5))
+        for n in range(-2,3):
+            self.window.blit(p.transform.scale(self.playableCharacters[(self.selectedCharacter + n) % self.maxAvailablePlayableChars]['cutingEdge']['character_sel_picture'], self.charactersPlacerRects[n + 2].size),self.charactersPlacerRects[n + 2].topleft)
+            
         if self.debug:
             self.__debug()
         p.display.flip()
@@ -85,15 +104,17 @@ class characterSelector:
             print(playableChars)
         self.playableCharacters = []
         for desc in playableChars:
-            self.playableCharacters.append({"Name":None, "Desc":None, "cutingEdge":None})
+            self.playableCharacters.append({"Name":None, "Desc":None, "cutingEdge":None, "charDescFile": desc[0:-5]})
             descFile = open(os.path.join(spritePath, desc), "r")
             descContent = descFile.read().splitlines()
             descFile.close()
             self.playableCharacters[-1]["Name"] = descContent[0]
             self.playableCharacters[-1]["Desc"] = descContent[1]
             self.playableCharacters[-1]["cutingEdge"] = pyr_pg.cutting_edge.CuttingEdge(descContent[2], spritePath, debug=self.debug).return_sprite_table()
+        self.maxAvailablePlayableChars = len(self.playableCharacters)
         if self.debug:
             print(self.playableCharacters)
+            print(self.maxAvailablePlayableChars)
         
     def __create_textbox(self, tileSize: int, png: str) -> p.surface.Surface:
         box_tilesheet = p.image.load(png)

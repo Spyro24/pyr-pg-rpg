@@ -48,7 +48,7 @@ class main_class():
         self.runtimeStore[rs.TileSheetSize] = "6x12"
         self.fpsCounter                     = True
         self.debug_console                  = True
-        self.standard_player_sprite         = "protogen_kem"
+        self.standard_player_sprite         = "blue_cube"
         self.character_path                 = "./res/characters/"
         self.main_FPS_count                 = 0
         self.rendered_FPS_count             = 0
@@ -258,10 +258,11 @@ class main_class():
         if not chosenPlayer[1]:
             self.main_menu()
         else:
-            self.setup_player("create")
+            self.setup_player([chosenPlayer[0]])
     
     def setup_player(self, option):
-        self.player_env           = {"player":"Test", "player_sprite":"synth"}
+        self.player_env           = {"player":"Test", "player_sprite":option[0]}
+        self.main_config['player_sprite'] = self.player_env['player_sprite']
         self.map_config["window"] = self.game_win
         self.map                  = pyr_pg.map_.map(self.map_config)
         self.main_config["map"]   = self.map
@@ -328,7 +329,7 @@ class main_class():
             if self.fpsCounter:
                 if (FPS_get + 1) < cur_frame_time:
                     FPS_get = cur_frame_time
-                    print(int(self.rendered_FPS_count), int(self.main_FPS_count))
+                    print("FPS:", self.main_FPS_count, "RFPS:",self.rendered_FPS_count)
                     self.main_FPS_count = 0
                     self.rendered_FPS_count = 0                    
         
@@ -345,7 +346,7 @@ class main_class():
         self.b_pos_x = (w / 2) - (self.lowestSize / 2)
         self.b_pos_y = (h / 2) - (self.lowestSize / 2)
         self.menuSize   = self.lowestSize / 10
-        self.audioSetup = pyr_pg.sound.sound(self.game_win, "./music/")
+        self.audioSetup = pyr_pg.sound.sound(self.game_win, "./res/music/")
                 
     def close_game(self) -> None:
         p.quit()
