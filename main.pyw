@@ -172,22 +172,23 @@ class main_class():
             for event in p.event.get():
                 if event.type == p.QUIT:
                     run = False
-                    self.close_game()                    
-            m_click = p.mouse.get_pressed()
-            m_pos = p.mouse.get_pos()            
-            if m_click[0]:
-                if set_rect.collidepoint(m_pos):
-                    print("open settings menu")
-                    self.audioSetup.play("sfx_1", "menu_click")
-                    self.menu_settings()
-                    redraw = True                
-                if new_rect.collidepoint(m_pos):
-                    self.audioSetup.play("sfx_1", "menu_click")
-                    run = False
-                    start_new_game = True
-                if info_rect.collidepoint(m_pos):
-                    self.info_box.show(self.info_text)
-                    redraw = True
+                    self.close_game()
+                if event.type == p.MOUSEBUTTONDOWN:
+                    m_click = p.mouse.get_pressed()
+                    m_pos = p.mouse.get_pos()            
+                    if m_click[0]:
+                        if set_rect.collidepoint(m_pos):
+                            print("open settings menu")
+                            self.audioSetup.play("sfx_1", "menu_click")
+                            self.menu_settings()
+                            redraw = True                
+                        if new_rect.collidepoint(m_pos):
+                            self.audioSetup.play("sfx_1", "menu_click")
+                            run = False
+                            start_new_game = True
+                        if info_rect.collidepoint(m_pos):
+                            self.info_box.show(self.info_text)
+                            redraw = True
             if redraw:
                 self.game_win.blit(background, (self.b_pos_x, self.b_pos_y))
                 self.game_win.blit(title, (self.b_pos_x + (self.menuSize * 3), self.b_pos_y + self.menuSize))
@@ -248,7 +249,7 @@ class main_class():
         decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menuSize * 4)))
         start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
-        chosenPlayer = self.playerCharacterSelector.openSelector({"bg": background, "forward": p.image.load("./images/main_menu/char_selector/start.png")})
+        chosenPlayer = self.playerCharacterSelector.openSelector({"bg": background, "forward": p.image.load("./images/main_menu/char_selector/start.png"), "back": arow_left})
         
         if chosenPlayer[2]:
             self.close_game()
@@ -347,12 +348,11 @@ class main_class():
                 
     def close_game(self) -> None:
         p.quit()
-        exit(0)
     
     
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
-    runner = "Dev"
+    runner = "User"
     if runner == "User":
         try:
             game = main_class(LogSystem=logsys.insert)

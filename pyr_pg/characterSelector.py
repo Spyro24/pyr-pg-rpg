@@ -13,6 +13,7 @@ class characterSelector:
         self.window = runtimeStore[10][13] #the runtimestore system is not available in the module. runtimeStore[13] = rs.Window
         self.characterPath = characterPath
         self.runtimeStore = runtimeStore
+        self.fontSystem = runtimeStore[15]
         self.__envReady()
         self.debug = debug
         self.DebugRects = []
@@ -40,14 +41,18 @@ class characterSelector:
         self.__load_sprites()
         self.backgroud = p.transform.scale(assets["bg"], (self.lowestSize, self.lowestSize))
         self.fdButtonTexture = p.transform.scale(assets["forward"], (self.tileSize, self.tileSize))
+        self.backButtonTexture = p.transform.scale(assets["back"], (self.tileSize, self.tileSize))
         self.textBoxBG = self.__create_textbox(self.tileSize, "./res/textboxes/gray_rounded_playerSelectort.png")
         fdButton = self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
+        backButton = self.window.blit(self.backButtonTexture,(self.virtWindow.left, self.virtWindow.bottom - self.tileSize))
         self.charactersPlacerRects = [p.rect.Rect((self.zeroPos[0], self.zeroPos[1] + self.tileSize / 2 * 3), (self.tileSize, self.tileSize)),
                                       p.rect.Rect((self.zeroPos[0] + self.tileSize, self.zeroPos[1] + self.tileSize),(self.tileSize * 2, self.tileSize * 2)),
                                       p.rect.Rect((self.zeroPos[0] + self.tileSize * 3, self.zeroPos[1]),(self.tileSize * 4, self.tileSize * 4)),
                                       p.rect.Rect((self.zeroPos[0] + self.tileSize * 7, self.zeroPos[1] + self.tileSize),(self.tileSize * 2, self.tileSize * 2)),
                                       p.rect.Rect((self.zeroPos[0] + self.tileSize * 9, self.zeroPos[1] + self.tileSize / 2 * 3), (self.tileSize, self.tileSize))]
         self.DebugRects.append(fdButton)
+        self.microTiling = self.tileSize / 10
+        self.fontSize = self.microTiling * 6
         run = True
         renderTime = 1 / self.runtimeStore[2] #rs.DefaultFps
         lastFrame = 0
@@ -62,6 +67,9 @@ class characterSelector:
                     if mouseKeys[0]:
                         if fdButton.collidepoint(mousePos):
                             run = False
+                        elif backButton.collidepoint(mousePos):
+                            run = False
+                            return ("", False, False)
                 if event.type == p.KEYDOWN:
                     if event.key == p.K_LEFT or event.key == p.K_a:
                         self.selectedCharacter = (self.selectedCharacter - 1) % self.maxAvailablePlayableChars
@@ -85,9 +93,16 @@ class characterSelector:
         self.window.blit(self.backgroud, self.virtWindow.topleft)
         self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
         self.window.blit(self.textBoxBG,(self.virtWindow.left + self.tileSize, self.virtWindow.bottom - self.tileSize * 5))
+        self.window.blit(self.backButtonTexture,(self.virtWindow.left, self.virtWindow.bottom - self.tileSize))
         for n in range(-2,3):
             self.window.blit(p.transform.scale(self.playableCharacters[(self.selectedCharacter + n) % self.maxAvailablePlayableChars]['cutingEdge']['character_sel_picture'], self.charactersPlacerRects[n + 2].size),self.charactersPlacerRects[n + 2].topleft)
-            
+        self.fontSystem.draw(self.playableCharacters[self.selectedCharacter]['Name'], self.fontSize, (self.virtWindow.left + self.tileSize *5 ,self.virtWindow.top + self.tileSize * 6 + self.microTiling), placement=1)
+        descLen = len(self.playableCharacters[self.selectedCharacter]['Desc'])
+        if descLen > 19:
+            self.fontSystem.draw(self.playableCharacters[self.selectedCharacter]['Desc'][0:18], self.fontSize * 0.75, (self.virtWindow.left + self.tileSize *5 ,self.virtWindow.top + self.tileSize * 7 + self.microTiling), placement=1, color=(200,200,200))
+            self.fontSystem.draw(self.playableCharacters[self.selectedCharacter]['Desc'][18:descLen], self.fontSize * 0.75, (self.virtWindow.left + self.tileSize *5 ,self.virtWindow.top + self.tileSize * 7 + self.fontSize + self.microTiling), placement=1, color=(200,200,200))
+        else:
+            self.fontSystem.draw(self.playableCharacters[self.selectedCharacter]['Desc'], self.fontSize * 0.75, (self.virtWindow.left + self.tileSize *5 ,self.virtWindow.top + self.tileSize * 7 + self.microTiling), placement=1, color=(200,200,200))
         if self.debug:
             self.__debug()
         p.display.flip()

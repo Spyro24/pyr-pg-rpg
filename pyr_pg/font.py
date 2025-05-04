@@ -41,7 +41,7 @@ class font():
         self.ts = self.w / self.font_w
         print(self.ts)
         
-    def draw(self, string: str, size: int, dest: tuple, placement=0) -> p.Surface:
+    def draw(self, string: str, size: int, dest: tuple, placement=0, color=(255,255,255)) -> p.Surface:
         string_lenght = len(string)
         count_x = 0 #the counter for the letters to move the courser
         count_y = 0 #the line counter (not in use in this version) (the dialog wrapper has it own)
@@ -58,7 +58,8 @@ class font():
                 string_surface.blit(self.font_img, (count_x * self.ts + spacing,0), area=p.Rect((source[0] * self.ts, source[1] * self.ts),(self.ts, self.ts)))
                 spacing -= self.spacing[letter][2] - 1
             count_x += 1
-        print((spacing + self.ts * count_x, self.ts))
+        string_surface.fill((255,255,255), special_flags=p.BLEND_RGB_SUB)
+        string_surface.fill(color, special_flags=p.BLEND_RGB_ADD)
         blitableStringSurface = p.Surface((spacing + self.ts * count_x, self.ts), flags=p.SRCALPHA)
         blitableStringSurface.blit(string_surface,(0,0))
         blitStringSurface = p.transform.scale_by(blitableStringSurface, (1 / self.ts) * size)
