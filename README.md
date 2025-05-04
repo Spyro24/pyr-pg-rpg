@@ -1,7 +1,7 @@
 minimal requirements
-  RAM : 2GB
-  OS  : Linux
-  CPU : Intel Atom N450 with 1,66 GHz
+*  RAM : 2GB
+*  OS  : Linux
+*  CPU : Intel Atom N450 with 1,66 GHz
 
 Maptool controls:
 * CTRL + R = Reload the UI (you need this)
@@ -9,7 +9,7 @@ Maptool controls:
 * WASD = Move to the next map
 
 V1.0 [pre release]
-pyr_pg (Makend) is available on Itch.(V0.0(External githube link))
+pyr_pg (Makend) is available on Itch.
 
 
     (pyr-pg-rpg) (A Python RPG Maker with a bultin rpg)
@@ -27,3 +27,4 @@ pyr_pg (Makend) is available on Itch.(V0.0(External githube link))
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+

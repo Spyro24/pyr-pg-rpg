@@ -2,9 +2,9 @@ import pygame as p
 import time
 
 class options_menu():
-    def __init__(self, globconfig):
-        self.global_config  = globconfig
-        self.blit_surface   = self.global_config["pg_window"]
+    def __init__(self, runimeStore):
+        self.runtimStore    = runimeStore
+        self.blit_surface   = self.runtimStore[10][13]
         self.config         = {"gridsize":(16,16), "blit_pos":(0,0), "tile_size":0}
         self.runtime_config = {"menu_bg":None, "selector":None}
         self.options        = {}

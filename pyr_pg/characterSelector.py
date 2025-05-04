@@ -108,6 +108,45 @@ class characterSelector:
         p.display.flip()
         
     #---Internal Helper Functions---
+    def __localCutter(self, table, path): #This is a function from Cutting_edge to make this module standelone (to use it for your own game :) )
+        sprite_table      = {}
+        property_table    = {}
+        sprite_table_file = open(os.path.join(path,table), "r")
+        sprite_table_raw  = sprite_table_file.readlines()
+        sprite_table_raw  = [line.strip() for line in sprite_table_raw]
+        max_count         = len(sprite_table_raw)
+        sprite_table_file.close()
+        count = 0
+        tmp = sprite_table_raw[count].split("x")
+        sheet_w = int(tmp[0])
+        sheet_h = int(tmp[1])
+        count       += 1
+        tmp = sprite_table_raw[count].split(">")
+        count       += 1
+        execute = False
+        if tmp[0] == "SPRITESHEET":
+            sprite_sheet = p.image.load(os.path.join(self.characterPath, str(tmp[1])))
+            px_w, px_h        = sprite_sheet.get_size()
+            tile_size         = int(px_h /sheet_h)
+            tile_size    = (tile_size, tile_size)
+            execute           = True
+        if execute:
+            while count < max_count:
+                #---creating the config for the curent obj---
+                cur_obj        = sprite_table_raw[count] #get the obj
+                obj_config     = cur_obj.split("=") #split the param name from the rest of the code
+                obj_properties = obj_config[1].split(",") #split the psotition and the size of the object in half
+                obj_wh         = obj_properties[0].split(":") #generate the position
+                obj_size       = obj_properties[1].split("x") #generate the size
+                #---create the sprite and set it in the table---
+                obj_texture = p.Surface((tile_size[0] * int(obj_size[0]), tile_size[1] * int(obj_size[1])), flags=p.SRCALPHA)
+                obj_texture.blit(sprite_sheet, (0,0), p.Rect((tile_size[0] * int(obj_wh[0]), tile_size[1] * int(obj_wh[1])),(tile_size[0] * int(obj_size[0]), tile_size[1] * int(obj_size[1]))))
+                sprite_table[obj_config[0]] = obj_texture.convert_alpha()
+                #---save the properties---
+                property_table[obj_config[0]] = (int(obj_size[0]), int(obj_size[1]), int(obj_wh[0]), int(obj_wh[1]))
+                count += 1
+        return sprite_table
+        
     def __load_sprites(self) -> None:
         spritePath = "./res/characters"
         allData = os.listdir(spritePath)
@@ -125,7 +164,7 @@ class characterSelector:
             descFile.close()
             self.playableCharacters[-1]["Name"] = descContent[0]
             self.playableCharacters[-1]["Desc"] = descContent[1]
-            self.playableCharacters[-1]["cutingEdge"] = pyr_pg.cutting_edge.CuttingEdge(descContent[2], spritePath, debug=self.debug).return_sprite_table()
+            self.playableCharacters[-1]["cutingEdge"] = self.__localCutter(descContent[2], spritePath) #loading sprites with the local cutter
         self.maxAvailablePlayableChars = len(self.playableCharacters)
         if self.debug:
             print(self.playableCharacters)

@@ -131,24 +131,18 @@ class main_class():
             p.display.set_caption(self.game_config.get("display_name"))
         pyr_pg.splash(self.game_win, 1.2)
         self.setup_env()
-        #---Export important vars to self.global_config---
-        self.global_config["pg_window"] = self.game_win
-        self.global_config["font"]      = self.font
-        #-------------------------------------------------
         #This has to be configured after the env--------------
         self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menuSize / 2), (self.b_pos_x, self.b_pos_y), (20,20))
-        self.options  = pyr_pg.options_menu.options_menu(self.global_config)
+        self.options  = pyr_pg.options_menu.options_menu(self.runtimeStore)
         self.options.create("./res/menus/options_menu.png")
-        #-----------------------------------------------------
-        #---Export all other important vars to self.global_config---
-        self.global_config['options']   = self.options
         #-----------------------------------------------------
         self.cacheImages()
         self.main_menu() #Open the main menu and start the game
     
     def cacheImages(self) -> None:
-        self.cache["mainMenu"]       = {}
+        self.cache["mainMenu"] = {}
         self.cache["mainMenu"]["bg"] = p.image.load("./images/main_menu/back.png")
+        self.cache["mainMenu"]["title"] = p.image.load("./images/main_menu/title.png")
     
     def main_menu(self) -> None:
         render = True
@@ -156,7 +150,7 @@ class main_class():
         redraw = True
         #all main menu images
         background = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowestSize,self.lowestSize))
-        title      = p.transform.scale(p.image.load("./images/main_menu/title.png"),(self.menuSize * 4,self.menuSize * 2))
+        title      = p.transform.scale(self.cache["mainMenu"]["title"],(self.menuSize * 4,self.menuSize * 2))
         settings   = p.transform.scale(p.image.load("./images/main_menu/settings.png"),(self.menuSize,self.menuSize))
         start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menuSize*3,self.menuSize))
         continue_g = p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menuSize*3,self.menuSize))
@@ -166,6 +160,8 @@ class main_class():
         load_rect = self.game_win.blit(continue_g, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 8)))
         new_rect  = self.game_win.blit(start_newg, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 6.5)))
         info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
+        #make images global
+        self.backGround = background
         #setup button vars
         start_new_game = False
         while run: #main menu loop
@@ -178,7 +174,6 @@ class main_class():
                     m_pos = p.mouse.get_pos()            
                     if m_click[0]:
                         if set_rect.collidepoint(m_pos):
-                            print("open settings menu")
                             self.audioSetup.play("sfx_1", "menu_click")
                             self.menu_settings()
                             redraw = True                
@@ -237,20 +232,10 @@ class main_class():
                     
     def menu_create_character(self):
         menu__create_character__ = True
-        render = True
-        redraw = True
-        back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menuSize, self.menuSize))
-        background  = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowestSize,self.lowestSize))
-        arow_left   = p.image.load("./images/main_menu/char_selector/chose.png")
-        arow_right  = p.transform.rotate(arow_left, 180)
         ready  = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"),(self.menuSize, self.menuSize))
-        #setup rectangle buttons
-        back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
-        decrease_char_value = self.game_win.blit(arow_left, (self.b_pos_x, self.b_pos_y + (self.menuSize * 4)))
-        start_b = self.game_win.blit(back_button, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize * 9)))
-        #setup button vars
-        chosenPlayer = self.playerCharacterSelector.openSelector({"bg": background, "forward": p.image.load("./images/main_menu/char_selector/start.png"), "back": arow_left})
-        
+        chosenPlayer = self.playerCharacterSelector.openSelector({"bg": self.cache["mainMenu"]["bg"],
+                                                                  "forward": p.image.load("./images/main_menu/char_selector/start.png"),
+                                                                  "back": p.image.load("./images/main_menu/char_selector/chose.png")})
         if chosenPlayer[2]:
             self.close_game()
         if not chosenPlayer[1]:
@@ -324,7 +309,7 @@ class main_class():
                 self.rendered_FPS_count += 1            
             #---end of game loop---
             self.main_FPS_count += 1 
-            if self.fpsCounter:
+            if self.debug:
                 if (FPS_get + 1) < cur_frame_time:
                     FPS_get = cur_frame_time
                     print("FPS:", self.main_FPS_count, "RFPS:",self.rendered_FPS_count)
@@ -341,18 +326,16 @@ class main_class():
         w, h = self.game_win.get_size()
         self.lowestSize = w
         if w > h: self.lowestSize = h
-        self.b_pos_x = (w / 2) - (self.lowestSize / 2)
-        self.b_pos_y = (h / 2) - (self.lowestSize / 2)
+        self.b_pos_x, self.b_pos_y = (w / 2) - (self.lowestSize / 2), (h / 2) - (self.lowestSize / 2)
         self.menuSize   = self.lowestSize / 10
         self.audioSetup = pyr_pg.sound.sound(self.game_win, "./res/music/")
                 
     def close_game(self) -> None:
         p.quit()
     
-    
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
-    runner = "User"
+    runner = "Dev"
     if runner == "User":
         try:
             game = main_class(LogSystem=logsys.insert)

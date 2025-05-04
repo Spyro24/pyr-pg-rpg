@@ -39,9 +39,8 @@ class font():
         self.font_img = p.image.load(font_png +"_"+font_color+".png")
         self.w, self.h = self.font_img.get_size()
         self.ts = self.w / self.font_w
-        print(self.ts)
         
-    def draw(self, string: str, size: int, dest: tuple, placement=0, color=(255,255,255)) -> p.Surface:
+    def draw(self, string: str, size: int, dest: tuple, placement=0, color=(255,255,255), internalUse=False) -> p.Surface:
         string_lenght = len(string)
         count_x = 0 #the counter for the letters to move the courser
         count_y = 0 #the line counter (not in use in this version) (the dialog wrapper has it own)
@@ -60,16 +59,19 @@ class font():
             count_x += 1
         string_surface.fill((255,255,255), special_flags=p.BLEND_RGB_SUB)
         string_surface.fill(color, special_flags=p.BLEND_RGB_ADD)
-        blitableStringSurface = p.Surface((spacing + self.ts * count_x, self.ts), flags=p.SRCALPHA)
-        blitableStringSurface.blit(string_surface,(0,0))
-        blitStringSurface = p.transform.scale_by(blitableStringSurface, (1 / self.ts) * size)
-        if placement == 0:
-            self.game_win.blit(blitStringSurface, dest)
-        elif placement == 1:
-            self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1]))
-        elif placement == 2:
-            self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width()), dest[1]))
-        return blitStringSurface
+        if not internalUse:
+            blitableStringSurface = p.Surface((spacing + self.ts * count_x, self.ts), flags=p.SRCALPHA)
+            blitableStringSurface.blit(string_surface,(0,0))
+            blitStringSurface = p.transform.scale_by(blitableStringSurface, (1 / self.ts) * size)
+            if placement == 0:
+                self.game_win.blit(blitStringSurface, dest)
+            elif placement == 1:
+                self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1]))
+            elif placement == 2:
+                self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width()), dest[1]))
+            return blitStringSurface
+        else:
+            return string_surface
         
 
 if __name__ == "__main__":
