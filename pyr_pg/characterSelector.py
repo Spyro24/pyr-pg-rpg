@@ -64,10 +64,10 @@ class characterSelector:
                             run = False
                 if event.type == p.KEYDOWN:
                     if event.key == p.K_LEFT or event.key == p.K_a:
-                        self.selectedCharacter -= 1
-                        if self.selectedCharacter < 0:
-                            self.selectedCharacter = self.maxAvailablePlayableChars - 1
-                            
+                        self.selectedCharacter = (self.selectedCharacter - 1) % self.maxAvailablePlayableChars
+                    elif event.key == p.K_RIGHT or event.key == p.K_d:
+                        self.selectedCharacter = (self.selectedCharacter + 1) % self.maxAvailablePlayableChars
+                        
             if frameTime - renderTime > lastFrame:
                 lastFrame = frameTime
                 self.render()

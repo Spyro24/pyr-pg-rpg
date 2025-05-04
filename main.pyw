@@ -202,10 +202,7 @@ class main_class():
                 render = False
         if start_new_game:
             self.menu_create_character()
-            
-    def show_info(self):
-        pass
-            
+    
     def menu_settings(self):
         render = True
         menu__setting__ = True

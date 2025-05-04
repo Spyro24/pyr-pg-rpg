@@ -41,14 +41,14 @@ class font():
         self.ts = self.w / self.font_w
         print(self.ts)
         
-    def draw(self, string, size, dest):
+    def draw(self, string: str, size: int, dest: tuple, placement=0) -> p.Surface:
         string_lenght = len(string)
         count_x = 0 #the counter for the letters to move the courser
         count_y = 0 #the line counter (not in use in this version) (the dialog wrapper has it own)
         spacing = 0
         part_string = string.split("\n")
         lines = len(part_string)
-        string_surface = p.Surface((string_lenght * self.ts, (self.ts)), flags=p.SRCALPHA)
+        string_surface = p.Surface((string_lenght * self.ts, self.ts), flags=p.SRCALPHA)
         for letter in string:
             if letter == " ":
                 spacing += int(self.ts * self.font_table["space"]) - self.ts
@@ -58,12 +58,21 @@ class font():
                 string_surface.blit(self.font_img, (count_x * self.ts + spacing,0), area=p.Rect((source[0] * self.ts, source[1] * self.ts),(self.ts, self.ts)))
                 spacing -= self.spacing[letter][2] - 1
             count_x += 1
-        self.game_win.blit(p.transform.scale(string_surface, (string_lenght * size, size)), dest)
-        return string_surface
+        print((spacing + self.ts * count_x, self.ts))
+        blitableStringSurface = p.Surface((spacing + self.ts * count_x, self.ts), flags=p.SRCALPHA)
+        blitableStringSurface.blit(string_surface,(0,0))
+        blitStringSurface = p.transform.scale_by(blitableStringSurface, (1 / self.ts) * size)
+        if placement == 0:
+            self.game_win.blit(blitStringSurface, dest)
+        elif placement == 1:
+            self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1]))
+        elif placement == 2:
+            self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width()), dest[1]))
+        return blitStringSurface
         
 
 if __name__ == "__main__":
     _test_win = p.display.set_mode((700,700))
-    _test_font = font(_test_win, "./standard")
-    _test_font.draw("abcdefghijklmnopqrstuvwxyz", 20, (5,5))
+    _test_font = font(_test_win, "./res/fonts/standard")
+    _test_font.draw("abcdefghijklmnopqrstuvwxyz", 40, (5,5))
     p.display.flip()
