@@ -9,11 +9,11 @@ import time
 import pyr_pg
 
 class characterSelector:
-    def __init__(self, characterPath: str, runtimeStore: dict, debug=False):
-        self.window = runtimeStore[10][13] #the runtimestore system is not available in the module. runtimeStore[13] = rs.Window
-        self.characterPath = characterPath
+    def __init__(self, runtimeStore: dict, debug=False):
         self.runtimeStore = runtimeStore
-        self.fontSystem = runtimeStore[15]
+        self.window = self.runtimeStore[10][13] #The pygame Window
+        self.characterPath = self.runtimeStore[16]
+        self.fontSystem = runtimeStore[15] #The PYR_PG font system
         self.__envReady()
         self.debug = debug
         self.DebugRects = []

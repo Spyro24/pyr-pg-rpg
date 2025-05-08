@@ -14,3 +14,7 @@ WindowHight      = 12
 Window           = 13
 PlayerName       = 14
 FontSystem       = 15
+CharacterPath    = 16
+TilesXY          = 17
+OSPlatform       = 18
+PlayerStartPos   = 19

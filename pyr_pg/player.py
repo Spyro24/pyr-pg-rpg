@@ -20,22 +20,22 @@ import pygame as p
 import time
 
 class player(): 
-    def __init__(self, game_win, config, test=False):
+    def __init__(self, runtimeStore: dict, test=False):
         self.config_version = "0.0.1"
         self.storage        = {"player_name":"",
                                "position":[0,0,0,0,0,0],#xPos, yPos, tileXPos, tileYPos, mapXPos, mapYPos
                                }
         if not test:
             import pyr_pg
-            self.gw                          = game_win
-            self.main_config                 = config
-            self.tiles_x, self.tiles_y       = config["tiles_xy"]
-            self.debug_colors                = config["debug_colors"]
-            self.gridPosX, self.gridPosY = config["player_start_pos_xy"]
+            self.runtimeStore = runtimeStore
+            self.gameWindow                  = self.runtimeStore[10][13]
+            self.tiles_x, self.tiles_y       = self.runtimeStore[17]
+            self.debug_colors                = self.runtimeStore[8]
+            self.gridPosX, self.gridPosY = self.runtimeStore[19]
             self.state = [False]
             self.map = config["map"]
             #---get shortest window size and create the tile sys for player---
-            gw_w, gw_h = self.gw.get_size()
+            gw_w, gw_h = self.gameWindow.get_size()
             self.shortest_window_size = gw_w
             if gw_w > gw_h: self.shortest_window_size = gw_h
             self.tileSize = self.shortest_window_size / self.tiles_y
@@ -146,7 +146,7 @@ class player():
         self.state.insert(0, True)
     
     def render(self):
-        self.gw.blit(self.player_sprite, self.player_hitbox)
+        self.gameWindow.blit(self.player_sprite, self.player_hitbox)
         
     def get_state(self, stat):
         return self.state[stat]
@@ -187,7 +187,7 @@ class player():
             self.storage['player_name'] = params[1]
     
     def _debug(self): #the function for the debug class(its a external module thats loads with the main script)
-        p.draw.rect(self.gw, self.player_hitbox_color, self.player_hitbox, width=3)
+        p.draw.rect(self.gameWindow, self.player_hitbox_color, self.player_hitbox, width=3)
         
 if __name__ == "__main__":
     test_player = player(None, None, test=True)
