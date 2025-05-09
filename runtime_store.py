@@ -18,3 +18,6 @@ CharacterPath    = 16
 TilesXY          = 17
 OSPlatform       = 18
 PlayerStartPos   = 19
+ConfigFilePath   = 20
+MapSystem        = 21
+PlayerSprite     = 22

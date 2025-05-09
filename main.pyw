@@ -1,5 +1,4 @@
 #! /usr/bin/python3
-
 """
     main class to run a pyr_pg based rpg
     Copyright (C) 2024-2025 Spyro24
@@ -19,9 +18,7 @@
 """
 
 from random import randint
-import subprocess
 import os
-from pathlib import Path
 import pygame as p
 import pyr_pg
 #import time
@@ -30,15 +27,17 @@ import modding
 
 class main_class():
     def __init__(self, LogSystem=print, debug=False):
+        '''Setup the game ENV'''
         self.runtimeStore = {}
         self.cache        = {}
         self.modSupport   = modding.mod(self.runtimeStore)
         #----modify this section for your game if you use this runner----
-        self.runtimeStore[rs.PlayerSpeed]   = 8
-        self.runtimeStore[rs.DefaultFps]    = 60
-        self.runtimeStore[rs.LogSystem]     = LogSystem
-        self.runtimeStore[rs.CharacterPath] =  "./res/characters/"
-        self.runtimeStore[rs.TilesXY]       = (16,16)
+        self.runtimeStore[rs.PlayerSpeed]    = 8
+        self.runtimeStore[rs.DefaultFps]     = 60
+        self.runtimeStore[rs.LogSystem]      = LogSystem
+        self.runtimeStore[rs.CharacterPath]  =  "./res/characters/"
+        self.runtimeStore[rs.TilesXY]        = (16,16)
+        self.runtimeStore[rs.PlayerStartPos] = (0,0)
         #----------------------------------------------------------------
         self.autoSave                       = False
         self.runtimeStore[rs.PlayerName]    = "Default"
@@ -63,6 +62,7 @@ class main_class():
                               "debug_colors":self.debug_colors,
                               "character_path":self.character_path,
                               "player_sprite":None}
+        self.runtimeStore[rs.DebugColors] = self.debug_colors
         self.runtimeStore[rs.PlayerSpeed] = 1 / ((self.runtimeStore[rs.MicroTiling] * self.runtimeStore[rs.PlayerSpeed]))
         self.runtimeStore[rs.OSPlatform]  = os.name
         info              = open("./res/main_menu/info_box", "r")
@@ -74,12 +74,10 @@ class main_class():
         self.game_config  = pyr_pg.config.config("./game.rpg")
         self.game_name    = self.game_config.get("name")
         self.game_version = self.game_config.get("version")
-        self.NPCs         = []
-        is_ready          = False
-        print("try to init game: " + self.game_name)
-        print("[PYR-PG][Info] version " + pyr_pg.version)
-        print(self.info_text)
+        self.runtimeStore[rs.LogSystem]("try to init game: " + self.game_name)
+        self.runtimeStore[rs.LogSystem]("[PYR-PG][Info] version " + pyr_pg.version)
         self.conf_path = p.system.get_pref_path("pyr-pg","makend")
+        is_ready = False
         try:
             is_configured = open(self.conf_path + "/CONFIGURED", "r")
             is_ready = True
@@ -110,9 +108,6 @@ class main_class():
         self.runtimeStore[rs.WindowProperties] = {}
         self.runtimeStore[rs.WindowProperties][rs.Window] = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
         self.runtimeStore[rs.FontSystem] = pyr_pg.font.font(self.runtimeStore[rs.WindowProperties][rs.Window], "./res/fonts/standard")
-        
-    def loadInCacheOnStartup(self) -> None:
-        pass
     
     def play(self):
         '''Start the programm'''
@@ -245,24 +240,19 @@ class main_class():
     
     def setup_player(self, option):
         self.player_env           = {"player":"Test", "player_sprite":option[0]}
-        self.main_config['player_sprite'] = self.player_env['player_sprite']
+        self.runtimeStore[rs.PlayerSprite] = self.player_env['player_sprite']
         self.map_config["window"] = self.game_win
-        self.map                  = pyr_pg.map_.map(self.map_config)
-        self.main_config["map"]   = self.map
+        self.runtimeStore[rs.MapSystem] = pyr_pg.map_.map(self.map_config)
         self.dialog               = pyr_pg.DialogHandler.DialogScript(self.runtimeStore)
         self.player               = pyr_pg.player.player(self.runtimeStore)
-        self.map.load()
         self.play_game()
         
     def play_game(self):
-        mb_pressed = False
         debug_console = self.debug_console
         from time import time as time_get
         FPS_get = time_get()
         FPSmax = self.runtimeStore[rs.DefaultFps]
-        FPS_c = 0
         KT = time_get()
-        ms = 0.001
         run = True
         last_frame = time_get()
         while run:
@@ -270,7 +260,10 @@ class main_class():
             cur_frame_time = time_get()
             for event in p.event.get():
                 if event.type == p.QUIT:
-                    run = False            
+                    run = False
+                elif event.type == p.KEYDOWN:
+                    if event.key == p.K_ESCAPE:
+                        self.options.open()
             key_ar = p.key.get_pressed()              
             if (cur_frame_time - self.runtimeStore[rs.PlayerSpeed]) > KT:
                 if key_ar[p.K_w]:
@@ -289,32 +282,26 @@ class main_class():
                     KT = time_get()
                     self.player.reset_state(0)
             #put here the DEV menu code
-            if key_ar[p.K_ESCAPE]:
-                if not mb_pressed:
-                    self.options.open()
-                mb_pressed = True
-            else:
-                mb_pressed = False
             if (cur_frame_time - (1/FPSmax)) > last_frame:
                 last_frame = time_get()
                 self.game_win.fill((0,0,0))
                 self.player.reset_resetable_states()
-                self.map.render()
+                self.runtimeStore[rs.MapSystem].render()
                 self.player.render()
                 if self.debug:
                     self.player._debug()
-                    self.map.debug()
+                    self.runtimeStore[rs.MapSystem].debug()
                 p.display.flip()
                 render_win = False
-                self.rendered_FPS_count += 1            
+                self.rendered_FPS_count += 1
             #---end of game loop---
-            self.main_FPS_count += 1 
+            self.main_FPS_count += 1
             if self.debug:
                 if (FPS_get + 1) < cur_frame_time:
                     FPS_get = cur_frame_time
                     print("FPS:", self.main_FPS_count, "RFPS:",self.rendered_FPS_count)
                     self.main_FPS_count = 0
-                    self.rendered_FPS_count = 0                    
+                    self.rendered_FPS_count = 0
         
     def resume(self, player_save_file):
         pass
@@ -329,10 +316,10 @@ class main_class():
         self.b_pos_x, self.b_pos_y = (w / 2) - (self.lowestSize / 2), (h / 2) - (self.lowestSize / 2)
         self.menuSize   = self.lowestSize / 10
         self.audioSetup = pyr_pg.sound.sound(self.game_win, "./res/music/")
-                
+    
     def close_game(self) -> None:
         p.quit()
-    
+
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
     runner = "Dev"
