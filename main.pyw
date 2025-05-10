@@ -53,12 +53,13 @@ class main_class():
         self.rendered_FPS_count             = 0
         self.debug_colors  = {"player_hitbox":(0, 0, 255),
                               "map_hitbox":(0,127,255)}
-        self.map_config    = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/",    {"size":self.runtimeStore[rs.TileSheetSize]}),
-                              "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overlay/",   {"size":self.runtimeStore[rs.TileSheetSize]}),
+        self.map_config    = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                              "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/groundov/", {"size":self.runtimeStore[rs.TileSheetSize]}),
                               "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                              "ovov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overoverlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                              "shadow_tiles":pyr_pg.tile_handler.load_tiles("./tiles/shadows/", {"size":self.runtimeStore[rs.TileSheetSize]}),
                               "debug_col":self.debug_colors}
         self.main_config   = {"tiles_xy":(16,16),
-                              "player_start_pos_xy":(0,0),
                               "debug_colors":self.debug_colors,
                               "character_path":self.character_path,
                               "player_sprite":None}
@@ -288,6 +289,7 @@ class main_class():
                 self.player.reset_resetable_states()
                 self.runtimeStore[rs.MapSystem].render()
                 self.player.render()
+                self.runtimeStore[rs.MapSystem].overdraw()
                 if self.debug:
                     self.player._debug()
                     self.runtimeStore[rs.MapSystem].debug()
@@ -346,6 +348,7 @@ if __name__ == "__main__":
                    "\nplease report this to the developers if this is not a filepath error")
             logsys.WriteLog(path="./logs/")
         p.quit()
+        exit(1)
     elif runner == "Dev":
         game = main_class(debug=True)
         game.play()

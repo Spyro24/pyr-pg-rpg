@@ -1,3 +1,7 @@
+V1.2
+-add rendering for all visible layers to the map system
+-optimize the code for the future
+
 V0.4
 -add changelog
 -add main script

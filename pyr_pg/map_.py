@@ -4,11 +4,11 @@ import zlib
 class map:
     def __init__(self, *settings):
         self.state = {"load":False}
-        self.params = {"window":None,"map_xy":[0,0], "map_dir":"./map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"map_wh":(16,16),
-                       "map_byte_size":2,"layers":8,"tile_size":(1,1), "debug_col":{"map_hitbox":(0,127,127)}} # contains a list with all parameters of the game
+        self.params = {"window":None,"map_xy":[0,0], "map_dir":"./map/","bg_tiles":[],"gd_tiles":[],"ov_tiles":[],"ovov_tile":[],"shadow_tiles":[],
+                       "map_wh":(16,16),"map_byte_size":2,"layers":8,"tile_size":(1,1), "debug_col":{"map_hitbox":(0,127,127)}}
         self.map_hitboxes = [] #<- list with all hitboxes in [y][x] format
         self.map_raw_hitboxes = [] #<- list with all raw hitboxes in [y][x] format
-        #---Add +settings to the parameter list
+        #---Add settings to the parameter list
         for key in settings[0].keys(): #overwrite and add parameters to the map
             self.params[key] = settings[0][key]
         #---legacy code---
@@ -22,7 +22,6 @@ class map:
         self.map_y           = self.params["map_xy"][1] #Map x position
         self.map_path        = self.params["map_dir"] #The path to the map files
         self.mw, self.mh     = self.params["map_wh"] #Map with in tiles
-        self.tile_list       = [self.params["bg_tiles"], self.params["gd_tiles"]] #A list with all tiles sorted by layer
         self.byteConfig      = (2, 2, 2, 2, 2, 1) #Ground, Groundoverlay, overlay, oververlay, shadows, hitboxes
         self.rawMap          = []
         self.map             = None
@@ -67,16 +66,34 @@ class map:
                     else:
                         map[n].append(0)
                 #create the ground overlay layer
-                elif n == 2:
+                elif n == 1:
                     test = self.rawMap[n][tile]
                     if test > 0:
-                        tmp = (p.transform.scale(self.tile_list[1][test - 1],(self.scale,self.scale)))
+                        tmp = (p.transform.scale(self.params['gd_tiles'][test - 1],(self.scale,self.scale)))
                         map[n].append(tmp.convert_alpha())
                     else:
                         map[n].append(0)
-                #create the hitboxes        
+                elif n == 2:
+                    test = self.rawMap[n][tile]
+                    if test > 0:
+                        tmp = (p.transform.scale(self.params['ov_tiles'][test - 1],(self.scale,self.scale)))
+                        map[n].append(tmp.convert_alpha())
+                    else:
+                        map[n].append(0)
+                elif n == 3:
+                    test = self.rawMap[n][tile]
+                    if test > 0:
+                        tmp = (p.transform.scale(self.params['ovov_tile'][test - 1],(self.scale,self.scale)))
+                        map[n].append(tmp.convert_alpha())
+                    else:
+                        map[n].append(0)
                 elif n == 4:
-                    map[n].append(self.rawMap[n][tile])
+                    test = self.rawMap[n][tile]
+                    if test > 0:
+                        tmp = (p.transform.scale(self.params['shadow_tiles'][test - 1],(self.scale,self.scale)))
+                        map[n].append(tmp.convert_alpha())
+                    else:
+                        map[n].append(0)
         
         #---code for creating the hitboxes---
         #clear hitboxes
@@ -104,6 +121,9 @@ class map:
         count = 0
         tmp0 = p.Surface((self.mw * self.scale, self.mh * self.scale))
         tmp1 = p.Surface((self.mw * self.scale, self.mh * self.scale), flags=p.SRCALPHA)
+        tmp2 = p.Surface((self.mw * self.scale, self.mh * self.scale), flags=p.SRCALPHA)
+        tmp3 = p.Surface((self.mw * self.scale, self.mh * self.scale), flags=p.SRCALPHA)
+        tmp4 = p.Surface((self.mw * self.scale, self.mh * self.scale), flags=p.SRCALPHA)
         for h in range(self.mh):
             self.map_hitboxes.append([])
             for w in range(self.mw):
@@ -113,11 +133,19 @@ class map:
                     self.map_hitboxes[h].append(0)
                 if self.map[0][count] != 0:
                     tmp0.blit(self.map[0][count],(w * self.scale, h * self.scale))
+                if self.map[1][count] != 0:
+                    tmp1.blit(self.map[1][count],(w * self.scale, h * self.scale))
                 if self.map[2][count] != 0:
-                    tmp1.blit(self.map[2][count],(w * self.scale, h * self.scale))
+                    tmp2.blit(self.map[2][count],(w * self.scale, h * self.scale))
+                if self.map[3][count] != 0:
+                    tmp3.blit(self.map[3][count],(w * self.scale, h * self.scale))
+                if self.map[4][count] != 0:
+                    tmp4.blit(self.map[4][count],(w * self.scale, h * self.scale))
                 count += 1
         self.g_layer = tmp0.convert()
         self.gov_layer = tmp1.convert_alpha()
+        self.playerOverlay = tmp2.convert_alpha()
+        self.shadowOverlay = tmp4.convert_alpha()
     
     def get_dia(self) -> list:
         return self.map[2]
@@ -140,6 +168,11 @@ class map:
     def render(self) -> None:
        self.gw.blit(self.g_layer,(self.in_x, self.in_y))
        self.gw.blit(self.gov_layer,(self.in_x, self.in_y))
+       
+    def overdraw(self) -> None:
+        '''Renders the top layer of the map'''
+        self.gw.blit(self.playerOverlay,(self.in_x, self.in_y))
+        self.gw.blit(self.shadowOverlay,(self.in_x, self.in_y))
     
     def debug(self):
         for h in range(self.mh):
