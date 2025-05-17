@@ -22,8 +22,17 @@ import pyr_pg.npc_handler
 import pyr_pg.speechSynth
 import pyr_pg.characterSelector
 
-version = "0.3.8"
+version = "0.3.9"
 
+#static constants for the input system
+QUIT = 1
+K_UP = 2
+K_DOWN = 3
+K_LEFT = 4
+K_RIGHT = 5
+K_ESC = 6
+
+#Splashscreen for pyr_pg
 def splash(win, splash_duration: float) -> None:
     #create the pyr_pg splash(no images are used.)
     import base64
