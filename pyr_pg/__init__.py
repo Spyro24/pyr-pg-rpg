@@ -21,6 +21,7 @@ import pyr_pg.npc
 import pyr_pg.npc_handler
 import pyr_pg.speechSynth
 import pyr_pg.characterSelector
+import pyr_pg.inputSystem
 
 version = "0.3.9"
 
