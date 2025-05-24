@@ -27,12 +27,36 @@ class AseFile:
         self.gridHeight = int.from_bytes(aseFile.read(2), "little")
         self.endOfHeader = aseFile.read(84)
         self.aseData = aseFile.read()
+        self.loadFrames()
         
+    def loadFrames(self):
+        self.framesData = {}
+        frameStreamLenght = int.from_bytes(self.aseData[0:4], "little")
+        frameData = self.aseData[0:frameStreamLenght]
+        magicNumber = int.from_bytes(frameData[4:6], "little")
+        chunksCountOld = int.from_bytes(frameData[6:8], "little")
+        frameDuration = int.from_bytes(frameData[8:10], "little")
+        #forFuture = int.from_bytes(frameData[10:112], "little")
+        chunksCount = int.from_bytes(frameData[12:16], "little")
+        if chunksCount == 0:
+            chunksCount = chunksCountOld
+        print(chunksCount)
+        chuncks = self.splitChuncks(frameData[16:-1], chunksCount)
+        print(chuncks)
+        
+    
+    def splitChuncks(self, chunkStream: bytes, chunksCount: int):
+        chunks = []
+        offset = 0
+        for n in range(chunksCount):
+            chunks.append(chunkStream[offset: offset + int.from_bytes(chunkStream[offset:offset + 4], "little")])
+            offset = int.from_bytes(chunkStream[offset:offset + 4], "little")
+        return chunks
+        
+        
+
 if __name__ == "__main__":
     AseFileTest = AseFile("./testData/testAsefile.aseprite")
     print(f"Size: {AseFileTest.fileSize} bytes")
     print(f"Magic Number: {AseFileTest.magicNumber}")
     print(f"Frame count: {AseFileTest.framesCount}")
-    f = open("./testData/testAsefileData", "bw")
-    f.write(AseFileTest.aseData)
-    f.close()
