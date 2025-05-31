@@ -69,7 +69,8 @@ class font():
                 self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1]))
             elif placement == 2:
                 self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width()), dest[1]))
-            return blitStringSurface
+            elif placement == 4:
+                self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1] - (blitStringSurface.get_height() / 2 )))
         else:
             return string_surface
         
@@ -78,4 +79,5 @@ if __name__ == "__main__":
     _test_win = p.display.set_mode((700,700))
     _test_font = font(_test_win, "./res/fonts/standard")
     _test_font.draw("abcdefghijklmnopqrstuvwxyz", 40, (5,5))
+    #_test_font.draw("test", 40, (0,0), placement=4)
     p.display.flip()

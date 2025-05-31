@@ -151,12 +151,14 @@ class main_class():
         title      = p.transform.scale(self.cache["mainMenu"]["title"],(self.menuSize * 4,self.menuSize * 2))
         settings   = p.transform.scale(self.cache["mainMenu"]["settings"],(self.menuSize,self.menuSize))
         start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menuSize*3,self.menuSize))
-        continue_g = p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menuSize*3,self.menuSize))
+        continue_g = start_newg #p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menuSize*3,self.menuSize))
         info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
         #button rectangles
-        set_rect  = self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
-        load_rect = self.game_win.blit(continue_g, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 8)))
-        new_rect  = self.game_win.blit(start_newg, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 6.5)))
+        def blitButtonRectNew(): return self.game_win.blit(start_newg, (self.b_pos_x + ((self.menuSize * 5) - (start_newg.get_width() / 2)), self.b_pos_y + (self.menuSize * 6.5)))
+        def blitButtonRectLoad(): return self.game_win.blit(continue_g, (self.b_pos_x + ((self.menuSize * 5) - (continue_g.get_width() /2)), self.b_pos_y + (self.menuSize * 8)))
+        self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
+        load_rect = blitButtonRectLoad()
+        new_rect  = blitButtonRectNew()
         info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
         start_new_game = False
@@ -185,8 +187,12 @@ class main_class():
                 self.game_win.blit(title, (self.b_pos_x + (self.menuSize * 3), self.b_pos_y + self.menuSize))
                 set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
                 info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
-                self.game_win.blit(continue_g, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 8)))
-                self.game_win.blit(start_newg, (self.b_pos_x + (self.menuSize * 3.33), self.b_pos_y + (self.menuSize * 6.5)))
+                blitButtonRectLoad()
+                blitButtonRectNew()
+                #this is temp code for the button text until i have coded a button class
+                self.font.draw("New Game",self.menuSize * 0.45, (new_rect.centerx, new_rect.centery), placement=4)
+                self.font.draw("Load Game",self.menuSize * 0.4, (load_rect.centerx, load_rect.centery), placement=4)
+                #------
                 redraw = False
                 render = True                
             if render:
