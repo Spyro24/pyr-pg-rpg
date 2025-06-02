@@ -34,6 +34,7 @@ class characterSelector:
             p.draw.rect(self.window, (128, 0, 0), rect, width=3)
     
     def openSelector(self, assets: dict) -> tuple:#[characterConfForLoader: str, forward: bool, exit: bool]:
+        cleanUp = False
         self.selectedCharacter = 0
         FPS = 0
         RFPS = 0
@@ -69,6 +70,7 @@ class characterSelector:
                             run = False
                         elif backButton.collidepoint(mousePos):
                             run = False
+                            self.cleanUp()
                             return ("", False, False)
                 if event.type == p.KEYDOWN:
                     if event.key == p.K_LEFT or event.key == p.K_a:
@@ -87,7 +89,17 @@ class characterSelector:
                     print("FPS:", FPS, "RFPS:", RFPS)
                     FPS = 0; RFPS = 0
         return (self.playableCharacters[self.selectedCharacter]['charDescFile'], True, False)
-        
+    
+    def cleanUp(self):
+        pass
+    """
+        del self.charactersPlacerRects
+        del self.textBoxBG
+        del self.backButtonTexture
+        del self.backgroud
+        del self.playableCharacters
+    """
+    
     def render(self) -> None:
         self.window.fill((0, 0, 0))
         self.window.blit(self.backgroud, self.virtWindow.topleft)

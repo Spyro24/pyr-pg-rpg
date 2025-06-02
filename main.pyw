@@ -146,6 +146,7 @@ class main_class():
         render = True
         run = True
         redraw = True
+        cleanUp = False
         #scale all mainmenu images
         self.backGround = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowestSize,self.lowestSize))
         title      = p.transform.scale(self.cache["mainMenu"]["title"],(self.menuSize * 4,self.menuSize * 2))
@@ -178,6 +179,7 @@ class main_class():
                         if new_rect.collidepoint(m_pos):
                             self.audioSetup.play("sfx_1", "menu_click")
                             run = False
+                            cleanUp = True
                             start_new_game = True
                         if info_rect.collidepoint(m_pos):
                             self.info_box.show(self.info_text)
@@ -198,6 +200,12 @@ class main_class():
             if render:
                 p.display.flip()
                 render = False
+        if cleanUp:
+            del title
+            del settings
+            del start_newg
+            del continue_g
+            del info
         if start_new_game:
             self.menu_create_character()
     
