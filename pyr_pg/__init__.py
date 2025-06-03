@@ -22,8 +22,9 @@ import pyr_pg.npc_handler
 import pyr_pg.speechSynth
 import pyr_pg.characterSelector
 import pyr_pg.inputSystem
+import pyr_pg.ui
 
-version = "0.3.9"
+version = "0.4.0"
 
 #static constants for the input system
 QUIT = 1
@@ -35,7 +36,7 @@ K_ESC = 6
 
 #Splashscreen for pyr_pg
 def splash(win, splash_duration: float) -> None:
-    #create the pyr_pg splash(no images are used.)
+    """create the pyr_pg splash(You dont need any image for that.)"""
     import base64
     import zlib
     import pygame as p

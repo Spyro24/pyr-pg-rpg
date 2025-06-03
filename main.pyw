@@ -19,6 +19,7 @@
 
 from random import randint
 import os
+import sys
 import pygame as p
 import pyr_pg
 #import time
@@ -136,11 +137,13 @@ class main_class():
         self.main_menu() #Open the main menu and start the game
     
     def cacheImages(self) -> None:
-        '''This Function will cache all the images to reduce disk load'''
+        '''This Function will cache all the images to reduce disk load (and increase RAM usage)'''
         self.cache["mainMenu"] = {}
         self.cache["mainMenu"]["bg"] = p.image.load("./images/main_menu/back.png") #background Image
         self.cache["mainMenu"]["title"] = p.image.load("./images/main_menu/title.png") #title Image or logo
         self.cache["mainMenu"]["settings"] = p.image.load("./images/main_menu/settings.png") #Settings symbol
+        self.cache["buttons"] = {}
+        self.cache["buttons"]["defaultBackground"] = p.image.load("./res/buttons/ButtonBG_BlackWhite.png")
     
     def main_menu(self) -> None:
         render = True
@@ -155,6 +158,7 @@ class main_class():
         continue_g = start_newg #p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menuSize*3,self.menuSize))
         info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
         #button rectangles
+        startButton = pyr_pg.ui.button(self.game_win, (5, 6.5), self.menuSize, (3,1), self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text="New Game", zeroPos=(self.b_pos_x, self.b_pos_y)) 
         def blitButtonRectNew(): return self.game_win.blit(start_newg, (self.b_pos_x + ((self.menuSize * 5) - (start_newg.get_width() / 2)), self.b_pos_y + (self.menuSize * 6.5)))
         def blitButtonRectLoad(): return self.game_win.blit(continue_g, (self.b_pos_x + ((self.menuSize * 5) - (continue_g.get_width() /2)), self.b_pos_y + (self.menuSize * 8)))
         self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
@@ -192,7 +196,7 @@ class main_class():
                 blitButtonRectLoad()
                 blitButtonRectNew()
                 #this is temp code for the button text until i have coded a button class
-                self.font.draw("New Game",self.menuSize * 0.45, (new_rect.centerx, new_rect.centery), placement=4)
+                startButton.show_button()
                 self.font.draw("Load Game",self.menuSize * 0.4, (load_rect.centerx, load_rect.centery), placement=4)
                 #------
                 redraw = False
@@ -362,7 +366,7 @@ if __name__ == "__main__":
                    "\nplease report this to the developers if this is not a filepath error")
             logsys.WriteLog(path="./logs/")
         p.quit()
-        exit(1)
+        sys.exit(1)
     elif runner == "Dev":
         game = main_class(debug=True)
         game.play()
