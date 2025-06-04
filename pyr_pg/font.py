@@ -40,7 +40,10 @@ class font():
         self.w, self.h = self.font_img.get_size()
         self.ts = self.w / self.font_w
         
-    def draw(self, string: str, size: int, dest: tuple, placement=0, color=(255,255,255), internalUse=False) -> p.Surface:
+    def draw(self, string: str, size: int, dest: tuple, placement=0, color=(255,255,255), internalUse=False, blitSurface=None) -> p.Surface:
+        ownBlitSurface = blitSurface
+        if blitSurface == None:
+            ownBlitSurface = self.game_win
         string_lenght = len(string)
         count_x = 0 #the counter for the letters to move the courser
         count_y = 0 #the line counter (not in use in this version) (the dialog wrapper has it own)
@@ -64,13 +67,13 @@ class font():
             blitableStringSurface.blit(string_surface,(0,0))
             blitStringSurface = p.transform.scale_by(blitableStringSurface, (1 / self.ts) * size)
             if placement == 0:
-                self.game_win.blit(blitStringSurface, dest)
+                ownBlitSurface.blit(blitStringSurface, dest)
             elif placement == 1:
-                self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1]))
+                ownBlitSurface.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1]))
             elif placement == 2:
-                self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width()), dest[1]))
+                ownBlitSurface.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width()), dest[1]))
             elif placement == 4:
-                self.game_win.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1] - (blitStringSurface.get_height() / 2 )))
+                ownBlitSurface.blit(blitStringSurface, (dest[0] - (blitStringSurface.get_width() / 2 ), dest[1] - (blitStringSurface.get_height() / 2 )))
         else:
             return string_surface
         

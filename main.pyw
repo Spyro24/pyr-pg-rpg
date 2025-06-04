@@ -158,12 +158,9 @@ class main_class():
         continue_g = start_newg #p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menuSize*3,self.menuSize))
         info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
         #button rectangles
-        startButton = pyr_pg.ui.button(self.game_win, (5, 6.5), self.menuSize, (3,1), self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text="New Game", zeroPos=(self.b_pos_x, self.b_pos_y)) 
-        def blitButtonRectNew(): return self.game_win.blit(start_newg, (self.b_pos_x + ((self.menuSize * 5) - (start_newg.get_width() / 2)), self.b_pos_y + (self.menuSize * 6.5)))
-        def blitButtonRectLoad(): return self.game_win.blit(continue_g, (self.b_pos_x + ((self.menuSize * 5) - (continue_g.get_width() /2)), self.b_pos_y + (self.menuSize * 8)))
+        startNewButton = pyr_pg.ui.button(self.game_win, (5, 6.5), self.menuSize, (4,1), self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text="New Game", zeroPos=(self.b_pos_x, self.b_pos_y))
+        loadGameButton = pyr_pg.ui.button(self.game_win, (5, 8), self.menuSize, (4,1), self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text="Load Game", zeroPos=(self.b_pos_x, self.b_pos_y))
         self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
-        load_rect = blitButtonRectLoad()
-        new_rect  = blitButtonRectNew()
         info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
         start_new_game = False
@@ -180,7 +177,7 @@ class main_class():
                             self.audioSetup.play("sfx_1", "menu_click")
                             self.menu_settings()
                             redraw = True                
-                        if new_rect.collidepoint(m_pos):
+                        if startNewButton.check_click(m_pos):
                             self.audioSetup.play("sfx_1", "menu_click")
                             run = False
                             cleanUp = True
@@ -193,23 +190,21 @@ class main_class():
                 self.game_win.blit(title, (self.b_pos_x + (self.menuSize * 3), self.b_pos_y + self.menuSize))
                 set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
                 info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
-                blitButtonRectLoad()
-                blitButtonRectNew()
                 #this is temp code for the button text until i have coded a button class
-                startButton.show_button()
-                self.font.draw("Load Game",self.menuSize * 0.4, (load_rect.centerx, load_rect.centery), placement=4)
+                startNewButton.show_button()
+                loadGameButton.show_button()
                 #------
                 redraw = False
-                render = True                
+                render = True
+                if self.debug:
+                    startNewButton.draw_debug()
+                    loadGameButton.draw_debug()
             if render:
                 p.display.flip()
                 render = False
         if cleanUp:
-            del title
-            del settings
-            del start_newg
-            del continue_g
-            del info
+            del startNewButton
+            del loadGameButton
         if start_new_game:
             self.menu_create_character()
     
@@ -342,7 +337,7 @@ class main_class():
 
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
-    runner = "Dev"
+    runner = "User"
     if runner == "User":
         try:
             game = main_class(LogSystem=logsys.insert)
