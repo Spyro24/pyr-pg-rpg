@@ -154,12 +154,11 @@ class main_class():
         self.backGround = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowestSize,self.lowestSize))
         title      = p.transform.scale(self.cache["mainMenu"]["title"],(self.menuSize * 4,self.menuSize * 2))
         settings   = p.transform.scale(self.cache["mainMenu"]["settings"],(self.menuSize,self.menuSize))
-        start_newg = p.transform.scale(p.image.load("./images/main_menu/new.png"),(self.menuSize*3,self.menuSize))
-        continue_g = start_newg #p.transform.scale(p.image.load("./images/main_menu/load.png"),(self.menuSize*3,self.menuSize))
         info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
         #button rectangles
         startNewButton = pyr_pg.ui.button(self.game_win, (5, 6.5), self.menuSize, (4,1), self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text="New Game", zeroPos=(self.b_pos_x, self.b_pos_y))
         loadGameButton = pyr_pg.ui.button(self.game_win, (5, 8), self.menuSize, (4,1), self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text="Load Game", zeroPos=(self.b_pos_x, self.b_pos_y))
+        settingsButton = pyr_pg.ui.button(self.game_win, (9, 9), self.menuSize, (1,1), self.cache["buttons"]["defaultBackground"], zeroPos=(self.b_pos_x, self.b_pos_y))
         self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
         info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
@@ -173,7 +172,7 @@ class main_class():
                     m_click = p.mouse.get_pressed()
                     m_pos = p.mouse.get_pos()            
                     if m_click[0]:
-                        if set_rect.collidepoint(m_pos):
+                        if settingsButton.check_click(m_pos):
                             self.audioSetup.play("sfx_1", "menu_click")
                             self.menu_settings()
                             redraw = True                
@@ -193,6 +192,7 @@ class main_class():
                 #this is temp code for the button text until i have coded a button class
                 startNewButton.show_button()
                 loadGameButton.show_button()
+                settingsButton.show_button()
                 #------
                 redraw = False
                 render = True
