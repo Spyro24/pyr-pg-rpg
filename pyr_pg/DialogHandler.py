@@ -1,5 +1,5 @@
 """
-    Dialog System for PYR_PG (V4)
+    Dialog System (V4) for PYR_PG
     (c) 2025 Spyro24
 """
 import pygame as p
@@ -37,11 +37,11 @@ class DialogScript():
         while True:
             if pc >= scriptEnd: #Checks if the Dialog has finished
                 break
-            curInstruction   = script[pc].strip()
-            instructionTable = curInstruction.split("|")
-            instruction      = instructionTable[0]
+            curInstruction   = script[pc].strip() #Curent Instruction with the parameters
+            instructionTable = curInstruction.split("|") #The Instruction Parameters
+            instruction      = instructionTable[0] #The Instruction it self 
             try: #try to execute a command
-                if len(instruction) == 0:
+                if len(instruction) == 0: #Instruction is a empty line (to avoid errors)
                     pc += 1
                     continue 
                 elif instruction[0] == "#": #check if the curentline is a commend
@@ -68,7 +68,7 @@ class DialogScript():
         elif objType == str:
             self.env[arglist[1]] = str(arglist[2])
         else:
-            self.logsys(0, "[Error] " + str(arglist[1]) + " is from type " + str(objType) + " and not compatible with ChangeEnv")
+            self.logsys(0, f"[Error] {str(arglist[1])} is from type {str(objType)} and not compatible with ChangeEnv")
         return (0, 0)
         
     def cTextbox(self, argList: list) -> tuple:
@@ -101,6 +101,7 @@ class DialogScript():
         value   = argList[3]
         path    = argList[1]
         valType = argList[2]
+        value = None
         if valType == "string":
             value = str(value)
         elif valType == "float":
@@ -128,6 +129,7 @@ class DialogScript():
         raise BaseException
     
     def NULL(self, argList: list) -> None:
+        """This is a placeholder for not implemented functions"""
         pass
     
     def configLookUp(self, file, KEY) -> tuple or int:
