@@ -14,18 +14,20 @@ class codeFormater:
         self.curStep = 0
         self.states = {"longComment": False, "ModuleDocString": False}
         for line in self.infile.readlines():
-            line = line.strip("\n")
+            if line == "\n":
+                continue 
+            line = self.RSFBAE(line.strip("\n"))
             outline = ""
             for _ in range(self.indent):
                 outline += "    "
             
             try:
                 if self.curStep == 0:
-                    if self.RSFBAE(line)[0:2] == "#!":
+                    if line[0:2] == "#!":
                         outline += "#! /usr/bin/python3"
                     self.curStep += 1
                 elif self.curStep == 1:
-                    if self.RSFBAE(line)[0:3] == f"{chr(34)}{chr(34)}{chr(34)}" and self.states['ModuleDocString'] == False:
+                    if line[0:3] == f"{chr(34)}{chr(34)}{chr(34)}" and self.states['ModuleDocString'] == False:
                         self.indent += 1
                         self.states["ModuleDocString"] = True
                         outline += f"{chr(34)}{chr(34)}{chr(34)}"
@@ -39,8 +41,17 @@ class codeFormater:
                         outline += self.RSFBAE(line)
                     else:
                         self.curStep += 1
+                elif self.curStep == 2:
+                    test = self.checkImport(self.RSFBAE(line))
+                    if test == bool:
+                        self.curStep +=1
+                    else:
+                        outline = self.checkImport(test)
             except:
                 pass
+            
+            if line[0] == "#" and not line[0:2] == "#!":
+                continue 
             outline += "\n"
             self.outfile.write(outline)
     
@@ -63,7 +74,32 @@ class codeFormater:
             return string
     
     def checkImport(self, line: str):
-        pass
+        if line.startswith("from") or line.startswith("import"):
+            newLine = ""
+            oldLine = line.split(" ")
+            curPointer = 0
+            for element in oldLine:
+                if element == "" or element == ",":
+                    continue
+                elif element == "from":
+                    newLine += "from "
+                    curPointer += 1
+                elif element == "import":
+                    newLine += "import "
+                    curPointer += 1
+                elif element == "as":
+                    newLine += "as "
+                    curPointer += 1
+                else:
+                    if curPointer >= 2:
+                        newLine += element + ", "
+                    else:
+                        newLine += element + " "
+            if curPointer >= 2:
+                newLine = newLine[0:-2]
+            else:
+                newLine = newLine[0:-1]
+            return newLine
     
 if __name__ == "__main__":
     args = sys.argv
