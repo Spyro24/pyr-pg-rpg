@@ -2,8 +2,36 @@
     Aseprite File loader for pyr_pg (to use the raw data directly(only for develepment))
     (c) 2025 Spyro24
 """
+"""
+    BYTE: An 8-bit unsigned integer value
+    WORD: A 16-bit unsigned integer value
+    SHORT: A 16-bit signed integer value
+    DWORD: A 32-bit unsigned integer value
+    LONG: A 32-bit signed integer value
+    FIXED: A 32-bit fixed point (16.16) value
+    FLOAT: A 32-bit single-precision value
+    DOUBLE: A 64-bit double-precision value
+    QWORD: A 64-bit unsigned integer value
+    LONG64: A 64-bit signed integer value
+    BYTE[n]: "n" bytes.
+"""
+
 import zlib
 
+class fileLikeOBJ:
+    def __init__(self, byteStream: bytes, byteOrder="little"):
+        self.byteStram = byteStream
+        self.byteOrder = byteOrder
+        self._words = {"BYTE":(1, False),
+                       "WORD":(2, False),
+                       "SHORT":(2, True),
+                       }
+        self.bytesOffset = 0
+        self.curBytePos = 0
+    
+    def skipBytes(self, count: int):
+        
+        
 class AseFile:
     def __init__(self, AseFilePath: str):
         aseFile = open(AseFilePath, "br")

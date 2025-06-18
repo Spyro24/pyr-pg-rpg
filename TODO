@@ -23,4 +23,5 @@
 [ ] Maptool / Multieditor
  ├-[ ] Ase loader (to use .aseprite files)
  │  ├-[✓] Parse Files
+ │  ├-[ ] Add WORDing
  │  └-[ ] Load Frame data
