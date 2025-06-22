@@ -262,6 +262,10 @@ class main_class():
         self.play_game()
         
     def play_game(self):
+        playerFacings = ((p.K_w, "UP", (0,-1)),
+                         (p.K_s, "DOWN", (0,1)),
+                         (p.K_a, "LEFT", (-1,0)),
+                         (p.K_d, "RIGHT", (1,0)))
         debug_console = self.debug_console
         from time import time as time_get
         FPS_get = time_get()
@@ -280,18 +284,10 @@ class main_class():
                         self.options.open()
             key_ar = p.key.get_pressed()              
             if (cur_frame_time - self.runtimeStore[rs.PlayerSpeed]) > KT:
-                if key_ar[p.K_w]:
-                    self.player.set_facing("UP")
-                    self.player.move(0,-1)
-                if key_ar[p.K_d]:
-                    self.player.set_facing("RIGHT")
-                    self.player.move(1,0)              
-                if key_ar[p.K_s]:
-                    self.player.set_facing("DOWN")
-                    self.player.move(0,1)
-                if key_ar[p.K_a]:
-                    self.player.set_facing("LEFT")
-                    self.player.move(-1,0)
+                for facing in playerFacings:
+                    if key_ar[facing[0]]:
+                        self.player.set_facing(facing[1])
+                        self.player.move(facing[2])
                 if self.player.get_state(0):
                     KT = time_get()
                     self.player.reset_state(0)
@@ -337,7 +333,7 @@ class main_class():
 
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
-    runner = "Dev"
+    runner = "User"
     if runner == "User":
         try:
             game = main_class(LogSystem=logsys.insert)

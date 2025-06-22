@@ -74,7 +74,8 @@ class player():
     def set_flag(self, flag, value, table="FLAG_TABLE"):
         pass
     
-    def move(self, x, y):
+    def move(self, x_y: tuple):
+        x, y = x_y
         #save all values that are modified
         test_hitbox     = self.player_hitbox.move(self.micro_tile * x, self.micro_tile * y)
         tmp_minor_pos_x = self.minorPosX + x

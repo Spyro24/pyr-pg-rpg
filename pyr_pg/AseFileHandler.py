@@ -20,41 +20,64 @@ import zlib
 
 class fileLikeOBJ:
     def __init__(self, byteStream: bytes, byteOrder="little"):
-        self.byteStram = byteStream
+        self.byteStream = byteStream
         self.byteOrder = byteOrder
         self._words = {"BYTE":(1, False),
                        "WORD":(2, False),
                        "SHORT":(2, True),
-                       }
+                       "DWORD":(4, False),
+                       "LONG":(4, True),
+                       "QWORD":(8, False),
+                       "LONG64":(8, True)}
         self.bytesOffset = 0
         self.curBytePos = 0
     
     def skipBytes(self, count: int):
-        
+        self.curBytePos += count
+    
+    def setOffset(self, offset: int):
+        self.curBytePos = 0
+        self.bytesOffset = offset
+    
+    def read(self, WORD: str, count=1):
+        streamReturn = []
+        parsedWord = self._words[WORD]
+        for _ in range(count):
+            streamReturn.append(int.from_bytes(self.byteStream[self.bytesOffset + self.curBytePos:self.bytesOffset + self.curBytePos + parsedWord[0]], self.byteOrder, signed=parsedWord[1]))
+            self.curBytePos += parsedWord[0]
+        if count <= 1:
+            streamReturn = streamReturn[0]
+        return streamReturn
+    
+    def readRaw(self, byteCount: int):
+        returnStream = self.byteStream[self.bytesOffset + self.curBytePos:self.bytesOffset + self.curBytePos + byteCount]
+        self.curBytePos += byteCount
+        return returnStream
         
 class AseFile:
     def __init__(self, AseFilePath: str):
-        aseFile = open(AseFilePath, "br")
-        self.fileSize = int.from_bytes(aseFile.read(4), "little")
-        self.magicNumber = int.from_bytes(aseFile.read(2), "little")
-        self.framesCount = int.from_bytes(aseFile.read(2), "little")
-        self.imageWidth = int.from_bytes(aseFile.read(2), "little")
-        self.imageHeight = int.from_bytes(aseFile.read(2), "little")
-        self.colorDepth =int.from_bytes(aseFile.read(2), "little")
-        self.flgas = int.from_bytes(aseFile.read(4), "little")
-        self.animationSpeedMS = int.from_bytes(aseFile.read(2), "little")
-        aseFile.read(8) #its zero
-        self.transparentColorIndex = int.from_bytes(aseFile.read(1), "little")
-        aseFile.read(3) #These are ignored bytes
-        self.numberOfColors = int.from_bytes(aseFile.read(2), "little")
-        self.pixelWidth = int.from_bytes(aseFile.read(1), "little")
-        self.pixelHeight = int.from_bytes(aseFile.read(1), "little")
-        self.gridXPosition = int.from_bytes(aseFile.read(2), "little", signed=True)
-        self.gridYPosition = int.from_bytes(aseFile.read(2), "little", signed=True)
-        self.gridWidth = int.from_bytes(aseFile.read(2), "little")
-        self.gridHeight = int.from_bytes(aseFile.read(2), "little")
-        self.endOfHeader = aseFile.read(84)
-        self.aseData = aseFile.read()
+        tmp = open(AseFilePath, "br")
+        aseFile = fileLikeOBJ(tmp.read())
+        tmp.close()
+        self.fileSize = aseFile.read("DWORD")
+        self.magicNumber = aseFile.read("WORD")
+        self.framesCount = aseFile.read("WORD")
+        self.imageWidth = aseFile.read("WORD")
+        self.imageHeight = aseFile.read("WORD")
+        self.colorDepth = aseFile.read("WORD")
+        self.flags = aseFile.read("DWORD")
+        self.animationSpeedMS = aseFile.read("WORD")
+        aseFile.skipBytes(8) #its zero
+        self.transparentColorIndex = aseFile.read("BYTE")
+        #aseFile.read(3) #These are ignored bytes
+        #self.numberOfColors = int.from_bytes(aseFile.read(2), "little")
+        #self.pixelWidth = int.from_bytes(aseFile.read(1), "little")
+        #self.pixelHeight = int.from_bytes(aseFile.read(1), "little")
+        #self.gridXPosition = int.from_bytes(aseFile.read(2), "little", signed=True)
+        #self.gridYPosition = int.from_bytes(aseFile.read(2), "little", signed=True)
+        #self.gridWidth = int.from_bytes(aseFile.read(2), "little")
+        #self.gridHeight = int.from_bytes(aseFile.read(2), "little")
+        aseFile.setOffset(128)
         self.loadFrames()
         
     def loadFrames(self):
