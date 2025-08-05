@@ -1,6 +1,7 @@
 import pygame as p
 import map_pg
 import time
+import editor_modules
 from multiprocessing import Pool
 
 class multi_editor():
@@ -26,8 +27,8 @@ class multi_editor():
         self.selected_tile    = 0
         self.editigLayers     = ["Ground", "GroundOverlay", "PlayerOverlay", "OverOverlay", "Shadows"]
         self.mouse_pressed    = False
-        self.cur_layer        = 0
         self.cur_tilsesel_pos = 0
+        self.current_tool     = 0
         self.main_menu_entrys = {"Settings":self.settings, "About":self.VOID, "Exit":self.end}
         logo                  = p.image.load("./res/symbols/logo.png")
         logo_scaled           = p.transform.scale(logo, (self.font_size, self.font_size))
@@ -39,7 +40,11 @@ class multi_editor():
                                     self.setupMapeditor, #setup the mapediting system
                                     self.addTilesToMaped], #add the cached tiles to the mapedting system],
                                    self.colors[0])
+        #variables reanrengment
+        self.mapFileHandleSystem  = map_pg.mapHandler.mapFileHandler(16,16,"../map")
+        #---
         self.mapEditorSystem.createMap()
+        self.cur_layer = 0
         self.mapEditorSystem.editLayer = self.cur_layer
         self.main_loop()
         
@@ -198,7 +203,7 @@ class multi_editor():
     def set_mode_paint(self):
         self.editor_md_tag = "Paintmode"
         self.editor_mode   = 1
-        
+           
     def end(self):
         self.mapFileHandleSystem.saveMap()
         p.quit()
@@ -274,7 +279,6 @@ class multi_editor():
             self.menus.append(map_pg.DropDown.drop_down(self.window, self.font_size, (self.ui_size, self.ui_size * 5), 6, self.font, [(0, 128, 128),(128, 0, 128)], self.buttons[1], {"Mapeditor":self.set_mode_mapeditor, "Paintmode":self.set_mode_paint}, mode="advance"))
             self.selectorButtonsTiles = map_pg.tile_handler.tile_handler("./res/buttons/selector_bar.png", {"size":"6x1"}, mode="single")
             self.listSelectButtons    = self.selectorButtonsTiles.return_tiles()
-            self.mapFileHandleSystem  = map_pg.mapHandler.mapFileHandler(16,16,"../map")
             self.mapFileHandleSystem.failSafeLoadMap()
             
     def setupMapeditor(self, x):

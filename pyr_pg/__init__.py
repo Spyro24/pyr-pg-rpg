@@ -7,7 +7,7 @@
     (c) 2023-2025 Spyro24
 '''
 import pyr_pg.config
-import pyr_pg.sound
+import pyr_pg.audioMixer
 import pyr_pg.map_
 import pyr_pg.player
 import pyr_pg.tile_handler

@@ -9,6 +9,7 @@ import pygame as p
 class DialogScript():
     def __init__(self, runtimeStore):
         self.rs       = runtimeStore
+        self.vorbiden = {"or", "and", "xor"}
         self.logsys   = self.rs[9]
         self.font     = self.rs[15]
         self.window   = self.rs[10][13]

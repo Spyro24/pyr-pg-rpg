@@ -1,12 +1,35 @@
-minimal requirements
+#The PYR_PG Project
+## Overview
+
+1. [System requirements](#minimal-requirements)
+2. [Game Options](#how-to-set-options)
+
+## Maptool controls:
+
+* CTRL + R = Reload the UI (you need this)
+* Arrow Up or Down = Change Edit layer
+* WASD = Move to the next map
+
+## Standard controls
+
+* WASD controls to move the player (GamePad control will coming soon)
+* ESC to open the options menu
+
+## Current Progress
+
+* [ ] pyr_pg [>_________]
+* [ ] Save File System [>_________]
+
+## Minimal requirements
+
 *  RAM : 2GB
 *  OS  : Linux
 *  CPU : Intel Atom N450 with 1,66 GHz
 
-Maptool controls:
-* CTRL + R = Reload the UI (you need this)
-* Arrow Up or Down = Change Edit layer
-* WASD = Move to the next map
+## How to set Options
+
+* There is curently no options menu in the game.
+* You have to set the options directly in the main.py(if available)
 
 V1.0 [pre release]
 pyr_pg (Makend) is available on Itch.

@@ -78,7 +78,8 @@ class main_class():
         self.game_version = self.game_config.get("version")
         self.runtimeStore[rs.LogSystem]("try to init game: " + self.game_name)
         self.runtimeStore[rs.LogSystem]("[PYR-PG][Info] version " + pyr_pg.version)
-        self.conf_path = p.system.get_pref_path("pyr-pg","makend")
+        self.conf_path = p.system.get_pref_path("pyr-pg",self.game_config.get("config_name"))
+        self.runtimeStore[rs.LogSystem](f"[PYR-PG][Info] config path '{self.conf_path}'")
         is_ready = False
         try:
             is_configured = open(self.conf_path + "/CONFIGURED", "r")
@@ -156,9 +157,11 @@ class main_class():
         settings   = p.transform.scale(self.cache["mainMenu"]["settings"],(self.menuSize,self.menuSize))
         info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
         #button rectangles
-        startNewButton = pyr_pg.ui.button(self.game_win, (5, 6.5), self.menuSize, (4,1), self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text="New Game", zeroPos=(self.b_pos_x, self.b_pos_y))
-        loadGameButton = pyr_pg.ui.button(self.game_win, (5, 8), self.menuSize, (4,1), self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text="Load Game", zeroPos=(self.b_pos_x, self.b_pos_y))
-        settingsButton = pyr_pg.ui.button(self.game_win, (9, 9), self.menuSize, (1,1), self.cache["buttons"]["defaultBackground"], zeroPos=(self.b_pos_x, self.b_pos_y))
+        def createButton(pos: tuple, size: tuple, text: str):
+            return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y))
+        startNewButton = createButton((5, 6.5), (4,1), "New Game")
+        loadGameButton = createButton((5, 8), (4,1), "Load Game")
+        settingsButton = createButton((9, 9), (1,1), "")
         self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
         info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
         #setup button vars
@@ -314,26 +317,27 @@ class main_class():
                     self.main_FPS_count = 0
                     self.rendered_FPS_count = 0
         
-    def resume(self, player_save_file):
+    def resume(self, player_save_file) -> None:
+        '''Funtion to resume a save file (NIJ)'''
         pass
     
-    def key_config(self):
+    def key_config(self) -> None:
         self.set_keys = ["UP","DOWN","LEFT","RIGHT"]
     
-    def setup_env(self):
+    def setup_env(self) -> None:
         w, h = self.game_win.get_size()
         self.lowestSize = w
         if w > h: self.lowestSize = h
         self.b_pos_x, self.b_pos_y = (w / 2) - (self.lowestSize / 2), (h / 2) - (self.lowestSize / 2)
         self.menuSize   = self.lowestSize / 10
-        self.audioSetup = pyr_pg.sound.sound(self.game_win, "./res/music/")
+        self.audioSetup = pyr_pg.audioMixer.sound(self.game_win, "./res/music/")
     
     def close_game(self) -> None:
         p.quit()
 
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
-    runner = "User"
+    runner = "Dev"
     if runner == "User":
         try:
             game = main_class(LogSystem=logsys.insert)

@@ -23,6 +23,7 @@ class sound():
         p.mixer.init()
         self.aud_pat = audio_path
         self.win = win
+        self.mainVulume = 100 
         self.c_ambiente = p.mixer.Channel(0)
         self.c_voiceline = p.mixer.Channel(1)
         self.sfx_1 = p.mixer.Channel(2)

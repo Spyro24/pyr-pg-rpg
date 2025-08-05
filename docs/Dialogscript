@@ -1,4 +1,4 @@
-Das ist die Dialogscript Dukomentation.
+This is the Dialogscript Ducomentation.
 Dialogscript macht nämlich das komplette system interaktiv und bietet sehr viel freiheit.
 Hier werden ALLE befehle und die args der Befehle aufgelistet sowie was die Befehle eventuel tun.
 Die Befehls Argumenete werden mit einem "|" (PIPE-Strich) getrent sowie ist je Zeile nur ein Befehl zulässig ist.
