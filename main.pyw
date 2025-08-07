@@ -147,6 +147,7 @@ class main_class():
         self.cache["buttons"]["defaultBackground"] = p.image.load("./res/buttons/ButtonBG_BlackWhite.png")
     
     def main_menu(self) -> None:
+        '''Creating and handling of the main menu'''
         render = True
         run = True
         redraw = True
@@ -157,7 +158,7 @@ class main_class():
         settings   = p.transform.scale(self.cache["mainMenu"]["settings"],(self.menuSize,self.menuSize))
         info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
         #button rectangles
-        def createButton(pos: tuple, size: tuple, text: str):
+        def createButton(pos: tuple(int, int), size: tuple(int, int), text: str):
             return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y))
         startNewButton = createButton((5, 6.5), (4,1), "New Game")
         loadGameButton = createButton((5, 8), (4,1), "Load Game")
@@ -318,7 +319,7 @@ class main_class():
                     self.rendered_FPS_count = 0
         
     def resume(self, player_save_file) -> None:
-        '''Funtion to resume a save file (NIJ)'''
+        '''Funtion to resume from a save file (NIJ)'''
         pass
     
     def key_config(self) -> None:
@@ -337,7 +338,9 @@ class main_class():
 
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
-    runner = "Dev"
+    runner = "User"
+    if sys.argv[1] == "-d":
+        runner = "Dev"
     if runner == "User":
         try:
             game = main_class(LogSystem=logsys.insert)
