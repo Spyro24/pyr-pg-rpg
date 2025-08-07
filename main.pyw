@@ -140,7 +140,7 @@ class main_class():
     def cacheImages(self) -> None:
         '''This Function will cache all the images to reduce disk load (and increase RAM usage)'''
         self.cache["mainMenu"] = {}
-        self.cache["mainMenu"]["bg"] = p.image.load("./images/main_menu/back.png") #background Image
+        self.cache["mainMenu"]["bg"] = p.image.load("./res/main_menu/back.png") #background Image
         self.cache["mainMenu"]["title"] = p.image.load("./images/main_menu/title.png") #title Image or logo
         self.cache["mainMenu"]["settings"] = p.image.load("./images/main_menu/settings.png") #Settings symbol
         self.cache["buttons"] = {}
@@ -158,7 +158,7 @@ class main_class():
         settings   = p.transform.scale(self.cache["mainMenu"]["settings"],(self.menuSize,self.menuSize))
         info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
         #button rectangles
-        def createButton(pos: tuple(int, int), size: tuple(int, int), text: str):
+        def createButton(pos: tuple[int, int], size: tuple[int, int], text: str,  placement=(0,0)):
             return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y))
         startNewButton = createButton((5, 6.5), (4,1), "New Game")
         loadGameButton = createButton((5, 8), (4,1), "Load Game")
@@ -191,8 +191,6 @@ class main_class():
             if redraw:
                 self.game_win.blit(self.backGround, (self.b_pos_x, self.b_pos_y))
                 self.game_win.blit(title, (self.b_pos_x + (self.menuSize * 3), self.b_pos_y + self.menuSize))
-                set_rect = self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
-                info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
                 #this is temp code for the button text until i have coded a button class
                 startNewButton.show_button()
                 loadGameButton.show_button()
@@ -203,6 +201,7 @@ class main_class():
                 if self.debug:
                     startNewButton.draw_debug()
                     loadGameButton.draw_debug()
+                    settingsButton.draw_debug()
             if render:
                 p.display.flip()
                 render = False
