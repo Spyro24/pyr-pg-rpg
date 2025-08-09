@@ -142,9 +142,11 @@ class main_class():
         self.cache["mainMenu"] = {}
         self.cache["mainMenu"]["bg"] = p.image.load("./res/main_menu/back.png") #background Image
         self.cache["mainMenu"]["title"] = p.image.load("./images/main_menu/title.png") #title Image or logo
-        self.cache["mainMenu"]["settings"] = p.image.load("./images/main_menu/settings.png") #Settings symbol
         self.cache["buttons"] = {}
         self.cache["buttons"]["defaultBackground"] = p.image.load("./res/buttons/ButtonBG_BlackWhite.png")
+        self.cache["icons"] = {}
+        self.cache["icons"]["settings"] = p.image.load("./res/icons/settings.png")
+        self.cache["icons"]["info"] = p.image.load("./res/icons/info.png")
     
     def main_menu(self) -> None:
         '''Creating and handling of the main menu'''
@@ -155,16 +157,13 @@ class main_class():
         #scale all mainmenu images
         self.backGround = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowestSize,self.lowestSize))
         title      = p.transform.scale(self.cache["mainMenu"]["title"],(self.menuSize * 4,self.menuSize * 2))
-        settings   = p.transform.scale(self.cache["mainMenu"]["settings"],(self.menuSize,self.menuSize))
-        info       = p.transform.scale(p.image.load("./images/main_menu/info.png"),(self.menuSize,self.menuSize))
-        #button rectangles
-        def createButton(pos: tuple[int, int], size: tuple[int, int], text: str,  placement=(0,0)):
-            return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y))
+        #buttons
+        def createButton(pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
+            return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y), alignment=alignment, icon=icon, iconScale=icon_scale)
         startNewButton = createButton((5, 6.5), (4,1), "New Game")
         loadGameButton = createButton((5, 8), (4,1), "Load Game")
-        settingsButton = createButton((9, 9), (1,1), "")
-        self.game_win.blit(settings, (self.b_pos_x + (self.menuSize * 9), self.b_pos_y + (self.menuSize *9)))
-        info_rect = self.game_win.blit(info, (self.b_pos_x, self.b_pos_y + (self.menuSize * 9)))
+        settingsButton = createButton((9, 9), (1,1), "", alignment=0, icon=self.cache["icons"]["settings"])
+        infoButton = createButton((0, 9), (1,1), "", alignment=0, icon=self.cache["icons"]["info"])
         #setup button vars
         start_new_game = False
         while run: #main menu loop
@@ -195,6 +194,7 @@ class main_class():
                 startNewButton.show_button()
                 loadGameButton.show_button()
                 settingsButton.show_button()
+                infoButton.show_button()
                 #------
                 redraw = False
                 render = True
@@ -202,6 +202,7 @@ class main_class():
                     startNewButton.draw_debug()
                     loadGameButton.draw_debug()
                     settingsButton.draw_debug()
+                    infoButton.draw_debug()
             if render:
                 p.display.flip()
                 render = False
@@ -338,7 +339,7 @@ class main_class():
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
     runner = "User"
-    if sys.argv[1] == "-d":
+    if sys.argv.__contains__("-d"):
         runner = "Dev"
     if runner == "User":
         try:

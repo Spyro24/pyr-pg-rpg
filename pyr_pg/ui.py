@@ -6,13 +6,16 @@ import pygame as p
 
 class button:
     """Creates a simple UI button"""
-    def __init__(self, window, pos: tuple, uiTileSize: int ,sizeInUiTiles: tuple, pathToButtonImage: str, fontSystem=None, text=None, alignment=4, zeroPos=(0, 0), fontSize=0.5, symbolSize=1, symbol: p.Surface=None):
-        if type(pathToButtonImage) == str: 
-            self.buttonTexture = p.image.load(pathToButtonImage)
-        else:
+    def __init__(self, window, pos: tuple, uiTileSize: int ,sizeInUiTiles: tuple, pathToButtonImage: str, fontSystem=None, text=None, alignment=4, zeroPos=(0, 0), fontSize=0.5, iconScale=1, icon: p.Surface or str=None):
+        if type(pathToButtonImage) == p.surface.Surface:
             self.buttonTexture = pathToButtonImage
+        else:
+            self.buttonTexture = p.image.load(str(pathToButtonImage))
         self.buttonAlignment = alignment
         self.buttonText = text
+        self.icon_size = uiTileSize
+        self.icon = icon
+        self.icon_scale = iconScale
         self.buttonSize = (uiTileSize * sizeInUiTiles[0],  uiTileSize * sizeInUiTiles[1])
         self.buttonRawSize = sizeInUiTiles
         self.zeroPos = zeroPos
@@ -43,13 +46,25 @@ class button:
             for n in range(self.buttonRawSize[0] - 2):
                 finishButtonTexture.blit(buttonTiles[2],((n + 1) * tileSize,0))
         self.buttonTexture = p.transform.scale(finishButtonTexture, self.buttonSize)
+        if self.icon != None:
+            if type(self.icon) == str:
+                icon = p.image.load(self.icon).convert_alpha()
+            elif type(self.icon) == p.surface.Surface:
+                icon = self.icon
+            lowest_button_size = self.buttonTexture.get_height()
+            if self.buttonTexture.get_width() < lowest_button_size:
+                lowest_button_size = self.buttonTexture.get_width()
+            icon = p.transform.scale(icon, (lowest_button_size * self.icon_scale, lowest_button_size * self.icon_scale))
+            icon_size = icon.get_size()
+            button_size = self.buttonTexture.get_size()
+            self.buttonTexture.blit(icon, (button_size[0] / 2 - icon_size[0] / 2, button_size[1] / 2 - icon_size[1] / 2))
         if self.fontSystem != None and self.buttonText != None:
             self.fontSystem.draw(self.buttonText, self.fontSize, (self.buttonTexture.get_width() / 2, self.buttonTexture.get_height() / 2), placement=4, blitSurface=self.buttonTexture)
     
     def __calculateButtonPos(self):
         """Internal function to calculate the values for the button"""
         if self.buttonAlignment == 0:
-            pass
+            self.blitPos = (self.blitPos[0], self.blitPos[1])
         elif self.buttonAlignment == 4:
             self.blitPos = (self.blitPos[0] - self.buttonTexture.get_width() / 2, self.blitPos[1] - self.buttonTexture.get_height() / 2)
         self.recRect = self.window.blit(self.buttonTexture, (self.zeroPos[0] + self.blitPos[0], self.zeroPos[1] + self.blitPos[1]))
