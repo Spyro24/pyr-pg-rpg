@@ -2,6 +2,7 @@ name=pyr_pg_rpg
 config_name=makend
 display_name=Makend
 version=1.2
+random_caption_text=True
 mx=0
 my=0
 px=0

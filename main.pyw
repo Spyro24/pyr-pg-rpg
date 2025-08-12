@@ -42,7 +42,6 @@ class main_class():
         #----------------------------------------------------------------
         self.autoSave                       = False
         self.runtimeStore[rs.PlayerName]    = "Default"
-        self.random_title_text              = True #Set it to false if you don't want to use a sufix for the tiitle
         self.debug                          = debug
         self.runtimeStore[rs.MicroTiling]   = 16
         self.default_FPS                    = 30
@@ -76,6 +75,7 @@ class main_class():
         self.game_config  = pyr_pg.config.config("./game.rpg")
         self.game_name    = self.game_config.get("name")
         self.game_version = self.game_config.get("version")
+        self.random_title_text = self.game_config.get("random_caption_text")
         self.runtimeStore[rs.LogSystem]("try to init game: " + self.game_name)
         self.runtimeStore[rs.LogSystem]("[PYR-PG][Info] version " + pyr_pg.version)
         self.conf_path = p.system.get_pref_path("pyr-pg",self.game_config.get("config_name"))
@@ -91,7 +91,7 @@ class main_class():
                 is_configured.close()
             except BaseException as err:
                 print("---Error---")
-                print("cannot configure the game.\nHere the Error: [ " + str(err) + " ]")
+                print(f"cannot configure the game.\nHere the Error: '{str(err)}'")
                 print("---Error---")
         self.global_config_file = pyr_pg.config.config(self.conf_path + "/global_config")
         if not is_ready:
@@ -118,7 +118,7 @@ class main_class():
         self.font                 = self.runtimeStore[rs.FontSystem]
         self.map_config["window"] = self.game_win
         caption = self.game_config.get("display_name")
-        if self.random_title_text:
+        if self.random_title_text == "True":
             text_list     = open("./pyr_pg/random_tittle_texts","r")
             random_line   = text_list.readlines() #read every line from the random tiltle text file
             random_line   = [line.strip() for line in random_line]
