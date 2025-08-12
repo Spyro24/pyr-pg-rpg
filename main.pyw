@@ -117,15 +117,15 @@ class main_class():
         self.game_win             = self.runtimeStore[rs.WindowProperties][rs.Window]
         self.font                 = self.runtimeStore[rs.FontSystem]
         self.map_config["window"] = self.game_win
+        caption = self.game_config.get("display_name")
         if self.random_title_text:
             text_list     = open("./pyr_pg/random_tittle_texts","r")
             random_line   = text_list.readlines() #read every line from the random tiltle text file
             random_line   = [line.strip() for line in random_line]
             chosen_tiitle = randint(0, len(random_line) - 1)
             text_list.close() #close the configuration nfile
-            p.display.set_caption(self.game_config.get("display_name") + ": " + random_line[chosen_tiitle])
-        else:
-            p.display.set_caption(self.game_config.get("display_name"))
+            caption = f"{caption}: {random_line[chosen_tiitle]}"
+        p.display.set_caption(caption)
         if not self.debug:
             pyr_pg.splash(self.game_win, 1.2)
         self.setup_env()
@@ -158,12 +158,10 @@ class main_class():
         self.backGround = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowestSize,self.lowestSize))
         title      = p.transform.scale(self.cache["mainMenu"]["title"],(self.menuSize * 4,self.menuSize * 2))
         #buttons
-        def createButton(pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
-            return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y), alignment=alignment, icon=icon, iconScale=icon_scale)
-        startNewButton = createButton((5, 6.5), (4,1), "New Game")
-        loadGameButton = createButton((5, 8), (4,1), "Load Game")
-        settingsButton = createButton((9, 9), (1,1), "", alignment=0, icon=self.cache["icons"]["settings"])
-        infoButton = createButton((0, 9), (1,1), "", alignment=0, icon=self.cache["icons"]["info"])
+        startNewButton = self.createButton((5, 6.5), (4,1), "New Game")
+        loadGameButton = self.createButton((5, 8), (4,1), "Load Game")
+        settingsButton = self.createButton((9, 9), (1,1), "", alignment=0, icon=self.cache["icons"]["settings"])
+        infoButton = self.createButton((0, 9), (1,1), "", alignment=0, icon=self.cache["icons"]["info"])
         #setup button vars
         start_new_game = False
         while run: #main menu loop
@@ -184,7 +182,7 @@ class main_class():
                             run = False
                             cleanUp = True
                             start_new_game = True
-                        if info_rect.collidepoint(m_pos):
+                        if infoButton.check_click(m_pos):
                             self.info_box.show(self.info_text)
                             redraw = True
             if redraw:
@@ -335,6 +333,10 @@ class main_class():
     
     def close_game(self) -> None:
         p.quit()
+    
+    #----Helper Functions
+    def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
+        return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y), alignment=alignment, icon=icon, iconScale=icon_scale)
 
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
