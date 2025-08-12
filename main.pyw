@@ -30,50 +30,50 @@ class main_class():
     def __init__(self, LogSystem=print, debug=False):
         '''Setup the game ENV'''
         self.runtimeStore = {}
-        self.cache        = {}
-        self.modSupport   = modding.mod(self.runtimeStore)
+        self.cache = {}
+        self.modSupport = modding.mod(self.runtimeStore)
         #----modify this section for your game if you use this runner----
-        self.runtimeStore[rs.PlayerSpeed]    = 8
-        self.runtimeStore[rs.DefaultFps]     = 60
-        self.runtimeStore[rs.LogSystem]      = LogSystem
-        self.runtimeStore[rs.CharacterPath]  =  "./res/characters/"
-        self.runtimeStore[rs.TilesXY]        = (16,16)
+        self.runtimeStore[rs.PlayerSpeed] = 8
+        self.runtimeStore[rs.DefaultFps] = 60
+        self.runtimeStore[rs.LogSystem] = LogSystem
+        self.runtimeStore[rs.CharacterPath] =  "./res/characters/"
+        self.runtimeStore[rs.TilesXY] = (16,16)
         self.runtimeStore[rs.PlayerStartPos] = (0,0)
         #----------------------------------------------------------------
-        self.autoSave                       = False
-        self.runtimeStore[rs.PlayerName]    = "Default"
-        self.debug                          = debug
-        self.runtimeStore[rs.MicroTiling]   = 16
-        self.default_FPS                    = 30
+        self.autoSave = False
+        self.runtimeStore[rs.PlayerName] = "Default"
+        self.debug = debug
+        self.runtimeStore[rs.MicroTiling] = 16
+        self.default_FPS = 30
         self.runtimeStore[rs.TileSheetSize] = "6x12"
-        self.fpsCounter                     = True
-        self.debug_console                  = True
-        self.character_path                 = self.runtimeStore[rs.CharacterPath]
-        self.main_FPS_count                 = 0
-        self.rendered_FPS_count             = 0
-        self.debug_colors  = {"player_hitbox":(0, 0, 255),
-                              "map_hitbox":(0,127,255)}
-        self.map_config    = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                              "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/groundov/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                              "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                              "ovov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overoverlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                              "shadow_tiles":pyr_pg.tile_handler.load_tiles("./tiles/shadows/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                              "debug_col":self.debug_colors}
-        self.main_config   = {"tiles_xy":(16,16),
-                              "debug_colors":self.debug_colors,
-                              "character_path":self.character_path,
-                              "player_sprite":None}
+        self.fpsCounter = True
+        self.debug_console = True
+        self.character_path = self.runtimeStore[rs.CharacterPath]
+        self.main_FPS_count = 0
+        self.rendered_FPS_count = 0
+        self.debug_colors = {"player_hitbox":(0, 0, 255),
+                            "map_hitbox":(0,127,255)}
+        self.map_config = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/groundov/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "ovov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overoverlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "shadow_tiles":pyr_pg.tile_handler.load_tiles("./tiles/shadows/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "debug_col":self.debug_colors}
+        self.main_config = {"tiles_xy":(16,16),
+                            "debug_colors":self.debug_colors,
+                            "character_path":self.character_path,
+                            "player_sprite":None}
         self.runtimeStore[rs.DebugColors] = self.debug_colors
         self.runtimeStore[rs.PlayerSpeed] = 1 / ((self.runtimeStore[rs.MicroTiling] * self.runtimeStore[rs.PlayerSpeed]))
-        self.runtimeStore[rs.OSPlatform]  = os.name
-        info              = open("./res/main_menu/info_box", "r")
-        self.info_text    = info.readlines(); info.close()
-        inf               = ""
+        self.runtimeStore[rs.OSPlatform] = os.name
+        info = open("./res/main_menu/info_box", "r")
+        self.info_text = info.readlines(); info.close()
+        inf  = ""
         for line in self.info_text:
             inf += line
-        self.info_text    = inf
-        self.game_config  = pyr_pg.config.config("./game.rpg")
-        self.game_name    = self.game_config.get("name")
+        self.info_text = inf
+        self.game_config = pyr_pg.config.config("./game.rpg")
+        self.game_name = self.game_config.get("name")
         self.game_version = self.game_config.get("version")
         self.random_title_text = self.game_config.get("random_caption_text")
         self.runtimeStore[rs.LogSystem]("try to init game: " + self.game_name)
@@ -103,7 +103,7 @@ class main_class():
         self.modSupport._on_ready()
         self.setupBeforeStartup()
          #---Setup Menu Objects---
-        self.playerCharacterSelector = pyr_pg.characterSelector.characterSelector( self.runtimeStore, debug=debug)
+        self.playerCharacterSelector = pyr_pg.characterSelector.characterSelector(self.runtimeStore, debug=debug)
         #------------------------
     
     def setupBeforeStartup(self) -> None:
@@ -114,8 +114,8 @@ class main_class():
     
     def play(self):
         '''Start the programm'''
-        self.game_win             = self.runtimeStore[rs.WindowProperties][rs.Window]
-        self.font                 = self.runtimeStore[rs.FontSystem]
+        self.game_win = self.runtimeStore[rs.WindowProperties][rs.Window]
+        self.font = self.runtimeStore[rs.FontSystem]
         self.map_config["window"] = self.game_win
         caption = self.game_config.get("display_name")
         if self.random_title_text == "True":
@@ -259,8 +259,8 @@ class main_class():
         self.runtimeStore[rs.PlayerSprite] = self.player_env['player_sprite']
         self.map_config["window"] = self.game_win
         self.runtimeStore[rs.MapSystem] = pyr_pg.map_.map(self.map_config)
-        self.dialog               = pyr_pg.DialogHandler.DialogScript(self.runtimeStore)
-        self.player               = pyr_pg.player.player(self.runtimeStore)
+        self.dialog  = pyr_pg.DialogHandler.DialogScript(self.runtimeStore)
+        self.player = pyr_pg.player.player(self.runtimeStore)
         self.play_game()
         
     def play_game(self):
@@ -356,13 +356,13 @@ if __name__ == "__main__":
             
             log = game.runtimeStore[rs.LogSystem]
             log(1, "-----Fatal Error-----",
-                   "Crash Time: "       + str(log_time),
-                   "Operating System: " + str(os.name),
-                   "Game Name: "        + str(game.game_name),
-                   "Game Version: "     + str(game.game_version),
-                   "pyr_pg Version: "   + str(pyr_pg.version),
-                   "Error: "            + str(err),
-                   "------Error end------",
+                   f"Crash Time: {str(log_time)}",
+                   f"Operating System: {str(os.name)}",
+                   f"Game Name: {str(game.game_name)}",
+                   f"Game Version: {str(game.game_version)}",
+                   f"pyr_pg Version: {str(pyr_pg.version)}",
+                   f"Error: {str(err)}",
+                   f"------Error end------",
                    "\nplease report this to the developers if this is not a filepath error")
             logsys.WriteLog(path="./logs/")
         p.quit()
