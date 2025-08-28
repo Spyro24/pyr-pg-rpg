@@ -47,9 +47,9 @@ class characterSelector:
         fdButton = self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
         backButton = self.window.blit(self.backButtonTexture,(self.virtWindow.left, self.virtWindow.bottom - self.tileSize))
         self.charactersPlacerRects = [p.rect.Rect((self.zeroPos[0], self.zeroPos[1] + self.tileSize / 2 * 3), (self.tileSize, self.tileSize)),
-                                      p.rect.Rect((self.zeroPos[0] + self.tileSize, self.zeroPos[1] + self.tileSize),(self.tileSize * 2, self.tileSize * 2)),
-                                      p.rect.Rect((self.zeroPos[0] + self.tileSize * 3, self.zeroPos[1]),(self.tileSize * 4, self.tileSize * 4)),
-                                      p.rect.Rect((self.zeroPos[0] + self.tileSize * 7, self.zeroPos[1] + self.tileSize),(self.tileSize * 2, self.tileSize * 2)),
+                                      p.rect.Rect((self.zeroPos[0] + self.tileSize, self.zeroPos[1] + self.tileSize), (self.tileSize * 2, self.tileSize * 2)),
+                                      p.rect.Rect((self.zeroPos[0] + self.tileSize * 3, self.zeroPos[1]), (self.tileSize * 4, self.tileSize * 4)),
+                                      p.rect.Rect((self.zeroPos[0] + self.tileSize * 7, self.zeroPos[1] + self.tileSize), (self.tileSize * 2, self.tileSize * 2)),
                                       p.rect.Rect((self.zeroPos[0] + self.tileSize * 9, self.zeroPos[1] + self.tileSize / 2 * 3), (self.tileSize, self.tileSize))]
         self.DebugRects.append(fdButton)
         self.microTiling = self.tileSize / 10
@@ -138,21 +138,21 @@ class characterSelector:
         execute = False
         if tmp[0] == "SPRITESHEET":
             sprite_sheet = p.image.load(os.path.join(self.characterPath, str(tmp[1])))
-            px_w, px_h        = sprite_sheet.get_size()
-            tile_size         = int(px_h /sheet_h)
-            tile_size    = (tile_size, tile_size)
-            execute           = True
+            px_w, px_h = sprite_sheet.get_size()
+            tile_size = int(px_h / sheet_h)
+            tile_size = (tile_size, tile_size)
+            execute = True
         if execute:
             while count < max_count:
                 #---creating the config for the curent obj---
-                cur_obj        = sprite_table_raw[count] #get the obj
-                obj_config     = cur_obj.split("=") #split the param name from the rest of the code
+                cur_obj = sprite_table_raw[count] #get the obj
+                obj_config = cur_obj.split("=") #split the param name from the rest of the code
                 obj_properties = obj_config[1].split(",") #split the psotition and the size of the object in half
-                obj_wh         = obj_properties[0].split(":") #generate the position
-                obj_size       = obj_properties[1].split("x") #generate the size
+                obj_wh = obj_properties[0].split(":") #generate the position
+                obj_size = obj_properties[1].split("x") #generate the size
                 #---create the sprite and set it in the table---
                 obj_texture = p.Surface((tile_size[0] * int(obj_size[0]), tile_size[1] * int(obj_size[1])), flags=p.SRCALPHA)
-                obj_texture.blit(sprite_sheet, (0,0), p.Rect((tile_size[0] * int(obj_wh[0]), tile_size[1] * int(obj_wh[1])),(tile_size[0] * int(obj_size[0]), tile_size[1] * int(obj_size[1]))))
+                obj_texture.blit(sprite_sheet, (0, 0), p.Rect((tile_size[0] * int(obj_wh[0]), tile_size[1] * int(obj_wh[1])),(tile_size[0] * int(obj_size[0]), tile_size[1] * int(obj_size[1]))))
                 sprite_table[obj_config[0]] = obj_texture.convert_alpha()
                 #---save the properties---
                 property_table[obj_config[0]] = (int(obj_size[0]), int(obj_size[1]), int(obj_wh[0]), int(obj_wh[1]))
@@ -170,7 +170,7 @@ class characterSelector:
             print(playableChars)
         self.playableCharacters = []
         for desc in playableChars:
-            self.playableCharacters.append({"Name":None, "Desc":None, "cutingEdge":None, "charDescFile": desc[0:-5]})
+            self.playableCharacters.append({"Name": None, "Desc": None, "cutingEdge": None, "charDescFile": desc[0:-5]})
             descFile = open(os.path.join(spritePath, desc), "r")
             descContent = descFile.read().splitlines()
             descFile.close()
@@ -184,31 +184,31 @@ class characterSelector:
         
     def __create_textbox(self, tileSize: int, png: str) -> p.surface.Surface:
         box_tilesheet = p.image.load(png)
-        textBoxSize = (8,5)
+        textBoxSize = (8, 5)
         textbox_tile_list = []
         box_tilesize = box_tilesheet.get_size()[0] / 3
         for x_tile in range(3):
             for y_tile in range(3):
                 cur_tile = p.surface.Surface((box_tilesize,box_tilesize), flags=p.SRCALPHA)
                 cur_tile.blit(box_tilesheet,(-(x_tile * box_tilesize), -(y_tile * box_tilesize)))
-                textbox_tile_list.append(p.transform.scale(cur_tile,(tileSize, tileSize)))
+                textbox_tile_list.append(p.transform.scale(cur_tile, (tileSize, tileSize)))
                 
         textbox = p.surface.Surface((textBoxSize[0] * tileSize, textBoxSize[1] * tileSize), flags=p.SRCALPHA)
-        textbox.blit(textbox_tile_list[0],(0,0))
-        textbox.blit(textbox_tile_list[8],((textBoxSize[0] - 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
-        textbox.blit(textbox_tile_list[6],((textBoxSize[0] - 1) * tileSize,0))
-        textbox.blit(textbox_tile_list[2],(0,(textBoxSize[1] - 1) * tileSize))
+        textbox.blit(textbox_tile_list[0], (0, 0))
+        textbox.blit(textbox_tile_list[8], ((textBoxSize[0] - 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+        textbox.blit(textbox_tile_list[6], ((textBoxSize[0] - 1) * tileSize,0))
+        textbox.blit(textbox_tile_list[2], (0, (textBoxSize[1] - 1) * tileSize))
         if textBoxSize[0] > 2:
             if textBoxSize[1] > 2:
                 for x in range(textBoxSize[0] - 2):
-                    textbox.blit(textbox_tile_list[3],((x + 1) * tileSize,0))
+                    textbox.blit(textbox_tile_list[3], ((x + 1) * tileSize,0))
                 for y in range(textBoxSize[1] - 2):
-                    textbox.blit(textbox_tile_list[1],(0,(y + 1) * tileSize))
+                    textbox.blit(textbox_tile_list[1], (0,(y + 1) * tileSize))
                 for x in range(textBoxSize[0] - 2):
-                    textbox.blit(textbox_tile_list[5],((x + 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+                    textbox.blit(textbox_tile_list[5], ((x + 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
                 for y in range(textBoxSize[1] - 2):
-                    textbox.blit(textbox_tile_list[7],((textBoxSize[0] - 1) * tileSize,(y + 1) * tileSize))
+                    textbox.blit(textbox_tile_list[7], ((textBoxSize[0] - 1) * tileSize,(y + 1) * tileSize))
                 for x in range(textBoxSize[0] - 2):
                     for y in range(textBoxSize[1] - 2):
-                        textbox.blit(textbox_tile_list[4],((x + 1) * tileSize,(y + 1) * tileSize))
+                        textbox.blit(textbox_tile_list[4], ((x + 1) * tileSize,(y + 1) * tileSize))
         return textbox
