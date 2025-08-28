@@ -13,9 +13,13 @@ class DialogScript():
         self.logsys   = self.rs[9]
         self.font     = self.rs[15]
         self.window   = self.rs[10][13]
-        self.env      = {"waitEnter":True, "notWorking":()}
-        self.config   = {"gridsize":(16,16), "blit_pos":(0,0), "tile_size":0}
-        self.cache    = {"configData":{}, "textbox":{"image":p.surface.Surface((1,1)),"pos":(0,0), "text_pos":(1,1), "lines":3}, "config_file":{}}
+        self.env      = {"waitEnter": True, "notWorking":()}
+        self.config   = {"gridsize": (16, 16), "blit_pos": (0, 0), "tile_size":0}
+        self.cache    = {"configData": {},
+                         "textbox": {"image": p.surface.Surface((1, 1)),
+                                     "pos": (0, 0), "text_pos": (1, 1),
+                                     "lines": 3},
+                         "config_file": {}}
         self.__setup_env()
         self.commands = {"exec":self.cExec,
                          "break":self.cBreak,
@@ -30,17 +34,17 @@ class DialogScript():
                          }
     
     def execDialogScript(self, diascript: str) -> None:
-        script_file = open(diascript,"r")
-        script      = script_file.readlines()
+        script_file = open(diascript, "r")
+        script = script_file.readlines()
         script_file.close()
-        scriptEnd   = len(script)
+        scriptEnd = len(script)
         pc = 0 #Programm Counter
         while True:
             if pc >= scriptEnd: #Checks if the Dialog has finished
                 break
-            curInstruction   = script[pc].strip() #Curent Instruction with the parameters
+            curInstruction = script[pc].strip() #Curent Instruction with the parameters
             instructionTable = curInstruction.split("|") #The Instruction Parameters
-            instruction      = instructionTable[0] #The Instruction it self 
+            instruction = instructionTable[0] #The Instruction it self 
             try: #try to execute a command
                 if len(instruction) == 0: #Instruction is a empty line (to avoid errors)
                     pc += 1
@@ -86,21 +90,21 @@ class DialogScript():
         print(path)
         box_config = self.configLookUp(path, param)
         print(box_config)
-        self.__create_textbox([box_config["position"],(16,5),(1,1),3], "./res/textboxes/gray_rounded.png")
+        self.__create_textbox([box_config["position"], (16, 5), (1, 1), 3], "./res/textboxes/gray_rounded.png")
         return (0, 0)
     
     def cDialog(self, argList: list) -> list:
-        bx, by   = self.config['blit_pos']
-        ts       = self.config['tile_size']
+        bx, by = self.config['blit_pos']
+        ts = self.config['tile_size']
         blit_pos = self.cache['textbox']['pos']
         self.window.blit(self.cache['textbox']['image'], (bx + ts * blit_pos[0], by + ts * blit_pos[1]))
         self.__draw_text(argList[3], "box")
         p.display.update()
-        return(0, 0)
+        return (0, 0)
         
     def cStore(self, argList: list) -> tuple:
-        value   = argList[3]
-        path    = argList[1]
+        value = argList[3]
+        path = argList[1]
         valType = argList[2]
         value = None
         if valType == "string":
@@ -191,10 +195,10 @@ class DialogScript():
                 textbox_tile_list.append(p.transform.scale(cur_tile,(self.config["tile_size"], self.config["tile_size"])))
                 
         textbox = p.surface.Surface((config[1][0] * self.config["tile_size"], config[1][1] * self.config["tile_size"]), flags=p.SRCALPHA)
-        textbox.blit(textbox_tile_list[0],(0,0))
-        textbox.blit(textbox_tile_list[8],((config[1][0] - 1) * tileSize,(config[1][1] - 1) * tileSize))
-        textbox.blit(textbox_tile_list[6],((config[1][0] - 1) * tileSize,0))
-        textbox.blit(textbox_tile_list[2],(0,(config[1][1] - 1) * tileSize))
+        textbox.blit(textbox_tile_list[0], (0, 0))
+        textbox.blit(textbox_tile_list[8], ((config[1][0] - 1) * tileSize,(config[1][1] - 1) * tileSize))
+        textbox.blit(textbox_tile_list[6], ((config[1][0] - 1) * tileSize, 0))
+        textbox.blit(textbox_tile_list[2], (0, (config[1][1] - 1) * tileSize))
         if config[1][0] > 2:
             if config[1][1] > 2:
                 for x in range(config[1][0] - 2):
@@ -212,12 +216,12 @@ class DialogScript():
         self.cache['textbox']['image'] = textbox
     
     def __setup_env(self):
-        window_wh     = self.window.get_size()
+        window_wh = self.window.get_size()
         shortest_side = window_wh[1]
         if window_wh[0] < window_wh[1]:
             shortest_side = window_wh[0]
         blit_point = (0, 0)
-        midpoint                 = (window_wh[0]/2, window_wh[1]/2)
-        blit_point               = (midpoint[0] - shortest_side/2, midpoint[1] - shortest_side/2)
-        self.config["blit_pos"]  = blit_point
+        midpoint = (window_wh[0]/2, window_wh[1] / 2)
+        blit_point = (midpoint[0] - shortest_side / 2, midpoint[1] - shortest_side/2)
+        self.config["blit_pos"] = blit_point
         self.config["tile_size"] = int(shortest_side / self.config["gridsize"][0])
