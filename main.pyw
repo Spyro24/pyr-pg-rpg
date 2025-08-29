@@ -52,23 +52,24 @@ class main_class():
         self.main_FPS_count = 0
         self.rendered_FPS_count = 0
         self.debug_colors = {"player_hitbox":(0, 0, 255),
-                            "map_hitbox":(0,127,255)}
-        self.map_config = {"bg_tiles":pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                           "gd_tiles":pyr_pg.tile_handler.load_tiles("./tiles/groundov/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                           "ov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                           "ovov_tiles":pyr_pg.tile_handler.load_tiles("./tiles/overoverlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                           "shadow_tiles":pyr_pg.tile_handler.load_tiles("./tiles/shadows/", {"size":self.runtimeStore[rs.TileSheetSize]}),
-                           "debug_col":self.debug_colors}
-        self.main_config = {"tiles_xy":(16,16),
-                            "debug_colors":self.debug_colors,
-                            "character_path":self.character_path,
-                            "player_sprite":None}
+                             "map_hitbox": (0, 127, 255)}
+        self.map_config = {"bg_tiles": pyr_pg.tile_handler.load_tiles("./tiles/ground/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "gd_tiles": pyr_pg.tile_handler.load_tiles("./tiles/groundov/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "ov_tiles": pyr_pg.tile_handler.load_tiles("./tiles/p_overlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "ovov_tiles": pyr_pg.tile_handler.load_tiles("./tiles/overoverlay/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "shadow_tiles": pyr_pg.tile_handler.load_tiles("./tiles/shadows/", {"size":self.runtimeStore[rs.TileSheetSize]}),
+                           "debug_col": self.debug_colors}
+        self.main_config = {"tiles_xy": (16, 16),
+                            "debug_colors": self.debug_colors,
+                            "character_path": self.character_path,
+                            "player_sprite": None}
         self.runtimeStore[rs.DebugColors] = self.debug_colors
-        self.runtimeStore[rs.PlayerSpeed] = 1 / ((self.runtimeStore[rs.MicroTiling] * self.runtimeStore[rs.PlayerSpeed]))
+        self.runtimeStore[rs.PlayerSpeed] = 1 / (self.runtimeStore[rs.MicroTiling] * self.runtimeStore[rs.PlayerSpeed])
         self.runtimeStore[rs.OSPlatform] = os.name
         info = open("./res/main_menu/info_box", "r")
-        self.info_text = info.readlines(); info.close()
-        inf  = ""
+        self.info_text = info.readlines()
+        info.close()
+        inf = ""
         for line in self.info_text:
             inf += line
         self.info_text = inf
@@ -76,13 +77,13 @@ class main_class():
         self.game_name = self.game_config.get("name")
         self.game_version = self.game_config.get("version")
         self.random_title_text = self.game_config.get("random_caption_text")
-        self.runtimeStore[rs.LogSystem]("try to init game: " + self.game_name)
-        self.runtimeStore[rs.LogSystem]("[PYR-PG][Info] version " + pyr_pg.version)
-        self.conf_path = p.system.get_pref_path("pyr-pg",self.game_config.get("config_name"))
-        self.runtimeStore[rs.LogSystem](f"[PYR-PG][Info] config path '{self.conf_path}'")
+        self.conf_path = p.system.get_pref_path("pyr-pg", self.game_config.get("config_name"))
+        self.runtimeStore[rs.LogSystem](f"[PYR_PG][Main] try to init game: {self.game_name}")
+        self.runtimeStore[rs.LogSystem](f"[PYR_PG][Info] version {pyr_pg.version}")
+        self.runtimeStore[rs.LogSystem](f"[PYR_PG][Info] config path '{self.conf_path}'")
         is_ready = False
         try:
-            is_configured = open(self.conf_path + "/CONFIGURED", "r")
+            is_configured = open(f"{self.conf_path}/CONFIGURED", "r")
             is_ready = True
             is_configured.close()
         except:
@@ -91,11 +92,11 @@ class main_class():
                 is_configured.close()
             except BaseException as err:
                 print("---Error---")
-                print(f"cannot configure the game.\nHere the Error: '{str(err)}'")
+                print(f"[PYR_PG][ERROR] cannot configure the game.\n[PYR_PG][Info] Here the Error: '{str(err)}'")
                 print("---Error---")
-        self.global_config_file = pyr_pg.config.config(self.conf_path + "/global_config")
+        self.global_config_file = pyr_pg.config.config(f"{self.conf_path}/global_config")
         if not is_ready:
-            get_wh = p.display.set_mode((0,0))
+            get_wh = p.display.set_mode((0, 0))
             w,h = get_wh.get_size()
             self.global_config_file.add("win_w", w / 1.5)
             self.global_config_file.add("win_h", h / 1.5)
@@ -108,8 +109,10 @@ class main_class():
     
     def setupBeforeStartup(self) -> None:
         '''Things that need to be init before starting the game'''
+        def intf(strfloat: str) -> int:
+            return int(float(strfloat))
         self.runtimeStore[rs.WindowProperties] = {}
-        self.runtimeStore[rs.WindowProperties][rs.Window] = p.display.set_mode((int(float(self.global_config_file.get("win_w"))),int(float(self.global_config_file.get("win_h")))))
+        self.runtimeStore[rs.WindowProperties][rs.Window] = p.display.set_mode((intf(self.global_config_file.get("win_w")), intf(self.global_config_file.get("win_h"))))
         self.runtimeStore[rs.FontSystem] = pyr_pg.font.font(self.runtimeStore[rs.WindowProperties][rs.Window], "./res/fonts/standard")
     
     def play(self):
@@ -130,7 +133,7 @@ class main_class():
             pyr_pg.splash(self.game_win, 1.2)
         self.setup_env()
         #This has to be configured after the env--------------
-        self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menuSize / 2), (self.b_pos_x, self.b_pos_y), (20,20))
+        self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menuSize / 2), (self.b_pos_x, self.b_pos_y), (20, 20))
         self.options  = pyr_pg.options_menu.options_menu(self.runtimeStore)
         self.options.create("./res/menus/options_menu.png")
         #-----------------------------------------------------
@@ -140,11 +143,11 @@ class main_class():
     def cacheImages(self) -> None:
         '''This Function will cache all the images to reduce disk load (and increase RAM usage)'''
         self.cache["mainMenu"] = {}
+        self.cache["icons"] = {}
+        self.cache["buttons"] = {}
         self.cache["mainMenu"]["bg"] = p.image.load("./res/main_menu/back.png") #background Image
         self.cache["mainMenu"]["title"] = p.image.load("./images/main_menu/title.png") #title Image or logo
-        self.cache["buttons"] = {}
         self.cache["buttons"]["defaultBackground"] = p.image.load("./res/buttons/ButtonBG_BlackWhite.png")
-        self.cache["icons"] = {}
         self.cache["icons"]["settings"] = p.image.load("./res/icons/settings.png")
         self.cache["icons"]["info"] = p.image.load("./res/icons/info.png")
     
@@ -155,13 +158,13 @@ class main_class():
         redraw = True
         cleanUp = False
         #scale all mainmenu images
-        self.backGround = p.transform.scale(self.cache["mainMenu"]["bg"],(self.lowestSize,self.lowestSize))
-        title      = p.transform.scale(self.cache["mainMenu"]["title"],(self.menuSize * 4,self.menuSize * 2))
+        self.backGround = p.transform.scale(self.cache["mainMenu"]["bg"], (self.lowestSize, self.lowestSize))
+        title = p.transform.scale(self.cache["mainMenu"]["title"], (self.menuSize * 4, self.menuSize * 2))
         #buttons
-        startNewButton = self.createButton((5, 6.5), (4,1), "New Game")
-        loadGameButton = self.createButton((5, 8), (4,1), "Load Game")
-        settingsButton = self.createButton((9, 9), (1,1), "", alignment=0, icon=self.cache["icons"]["settings"])
-        infoButton = self.createButton((0, 9), (1,1), "", alignment=0, icon=self.cache["icons"]["info"])
+        startNewButton = self.createButton((5, 6.5), (4, 1), "New Game")
+        loadGameButton = self.createButton((5, 8), (4, 1), "Load Game")
+        settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons"]["settings"])
+        infoButton = self.createButton((0, 9), (1, 1), "", alignment=0, icon=self.cache["icons"]["info"])
         #setup button vars
         start_new_game = False
         while run: #main menu loop
@@ -212,24 +215,24 @@ class main_class():
     
     def menu_settings(self):
         render = True
-        menu__setting__ = True
+        settings_menu = True
         redraw = True
-        back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"),(self.menuSize, self.menuSize))
-        background = p.transform.scale(p.image.load("./images/main_menu/back.png"),(self.lowestSize,self.lowestSize))
-        seting_background = p.transform.scale(p.image.load("./images/main_menu/settings/settings_back.png"),(self.menuSize * 8, self.menuSize * 8))
+        back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"), (self.menuSize, self.menuSize))
+        background = p.transform.scale(p.image.load("./images/main_menu/back.png"), (self.lowestSize, self.lowestSize))
+        seting_background = p.transform.scale(p.image.load("./images/main_menu/settings/settings_back.png"), (self.menuSize * 8, self.menuSize * 8))
         #setup rectangle buttons
         back = 0
-        while menu__setting__:
+        while settings_menu:
             for event in p.event.get():
                 if event.type == p.QUIT:
-                    menu__setting__ = False
+                    settings_menu = False
                     self.close_game()            
             m_click = p.mouse.get_pressed()
             m_pos = p.mouse.get_pos()                    
             if redraw:
                 self.game_win.blit(background,(self.b_pos_x, self.b_pos_y))
                 back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y))
-                self.game_win.blit(seting_background,(self.b_pos_x + self.menuSize, self.b_pos_y + self.menuSize))
+                self.game_win.blit(seting_background, (self.b_pos_x + self.menuSize, self.b_pos_y + self.menuSize))
                 if self.debug:
                     pass
                 render = True
@@ -239,11 +242,11 @@ class main_class():
                 render = False                
             if m_click[0]:
                 if back.collidepoint(m_pos):
-                    menu__setting__ = False
+                    settings_menu = False
                     
     def menu_create_character(self):
         menu__create_character__ = True
-        ready  = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"),(self.menuSize, self.menuSize))
+        ready  = p.transform.scale(p.image.load("./images/main_menu/char_selector/start.png"), (self.menuSize, self.menuSize))
         chosenPlayer = self.playerCharacterSelector.openSelector({"bg": self.cache["mainMenu"]["bg"],
                                                                   "forward": p.image.load("./images/main_menu/char_selector/start.png"),
                                                                   "back": p.image.load("./images/main_menu/char_selector/chose.png")})
@@ -255,19 +258,20 @@ class main_class():
             self.setup_player([chosenPlayer[0]])
     
     def setup_player(self, option):
-        self.player_env           = {"player":"Test", "player_sprite":option[0]}
+        self.player_env           = {"player": "Test",
+                                     "player_sprite": option[0]}
         self.runtimeStore[rs.PlayerSprite] = self.player_env['player_sprite']
         self.map_config["window"] = self.game_win
         self.runtimeStore[rs.MapSystem] = pyr_pg.map_.map(self.map_config)
-        self.dialog  = pyr_pg.DialogHandler.DialogScript(self.runtimeStore)
+        self.dialog = pyr_pg.DialogHandler.DialogScript(self.runtimeStore)
         self.player = pyr_pg.player.player(self.runtimeStore)
         self.play_game()
         
     def play_game(self):
-        playerFacings = ((p.K_w, "UP", (0,-1)),
-                         (p.K_s, "DOWN", (0,1)),
-                         (p.K_a, "LEFT", (-1,0)),
-                         (p.K_d, "RIGHT", (1,0)))
+        playerFacings = ((p.K_w, "UP", (0, -1)),
+                         (p.K_s, "DOWN", (0, 1)),
+                         (p.K_a, "LEFT", (-1, 0)),
+                         (p.K_d, "RIGHT", (1, 0)))
         debug_console = self.debug_console
         from time import time as time_get
         FPS_get = time_get()
@@ -296,7 +300,7 @@ class main_class():
             #put here the DEV menu code
             if (cur_frame_time - (1/FPSmax)) > last_frame:
                 last_frame = time_get()
-                self.game_win.fill((0,0,0))
+                self.game_win.fill((0, 0, 0))
                 self.player.reset_resetable_states()
                 self.runtimeStore[rs.MapSystem].render()
                 self.player.render()
@@ -312,7 +316,7 @@ class main_class():
             if self.debug:
                 if (FPS_get + 1) < cur_frame_time:
                     FPS_get = cur_frame_time
-                    print("FPS:", self.main_FPS_count, "RFPS:",self.rendered_FPS_count)
+                    print("FPS:", self.main_FPS_count, "RFPS:", self.rendered_FPS_count)
                     self.main_FPS_count = 0
                     self.rendered_FPS_count = 0
         
@@ -321,14 +325,15 @@ class main_class():
         pass
     
     def key_config(self) -> None:
-        self.set_keys = ["UP","DOWN","LEFT","RIGHT"]
+        self.set_keys = ["UP", "DOWN", "LEFT", "RIGHT"]
     
     def setup_env(self) -> None:
         w, h = self.game_win.get_size()
         self.lowestSize = w
-        if w > h: self.lowestSize = h
+        if w > h:
+            self.lowestSize = h
         self.b_pos_x, self.b_pos_y = (w / 2) - (self.lowestSize / 2), (h / 2) - (self.lowestSize / 2)
-        self.menuSize   = self.lowestSize / 10
+        self.menuSize = self.lowestSize / 10
         self.audioSetup = pyr_pg.audioMixer.sound(self.game_win, "./res/music/")
     
     def close_game(self) -> None:
@@ -353,7 +358,6 @@ if __name__ == "__main__":
                 log_time = datetime.datetime.now()
             except ImportError as errTime:
                 log_time = errTime
-            
             log = game.runtimeStore[rs.LogSystem]
             log(1, "-----Fatal Error-----",
                    f"Crash Time: {str(log_time)}",
