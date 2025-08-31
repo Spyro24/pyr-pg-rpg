@@ -2,10 +2,11 @@
 ## Overview
 
 1. [System requirements](#minimal-requirements)
-2. [Game Options](#how-to-set-options)
+2. [Game Options](#set-options)
 
 ## Maptool controls:
 
+(The Maptool curently dont work)
 * CTRL + R = Reload the UI (you need this)
 * Arrow Up or Down = Change Edit layer
 * WASD = Move to the next map
@@ -26,10 +27,11 @@
 *  OS  : Linux
 *  CPU : Intel Atom N450 with 1,66 GHz
 
-## How to set Options
+## Set Options
 
 * There is curently no options menu in the game.
-* You have to set the options directly in the main.py(if available)
+* You have to set the options directly in the `main.py` (if available)
+* To run the programm in developer/debug mode use `./main.pyw -d`
 
 V1.0 [pre release]
 pyr_pg (Makend) is available on Itch.
