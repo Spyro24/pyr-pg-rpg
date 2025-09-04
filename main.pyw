@@ -132,11 +132,11 @@ class main_class():
         if not self.debug:
             pyr_pg.splash(self.game_win, 1.2)
         self.setup_env()
-        #This has to be configured after the env--------------
+        #---his has to be configured after the env---
         self.info_box = pyr_pg.infobox.InfoBox(self.game_win, self.font, int(self.menuSize / 2), (self.b_pos_x, self.b_pos_y), (20, 20))
-        self.options  = pyr_pg.options_menu.options_menu(self.runtimeStore)
+        self.options = pyr_pg.options_menu.options_menu(self.runtimeStore)
         self.options.create("./res/menus/options_menu.png")
-        #-----------------------------------------------------
+        #------
         self.cacheImages()
         self.main_menu() #Open the main menu and start the game
     
@@ -298,7 +298,7 @@ class main_class():
                     KT = time_get()
                     self.player.reset_state(0)
             #put here the DEV menu code
-            if (cur_frame_time - (1/FPSmax)) > last_frame:
+            if (cur_frame_time - (1 / FPSmax)) > last_frame:
                 last_frame = time_get()
                 self.game_win.fill((0, 0, 0))
                 self.player.reset_resetable_states()
