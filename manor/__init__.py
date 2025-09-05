@@ -8,3 +8,9 @@ try:
 except BaseException:
     print("[manor] This module needs pyr_pg to work")
     exit(1)
+
+container = manor.container.container()
+
+def start(log=print)->None:
+    log(f"[manor] Log method is {log.__module__}")
+    

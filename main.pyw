@@ -17,14 +17,16 @@
     along with this program.
 """
 
+import pygame as p
+import manor
+import pyr_pg
+import runtime_store as rs
+import modding
+
 from random import randint
 import os
 import sys
-import pygame as p
-import pyr_pg
 #import time
-import runtime_store as rs
-import modding
 
 class main_class():
     def __init__(self, LogSystem=print, debug=False):
@@ -348,8 +350,10 @@ if __name__ == "__main__":
     runner = "User"
     if sys.argv.__contains__("-d"):
         runner = "Dev"
+        logsys.printOut = True
     if runner == "User":
         try:
+            manor.start(log=logsys.insert)
             game = main_class(LogSystem=logsys.insert)
             game.play()
         except BaseException as err:
@@ -372,6 +376,7 @@ if __name__ == "__main__":
         p.quit()
         sys.exit(1)
     elif runner == "Dev":
+        manor.start(log=logsys.insert)
         game = main_class(debug=True)
         game.play()
         p.quit()

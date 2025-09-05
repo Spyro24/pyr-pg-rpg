@@ -3,19 +3,14 @@ import time
 class log():
     def __init__(self):
         self.content = []
+        self.printOut = False
         
     def insert(self, *strings):
-        PrintOut   = False
-        Counter    = 0
         MaxCounter = len(strings)
-        if strings[0] == 1:
-            PrintOut = True
-            Counter  = 1
-        while Counter < MaxCounter:
-            self.content.append(strings[Counter])
-            if PrintOut:
-                print(strings[Counter])
-            Counter += 1
+        for string in strings:
+            self.content.append(string)
+            if self.printOut:
+                print(string)
             
     def WriteLog(self, path="./", name=str(time.time()) + ".txt"):
         LogFile = open(path + name, "w")
