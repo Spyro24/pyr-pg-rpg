@@ -24,4 +24,4 @@ def start(log=print)->None:
         container.debugMode = True
         log(f"[manor] Programm is running in debug/developer mode")
     if not container.debugMode or flags.__contains__("--splash"):
-        pyr_pg.splash(window)
+        pyr_pg.splash(window, container.splashDuration)

@@ -7,3 +7,4 @@ class container:
         self.cache = None
         self.FPS = self.defaultFPS
         self.debugMode = False
+        self.splashDuration = 1.2

@@ -15,7 +15,7 @@ class displayManager:
             windowH, windowW = windowW, windowH
         
     def blit(self, source, dest=(0, 0), area=None, special_flags=0):
-        pass
+        self.window.blit(source, dest, area, special_flags) 
         
-    def get_size():
-        pass
+    def get_size(self):
+        return self.window.get_size()
