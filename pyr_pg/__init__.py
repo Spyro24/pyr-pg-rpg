@@ -5,14 +5,9 @@
     Lincense: GPLv3
     (c) 2023-2025 Spyro24
 '''
-import pyr_pg.config
-import pyr_pg.audioMixer
-import pyr_pg.map_
-import pyr_pg.player
-import pyr_pg.tile_handler
-import pyr_pg.cutting_edge
-import pyr_pg.infobox
-import pyr_pg.font
+
+import pyr_pg.config, pyr_pg.audioMixer, pyr_pg.map_, pyr_pg.player
+import pyr_pg.tile_handler, pyr_pg.cutting_edge, pyr_pg.infobox, pyr_pg.font
 import pyr_pg.DialogHandler
 import pyr_pg.options_menu
 import pyr_pg.log_system
@@ -22,8 +17,10 @@ import pyr_pg.speechSynth
 import pyr_pg.characterSelector
 import pyr_pg.inputSystem
 import pyr_pg.ui
+import pyr_pg.container
+import pyr_pg.displayManager
 
-version = "0.4.1"
+version = "0.4.2"
 
 #static constants for the input system
 QUIT = 1

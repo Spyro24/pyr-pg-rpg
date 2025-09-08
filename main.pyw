@@ -353,7 +353,6 @@ if __name__ == "__main__":
         logsys.printOut = True
     if runner == "User":
         try:
-            manor.start(log=logsys.insert)
             game = main_class(LogSystem=logsys.insert)
             game.play()
         except BaseException as err:
@@ -377,8 +376,6 @@ if __name__ == "__main__":
         sys.exit(1)
     elif runner == "Dev":
         manor.start(log=logsys.insert)
-        game = main_class(debug=True)
-        game.play()
         p.quit()
     else:
         print("Your are not a valid user for this programm")
