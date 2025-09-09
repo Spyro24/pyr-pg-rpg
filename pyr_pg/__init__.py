@@ -20,7 +20,7 @@ import pyr_pg.ui
 import pyr_pg.container
 import pyr_pg.displayManager
 
-version = "0.4.2"
+version = "0.4.3"
 
 #static constants for the input system
 QUIT = 1
@@ -47,7 +47,6 @@ def splash(win, splash_duration: float) -> None:
         lowest_size = w
     b_pos_x = (w / 2) - (lowest_size / 2)
     b_pos_y = (h / 2) - (lowest_size / 2)
-    print(lowest_size)
     transp = 51
     a = p.Surface((1, 1), flags=p.SRCALPHA)
     a.convert()

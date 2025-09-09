@@ -12,12 +12,15 @@ except ModuleNotFoundError:
     print("[manor] This module needs pyr_pg to work")
     exit(1)
 print(f"[manor] import manor modules")
+import manor.start_menu
+import manor.cache
 
 container = pyr_pg.container.container()
 
 def start(log=print)->None:
     log(f"[manor] Log method is {log.__module__}")
     container.window = pyr_pg.displayManager.displayManager((1080,720),(1,1))
+    container.cache = manor.cache.cacheStuff()
     window = container.window
     flags = sys.argv
     if flags.__contains__("-d"):
@@ -25,3 +28,4 @@ def start(log=print)->None:
         log(f"[manor] Programm is running in debug/developer mode")
     if not container.debugMode or flags.__contains__("--splash"):
         pyr_pg.splash(window, container.splashDuration)
+        
