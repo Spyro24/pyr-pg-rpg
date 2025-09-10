@@ -1,3 +1,5 @@
+import pygame as p
+
 def cacheStuff():
     cache = {}
     cache["mainMenu/bg"] = p.image.load("./res/main_menu/back.png") #background Image

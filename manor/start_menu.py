@@ -11,11 +11,18 @@ class startMenu():
         self.setup()
     
     def setup(self):
+        self.lowestSize = self.window.lowestSize
+        self.menuSize = self.lowestSize / 10
         self.backGround = p.transform.scale(self.cache["mainMenu/bg"], (self.lowestSize, self.lowestSize))
         self.titlePNG = p.transform.scale(self.cache["mainMenu/title"], (self.menuSize * 4, self.menuSize * 2))
 
     def main_loop(self) -> None:
         '''Creating and handling of the main menu'''
+        for event in p.event.get():
+            if event.type == p.WINDOWRESIZED:
+                return (None, 1, None)
+        return (None, None, None)
+        '''
         #scale all mainmenu images
         title = p.transform.scale(self.cache["mainMenu/title"], (self.menuSize * 4, self.menuSize * 2))
         #buttons
@@ -69,47 +76,17 @@ class startMenu():
             del loadGameButton
         if start_new_game:
             pass
+        '''
     
     def render(self):
-        self.game_win.blit(self.backGround, (0,0))
-        self.game_win.blit(title, (self.menuSize * 3, self.menuSize))
+        self.window.blit(self.backGround, (0,0))
+        self.window.blit(self.titlePNG, (self.menuSize * 3, self.menuSize))
     
     def debug_render(self):
         pass
     
     def on_window_update(self):
-        self.lowestSize = self.window.lowestSize
-        
-    def menu_settings(self):
-        render = True
-        settings_menu = True
-        redraw = True
-        back_button = p.transform.scale(p.image.load("./images/main_menu/settings/back.png"), (self.menuSize, self.menuSize))
-        background = p.transform.scale(p.image.load("./images/main_menu/back.png"), (self.lowestSize, self.lowestSize))
-        seting_background = p.transform.scale(p.image.load("./images/main_menu/settings/settings_back.png"), (self.menuSize * 8, self.menuSize * 8))
-        #setup rectangle buttons
-        back = 0
-        while settings_menu:
-            for event in p.event.get():
-                if event.type == p.QUIT:
-                    settings_menu = False
-                    self.close_game()            
-            m_click = p.mouse.get_pressed()
-            m_pos = p.mouse.get_pos()                    
-            if redraw:
-                self.game_win.blit(background,(self.b_pos_x, self.b_pos_y))
-                back = self.game_win.blit(back_button, (self.b_pos_x, self.b_pos_y))
-                self.game_win.blit(seting_background, (self.b_pos_x + self.menuSize, self.b_pos_y + self.menuSize))
-                if self.debug:
-                    pass
-                render = True
-                redraw = False            
-            if render:
-                p.display.flip()
-                render = False                
-            if m_click[0]:
-                if back.collidepoint(m_pos):
-                    settings_menu = False
+        self.setup()
     
     #----Helper Functions
     def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):

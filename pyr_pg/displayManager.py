@@ -6,8 +6,8 @@ class displayManager:
         self.window = p.display.set_mode(initSize, flags=p.RESIZABLE)
         self.zeroPos = (0, 0)
         self.windowSize = (0,0)
-        self.windowResize()
         self.lowestSize = 0
+        self.windowResize()
     
     def windowResize(self):
         windowSize = self.window.get_size()
@@ -25,3 +25,9 @@ class displayManager:
         
     def get_size(self):
         return self.windowSize
+    
+    def update(self):
+        p.display.update()
+    
+    def flip(self):
+        p.display.flip()
