@@ -79,4 +79,4 @@ class button:
         
     def draw_debug(self):
         """Only for debug purpose"""
-        p.draw.rect(self.window, (255,255,0), self.recRect, width=3)
+        self.window.draw_rect(self.recRect, (255,255,0), width=3)

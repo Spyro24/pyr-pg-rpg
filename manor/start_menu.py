@@ -8,6 +8,7 @@ class startMenu():
         self.cache = container.cache
         self.debug = container.debugMode
         self.window = container.window
+        self.font = container.font
         self.setup()
     
     def setup(self):
@@ -15,6 +16,7 @@ class startMenu():
         self.menuSize = self.lowestSize / 10
         self.backGround = p.transform.scale(self.cache["mainMenu/bg"], (self.lowestSize, self.lowestSize))
         self.titlePNG = p.transform.scale(self.cache["mainMenu/title"], (self.menuSize * 4, self.menuSize * 2))
+        self.NewGameButton = self.createButton((5, 6.5), (4, 1), "New Game")
 
     def main_loop(self) -> None:
         '''Creating and handling of the main menu'''
@@ -64,7 +66,6 @@ class startMenu():
                 redraw = False
                 render = True
                 if self.debug:
-                    startNewButton.draw_debug()
                     loadGameButton.draw_debug()
                     settingsButton.draw_debug()
                     infoButton.draw_debug()
@@ -81,16 +82,17 @@ class startMenu():
     def render(self):
         self.window.blit(self.backGround, (0,0))
         self.window.blit(self.titlePNG, (self.menuSize * 3, self.menuSize))
+        self.NewGameButton.show_button()
     
     def debug_render(self):
-        pass
+        self.NewGameButton.draw_debug()
     
     def on_window_update(self):
         self.setup()
     
     #----Helper Functions
     def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
-        return pyr_pg.ui.button(self.window, pos, self.menuSize, size, self.cache["buttons/defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y), alignment=alignment, icon=icon, iconScale=icon_scale)
+        return pyr_pg.ui.button(self.window, pos, self.menuSize, size, self.cache["buttons/defaultBackground"], fontSystem=self.font, text=text, alignment=alignment, icon=icon, iconScale=icon_scale)
 
 def scaleImageLowest(container: pyr_pg.container.container, image):
     return p.transform.scale(image, (container.window.lowestSize, container.window.lowestSize))

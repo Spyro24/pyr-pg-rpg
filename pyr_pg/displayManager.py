@@ -21,7 +21,7 @@ class displayManager:
         self.zeroPos = (windowMidpoint[0] - self.windowSize[0] / 2, windowMidpoint[1] - self.windowSize[1] / 2)
         
     def blit(self, source, dest=(0, 0), area=None, special_flags=0):
-        self.window.blit(source, (dest[0] + self.zeroPos[0], dest[1] + self.zeroPos[1]), area, special_flags) 
+        return self.window.blit(source, (dest[0] + self.zeroPos[0], dest[1] + self.zeroPos[1]), area, special_flags) 
         
     def get_size(self):
         return self.windowSize
@@ -31,3 +31,6 @@ class displayManager:
     
     def flip(self):
         p.display.flip()
+        
+    def draw_rect(self, rect: p.Rect, color: tuple[int, int, int], width=0):
+        p.draw.rect(self.window, color, p.Rect(rect[0], rect[1], rect[2], rect[3]), width=width)

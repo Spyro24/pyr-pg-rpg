@@ -13,3 +13,4 @@ class container:
         self.debugColors = [(0, 0, 255),(0, 255, 0),(255, 0, 0)]
         self.autoSave = False
         self.logSystem = None
+        self.font = None

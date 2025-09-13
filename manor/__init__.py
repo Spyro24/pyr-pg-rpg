@@ -26,6 +26,7 @@ def start(log=print)->None:
     container.window = pyr_pg.displayManager.displayManager((1080,720),(1,1))
     container.cache = manor.cache.cacheStuff()
     container.logSystem = log
+    container.font = pyr_pg.font.font(container.window, "./res/fonts/standard")
     window = container.window
     flags = sys.argv
     if flags.__contains__("-d"):
@@ -41,6 +42,7 @@ def game_loop(game_content)->None:
     cur_function = game_content["main_menu"]
     window = container.window
     container.logSystem(f"[manor] lowest size is {window.lowestSize}px")
+    is_debug_mode = container.debugMode
     while run:
         cur_states = cur_function.main_loop()
         if cur_states[1] == 1:
@@ -49,4 +51,6 @@ def game_loop(game_content)->None:
                 obj.setup()
         window.window.fill((0, 0, 0))
         cur_function.render()
+        if is_debug_mode:
+            cur_function.debug_render()
         window.flip()
