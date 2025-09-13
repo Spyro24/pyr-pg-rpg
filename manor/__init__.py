@@ -19,7 +19,12 @@ import manor.start_menu
 container = pyr_pg.container.container()
 
 def on_init(container_var):
-    return {"main_menu": manor.start_menu.startMenu(container_var)}
+    modules = (manor.start_menu.startMenu(container_var),
+               )
+    moduleAllocation = {}
+    for modul in modules:
+        moduleAllocation[modul.modul_name] = modul
+    return moduleAllocation
 
 def start(log=print)->None:
     log(f"[manor] Log method is {log.__module__}")

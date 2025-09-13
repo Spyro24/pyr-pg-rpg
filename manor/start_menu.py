@@ -4,6 +4,7 @@ import pygame as p
 class startMenu():
     def __init__(self, container: pyr_pg.container.container):
         '''Setup the game ENV'''
+        self.modul_name = "main_menu"
         self.container = container
         self.cache = container.cache
         self.debug = container.debugMode
@@ -16,8 +17,11 @@ class startMenu():
         self.menuSize = self.lowestSize / 10
         self.backGround = p.transform.scale(self.cache["mainMenu/bg"], (self.lowestSize, self.lowestSize))
         self.titlePNG = p.transform.scale(self.cache["mainMenu/title"], (self.menuSize * 4, self.menuSize * 2))
-        self.NewGameButton = self.createButton((5, 6.5), (4, 1), "New Game")
-
+        self.newGameButton = self.createButton((5, 6.5), (4, 1), "New Game")
+        self.loadGameButton = self.createButton((5, 8), (4, 1), "Load Game")
+        self.settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])
+        self.infoButton = self.createButton((0, 9), (1, 1), "", alignment=0, icon=self.cache["icons/info"])
+    
     def main_loop(self) -> None:
         '''Creating and handling of the main menu'''
         for event in p.event.get():
@@ -25,11 +29,6 @@ class startMenu():
                 return (None, 1, None)
         return (None, None, None)
         '''
-        #scale all mainmenu images
-        title = p.transform.scale(self.cache["mainMenu/title"], (self.menuSize * 4, self.menuSize * 2))
-        #buttons
-        startNewButton = self.createButton((5, 6.5), (4, 1), "New Game")
-        loadGameButton = self.createButton((5, 8), (4, 1), "Load Game")
         settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])
         infoButton = self.createButton((0, 9), (1, 1), "", alignment=0, icon=self.cache["icons/info"])
         #setup button vars
@@ -82,10 +81,16 @@ class startMenu():
     def render(self):
         self.window.blit(self.backGround, (0,0))
         self.window.blit(self.titlePNG, (self.menuSize * 3, self.menuSize))
-        self.NewGameButton.show_button()
+        self.newGameButton.show_button()
+        self.loadGameButton.show_button()
+        self.settingsButton.show_button()
+        self.infoButton.show_button()
     
     def debug_render(self):
-        self.NewGameButton.draw_debug()
+        self.newGameButton.draw_debug()
+        self.loadGameButton.draw_debug()
+        self.settingsButton.draw_debug()
+        self.infoButton.draw_debug()
     
     def on_window_update(self):
         self.setup()

@@ -33,4 +33,4 @@ class displayManager:
         p.display.flip()
         
     def draw_rect(self, rect: p.Rect, color: tuple[int, int, int], width=0):
-        p.draw.rect(self.window, color, p.Rect(rect[0], rect[1], rect[2], rect[3]), width=width)
+        p.draw.rect(self.window, color, rect, width=width)
