@@ -1,10 +1,10 @@
-import pyr_pg
 import pygame as p
+import pyr_pg
 
-class startMenu():
+class playerSelector:
     def __init__(self, container: pyr_pg.container.container):
         '''Init the module for the loader'''
-        self.modul_name = "main_menu"
+        self.modul_name = "player_selector"
         self.container = container
         self.cache = container.cache
         self.debug = container.debugMode
@@ -22,24 +22,12 @@ class startMenu():
         self.settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])
         self.infoButton = self.createButton((0, 9), (1, 1), "", alignment=0, icon=self.cache["icons/info"])
     
-    def main_loop(self) -> None:
+    def main_loop(self) -> tuple[None | str, None | int, None]:
         '''Creating and handling of the main menu'''
-        nextFunc = None
         for event in p.event.get():
-            if event.type == p.QUIT:
-                return ("QUIT", None, None)
-            elif event.type == p.WINDOWRESIZED:
+            if event.type == p.WINDOWRESIZED:
                 return (None, 1, None)
-            elif event.type == p.MOUSEBUTTONDOWN:
-                mouseButton = p.mouse.get_pressed()
-                mousePosition = p.mouse.get_pos()
-                if mouseButton[0]:
-                    print("clicked")
-                    if self.newGameButton.check_click(mousePosition):
-                        nextFunc = "player_selector"
-                    elif self.loadGameButton.check_click(mousePosition):
-                        nextFunc = None
-        return (nextFunc, None, None)
+        return (None, None, None)
         '''
         settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])
         infoButton = self.createButton((0, 9), (1, 1), "", alignment=0, icon=self.cache["icons/info"])
@@ -47,7 +35,7 @@ class startMenu():
         while run: #main menu loop
             for event in p.event.get():
                 if event.type == p.QUIT:
-                    
+                    return ("QUIT", None, None)
                 if event.type == p.WINDOWRESIZED:
                     return (None, 1, None)
                 if event.type == p.MOUSEBUTTONDOWN:
@@ -90,19 +78,11 @@ class startMenu():
             pass
         '''
     
-    def render(self):
+    def render(self) -> None:
         self.window.blit(self.backGround, (0,0))
-        self.window.blit(self.titlePNG, (self.menuSize * 3, self.menuSize))
-        self.newGameButton.show_button()
-        self.loadGameButton.show_button()
-        self.settingsButton.show_button()
-        self.infoButton.show_button()
     
-    def debug_render(self):
-        self.newGameButton.draw_debug()
-        self.loadGameButton.draw_debug()
-        self.settingsButton.draw_debug()
-        self.infoButton.draw_debug()
+    def debug_render(self) -> None:
+        pass
     
     def on_window_update(self):
         self.setup()
@@ -110,6 +90,37 @@ class startMenu():
     #----Helper Functions
     def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
         return pyr_pg.ui.button(self.window, pos, self.menuSize, size, self.cache["buttons/defaultBackground"], fontSystem=self.font, text=text, alignment=alignment, icon=icon, iconScale=icon_scale)
+    
+    def __create_textbox(self, tileSize: int, png: str) -> p.surface.Surface:
+        box_tilesheet = p.image.load(png)
+        textBoxSize = (8, 5)
+        textbox_tile_list = []
+        box_tilesize = box_tilesheet.get_size()[0] / 3
+        for x_tile in range(3):
+            for y_tile in range(3):
+                cur_tile = p.surface.Surface((box_tilesize,box_tilesize), flags=p.SRCALPHA)
+                cur_tile.blit(box_tilesheet,(-(x_tile * box_tilesize), -(y_tile * box_tilesize)))
+                textbox_tile_list.append(p.transform.scale(cur_tile, (tileSize, tileSize)))
+                
+        textbox = p.surface.Surface((textBoxSize[0] * tileSize, textBoxSize[1] * tileSize), flags=p.SRCALPHA)
+        textbox.blit(textbox_tile_list[0], (0, 0))
+        textbox.blit(textbox_tile_list[8], ((textBoxSize[0] - 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+        textbox.blit(textbox_tile_list[6], ((textBoxSize[0] - 1) * tileSize,0))
+        textbox.blit(textbox_tile_list[2], (0, (textBoxSize[1] - 1) * tileSize))
+        if textBoxSize[0] > 2:
+            if textBoxSize[1] > 2:
+                for x in range(textBoxSize[0] - 2):
+                    textbox.blit(textbox_tile_list[3], ((x + 1) * tileSize,0))
+                for y in range(textBoxSize[1] - 2):
+                    textbox.blit(textbox_tile_list[1], (0,(y + 1) * tileSize))
+                for x in range(textBoxSize[0] - 2):
+                    textbox.blit(textbox_tile_list[5], ((x + 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+                for y in range(textBoxSize[1] - 2):
+                    textbox.blit(textbox_tile_list[7], ((textBoxSize[0] - 1) * tileSize,(y + 1) * tileSize))
+                for x in range(textBoxSize[0] - 2):
+                    for y in range(textBoxSize[1] - 2):
+                        textbox.blit(textbox_tile_list[4], ((x + 1) * tileSize,(y + 1) * tileSize))
+        return textbox
 
 def scaleImageLowest(container: pyr_pg.container.container, image):
     return p.transform.scale(image, (container.window.lowestSize, container.window.lowestSize))

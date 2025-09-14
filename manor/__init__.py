@@ -15,15 +15,18 @@ except ModuleNotFoundError:
 print(f"[manor] import manor modules")
 import manor.cache
 import manor.start_menu
+import manor.player_selector
 
 container = pyr_pg.container.container()
 
 def on_init(container_var):
-    modules = (manor.start_menu.startMenu(container_var),
+    modules = (manor.start_menu.startMenu,
+               manor.player_selector.playerSelector,
                )
     moduleAllocation = {}
     for modul in modules:
-        moduleAllocation[modul.modul_name] = modul
+        cur_init = modul(container_var)
+        moduleAllocation[cur_init.modul_name] = cur_init
     return moduleAllocation
 
 def start(log=print)->None:
@@ -50,6 +53,8 @@ def game_loop(game_content)->None:
     is_debug_mode = container.debugMode
     while run:
         cur_states = cur_function.main_loop()
+        if cur_states[0] != None:
+            cur_function = game_content[cur_states[0]]
         if cur_states[1] == 1:
             window.windowResize()
             for obj in game_content.values():
