@@ -15,13 +15,16 @@ class playerSelector:
     def setup(self):
         self.lowestSize = self.window.lowestSize
         self.menuSize = self.lowestSize / 10
+        self.fontSize = self.menuSize * 0.6
         self.backGround = p.transform.scale(self.cache["mainMenu/bg"], (self.lowestSize, self.lowestSize))
-        self.titlePNG = p.transform.scale(self.cache["mainMenu/title"], (self.menuSize * 4, self.menuSize * 2))
-        self.newGameButton = self.createButton((5, 6.5), (4, 1), "New Game")
-        self.loadGameButton = self.createButton((5, 8), (4, 1), "Load Game")
-        self.settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])
-        self.infoButton = self.createButton((0, 9), (1, 1), "", alignment=0, icon=self.cache["icons/info"])
-    
+        self.charactersPlacerRects = [p.rect.Rect((0, self.menuSize / 2 * 3), (self.menuSize, self.menuSize)),
+                                      p.rect.Rect((self.menuSize, self.menuSize), (self.menuSize * 2, self.menuSize * 2)),
+                                      p.rect.Rect((self.menuSize * 3, 0), (self.menuSize * 4, self.menuSize * 4)),
+                                      p.rect.Rect((self.menuSize * 7, self.menuSize), (self.menuSize * 2, self.menuSize * 2)),
+                                      p.rect.Rect((self.menuSize * 9, self.menuSize / 2 * 3), (self.menuSize, self.menuSize))]
+        self.textBackground = self.__create_textbox(self.menuSize, self.cache["textbox/background/menu"])
+        self.textBGBlitPos = (self.menuSize, self.menuSize * 5)
+        
     def main_loop(self) -> tuple[None | str, None | int, None]:
         '''Creating and handling of the main menu'''
         for event in p.event.get():
@@ -29,60 +32,65 @@ class playerSelector:
                 return (None, 1, None)
         return (None, None, None)
         '''
-        settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])
-        infoButton = self.createButton((0, 9), (1, 1), "", alignment=0, icon=self.cache["icons/info"])
-        #setup button vars
-        while run: #main menu loop
+         cleanUp = False
+        self.selectedCharacter = 0
+        FPS = 0
+        RFPS = 0
+        plotTime = 0
+        self.__load_sprites()
+        self.fdButtonTexture = p.transform.scale(assets["forward"], (self.menuSize, self.menuSize))
+        self.backButtonTexture = p.transform.scale(assets["back"], (self.menuSize, self.menuSize))
+        self.textBoxBG = self.__create_textbox(self.menuSize, "./res/textboxes/gray_rounded_playerSelectort.png")
+        fdButton = self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.menuSize, self.virtWindow.bottom - self.menuSize))
+        backButton = self.window.blit(self.backButtonTexture,(self.virtWindow.left, self.virtWindow.bottom - self.menuSize))
+        self.DebugRects.append(fdButton)
+        self.microTiling = self.menuSize / 10
+        self.fontSize = self.microTiling * 6
+        run = True
+        renderTime = 1 / self.runtimeStore[2] #rs.DefaultFps
+        lastFrame = 0
+        while run:
+            frameTime = time.time() #the time the frame has begin to render
             for event in p.event.get():
                 if event.type == p.QUIT:
-                    return ("QUIT", None, None)
-                if event.type == p.WINDOWRESIZED:
-                    return (None, 1, None)
+                    return (None, False, True)
                 if event.type == p.MOUSEBUTTONDOWN:
-                    m_click = p.mouse.get_pressed()
-                    m_pos = p.mouse.get_pos()            
-                    if m_click[0]:
-                        if settingsButton.check_click(m_pos):
-                            #self.audioSetup.play("sfx_1", "menu_click")
-                            self.menu_settings()
-                            redraw = True                
-                        elif startNewButton.check_click(m_pos):
-                            #self.audioSetup.play("sfx_1", "menu_click")
+                    mouseKeys = p.mouse.get_pressed()
+                    mousePos = p.mouse.get_pos()
+                    if mouseKeys[0]:
+                        if fdButton.collidepoint(mousePos):
                             run = False
-                            cleanUp = True
-                            start_new_game = True
-                        #if infoButton.check_click(m_pos):
-                          #  self.info_box.show(self.info_text)
-                            
-            if redraw:
-                
-                #this is temp code for the button text until i have coded a button class
-                startNewButton.show_button()
-                loadGameButton.show_button()
-                settingsButton.show_button()
-                infoButton.show_button()
-                #------
-                redraw = False
-                render = True
-                if self.debug:
-                    loadGameButton.draw_debug()
-                    settingsButton.draw_debug()
-                    infoButton.draw_debug()
-            if render:
-                p.display.flip()
-                render = False
-        if cleanUp:
-            del startNewButton
-            del loadGameButton
-        if start_new_game:
-            pass
+                        elif backButton.collidepoint(mousePos):
+                            run = False
+                            self.cleanUp()
+                            return ("", False, False)
+                if event.type == p.KEYDOWN:
+                    if event.key == p.K_LEFT or event.key == p.K_a:
+                        self.selectedCharacter = (self.selectedCharacter - 1) % self.maxAvailablePlayableChars
+                    elif event.key == p.K_RIGHT or event.key == p.K_d:
+                        self.selectedCharacter = (self.selectedCharacter + 1) % self.maxAvailablePlayableChars
+                        
+            if frameTime - renderTime > lastFrame:
+                lastFrame = frameTime
+                self.render()
+                RFPS += 1
+            FPS += 1
+            if self.debug:
+                if plotTime + 1 < frameTime:
+                    plotTime = frameTime
+                    print("FPS:", FPS, "RFPS:", RFPS)
+                    FPS = 0; RFPS = 0
+        return (self.playableCharacters[self.selectedCharacter]['charDescFile'], True, False)
         '''
     
     def render(self) -> None:
         self.window.blit(self.backGround, (0,0))
+        self.window.blit(self.textBackground, self.textBGBlitPos)
     
     def debug_render(self) -> None:
-        pass
+        for rects in self.charactersPlacerRects:
+            rect = (rects[0] + self.window.zeroPos[0], rects[1] + self.window.zeroPos[1], rects[2], rects[3])
+            self.window.draw_rect(rect, (255, 0, 0), width=3)
     
     def on_window_update(self):
         self.setup()
@@ -91,8 +99,8 @@ class playerSelector:
     def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
         return pyr_pg.ui.button(self.window, pos, self.menuSize, size, self.cache["buttons/defaultBackground"], fontSystem=self.font, text=text, alignment=alignment, icon=icon, iconScale=icon_scale)
     
-    def __create_textbox(self, tileSize: int, png: str) -> p.surface.Surface:
-        box_tilesheet = p.image.load(png)
+    def __create_textbox(self, tileSize: int, image: p.surface.Surface) -> p.surface.Surface:
+        box_tilesheet = image
         textBoxSize = (8, 5)
         textbox_tile_list = []
         box_tilesize = box_tilesheet.get_size()[0] / 3

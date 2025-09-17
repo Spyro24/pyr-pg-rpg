@@ -1,5 +1,6 @@
 import sys
 import pygame as p
+import time
 
 version = "0.0.0"
 
@@ -52,6 +53,7 @@ def game_loop(game_content)->None:
     container.logSystem(f"[manor] lowest size is {window.lowestSize}px")
     is_debug_mode = container.debugMode
     while run:
+        frameTime = time.time()
         cur_states = cur_function.main_loop()
         if cur_states[0] != None:
             cur_function = game_content[cur_states[0]]

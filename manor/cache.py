@@ -7,4 +7,5 @@ def cacheStuff():
     cache["buttons/defaultBackground"] = p.image.load("./res/buttons/ButtonBG_BlackWhite.png")
     cache["icons/settings"] = p.image.load("./res/icons/settings.png")
     cache["icons/info"] = p.image.load("./res/icons/info.png")
+    cache["textbox/background/menu"] = p.image.load("./res/textboxes/gray_rounded_playerSelectort.png")
     return cache
