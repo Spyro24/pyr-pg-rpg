@@ -22,7 +22,7 @@ class playerSelector:
                                       p.rect.Rect((self.menuSize * 3, 0), (self.menuSize * 4, self.menuSize * 4)),
                                       p.rect.Rect((self.menuSize * 7, self.menuSize), (self.menuSize * 2, self.menuSize * 2)),
                                       p.rect.Rect((self.menuSize * 9, self.menuSize / 2 * 3), (self.menuSize, self.menuSize))]
-        self.textBackground = self.__create_textbox(self.menuSize, self.cache["textbox/background/menu"])
+        self.textBackground = pyr_pg.ui.create_textbox((8, 5), self.menuSize, self.cache["textbox/background/menu"])
         self.textBGBlitPos = (self.menuSize, self.menuSize * 5)
         
     def main_loop(self) -> tuple[None | str, None | int, None]:
@@ -98,37 +98,6 @@ class playerSelector:
     #----Helper Functions
     def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
         return pyr_pg.ui.button(self.window, pos, self.menuSize, size, self.cache["buttons/defaultBackground"], fontSystem=self.font, text=text, alignment=alignment, icon=icon, iconScale=icon_scale)
-    
-    def __create_textbox(self, tileSize: int, image: p.surface.Surface) -> p.surface.Surface:
-        box_tilesheet = image
-        textBoxSize = (8, 5)
-        textbox_tile_list = []
-        box_tilesize = box_tilesheet.get_size()[0] / 3
-        for x_tile in range(3):
-            for y_tile in range(3):
-                cur_tile = p.surface.Surface((box_tilesize,box_tilesize), flags=p.SRCALPHA)
-                cur_tile.blit(box_tilesheet,(-(x_tile * box_tilesize), -(y_tile * box_tilesize)))
-                textbox_tile_list.append(p.transform.scale(cur_tile, (tileSize, tileSize)))
-                
-        textbox = p.surface.Surface((textBoxSize[0] * tileSize, textBoxSize[1] * tileSize), flags=p.SRCALPHA)
-        textbox.blit(textbox_tile_list[0], (0, 0))
-        textbox.blit(textbox_tile_list[8], ((textBoxSize[0] - 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
-        textbox.blit(textbox_tile_list[6], ((textBoxSize[0] - 1) * tileSize,0))
-        textbox.blit(textbox_tile_list[2], (0, (textBoxSize[1] - 1) * tileSize))
-        if textBoxSize[0] > 2:
-            if textBoxSize[1] > 2:
-                for x in range(textBoxSize[0] - 2):
-                    textbox.blit(textbox_tile_list[3], ((x + 1) * tileSize,0))
-                for y in range(textBoxSize[1] - 2):
-                    textbox.blit(textbox_tile_list[1], (0,(y + 1) * tileSize))
-                for x in range(textBoxSize[0] - 2):
-                    textbox.blit(textbox_tile_list[5], ((x + 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
-                for y in range(textBoxSize[1] - 2):
-                    textbox.blit(textbox_tile_list[7], ((textBoxSize[0] - 1) * tileSize,(y + 1) * tileSize))
-                for x in range(textBoxSize[0] - 2):
-                    for y in range(textBoxSize[1] - 2):
-                        textbox.blit(textbox_tile_list[4], ((x + 1) * tileSize,(y + 1) * tileSize))
-        return textbox
 
 def scaleImageLowest(container: pyr_pg.container.container, image):
     return p.transform.scale(image, (container.window.lowestSize, container.window.lowestSize))

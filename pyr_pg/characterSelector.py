@@ -11,6 +11,7 @@ import pyr_pg
 class characterSelector:
     def __init__(self, runtimeStore: dict, debug=False):
         self.runtimeStore = runtimeStore
+        self.textBackgroundImage = p.image.load("./res/textboxes/gray_rounded_playerSelectort.png")
         self.window = self.runtimeStore[10][13] #The pygame Window
         self.characterPath = self.runtimeStore[16]
         self.fontSystem = runtimeStore[15] #The PYR_PG font system
@@ -43,7 +44,7 @@ class characterSelector:
         self.backgroud = p.transform.scale(assets["bg"], (self.lowestSize, self.lowestSize))
         self.fdButtonTexture = p.transform.scale(assets["forward"], (self.tileSize, self.tileSize))
         self.backButtonTexture = p.transform.scale(assets["back"], (self.tileSize, self.tileSize))
-        self.textBoxBG = self.__create_textbox(self.tileSize, "./res/textboxes/gray_rounded_playerSelectort.png")
+        self.textBoxBG = pyr_pg.ui.create_textbox((8, 5), self.tileSize, self.textBackgroundImage)
         fdButton = self.window.blit(self.fdButtonTexture,(self.virtWindow.right - self.tileSize, self.virtWindow.bottom - self.tileSize))
         backButton = self.window.blit(self.backButtonTexture,(self.virtWindow.left, self.virtWindow.bottom - self.tileSize))
         self.charactersPlacerRects = [p.rect.Rect((self.zeroPos[0], self.zeroPos[1] + self.tileSize / 2 * 3), (self.tileSize, self.tileSize)),

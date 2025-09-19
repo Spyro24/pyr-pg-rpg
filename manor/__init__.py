@@ -4,6 +4,10 @@ import time
 
 version = "0.0.0"
 
+if __name__ == "__main__":
+    print("You cannot use manor directly")
+    sys.exit(0)
+
 print("[manor] ---Init---")
 print(f"[manor] version {version}")
 try:
@@ -17,12 +21,14 @@ print(f"[manor] import manor modules")
 import manor.cache
 import manor.start_menu
 import manor.player_selector
+import manor.info_menu 
 
 container = pyr_pg.container.container()
 
 def on_init(container_var):
     modules = (manor.start_menu.startMenu,
                manor.player_selector.playerSelector,
+               manor.info_menu.infoMenu,
                )
     moduleAllocation = {}
     for modul in modules:
@@ -52,6 +58,10 @@ def game_loop(game_content)->None:
     window = container.window
     container.logSystem(f"[manor] lowest size is {window.lowestSize}px")
     is_debug_mode = container.debugMode
+    frameCounter = 0
+    lastSecond = time.time()
+    FPS = 1/60
+    lastRendereFrame = 0
     while run:
         frameTime = time.time()
         cur_states = cur_function.main_loop()
@@ -61,8 +71,15 @@ def game_loop(game_content)->None:
             window.windowResize()
             for obj in game_content.values():
                 obj.setup()
-        window.window.fill((0, 0, 0))
-        cur_function.render()
-        if is_debug_mode:
-            cur_function.debug_render()
-        window.flip()
+        if lastRendereFrame + FPS < frameTime:
+            lastRendereFrame = frameTime
+            window.window.fill((0, 0, 0))
+            cur_function.render()
+            if is_debug_mode:
+                cur_function.debug_render()
+            window.flip()
+        frameCounter += 1
+        if frameTime - 1 > lastSecond:
+            print(frameCounter)
+            lastSecond = frameTime
+            frameCounter = 0

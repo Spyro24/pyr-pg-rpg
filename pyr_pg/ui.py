@@ -80,3 +80,34 @@ class button:
     def draw_debug(self):
         """Only for debug purpose"""
         self.window.draw_rect(self.recRect, (255,255,0), width=3)
+
+def create_textbox(sizeInTiles: tuple[int, int], tileSize: int, image: p.surface.Surface) -> p.surface.Surface:
+        box_tilesheet = image
+        textBoxSize = sizeInTiles
+        textbox_tile_list = []
+        box_tilesize = box_tilesheet.get_size()[0] / 3
+        for x_tile in range(3):
+            for y_tile in range(3):
+                cur_tile = p.surface.Surface((box_tilesize,box_tilesize), flags=p.SRCALPHA)
+                cur_tile.blit(box_tilesheet,(-(x_tile * box_tilesize), -(y_tile * box_tilesize)))
+                textbox_tile_list.append(p.transform.scale(cur_tile, (tileSize, tileSize)))
+                
+        textbox = p.surface.Surface((textBoxSize[0] * tileSize, textBoxSize[1] * tileSize), flags=p.SRCALPHA)
+        textbox.blit(textbox_tile_list[0], (0, 0))
+        textbox.blit(textbox_tile_list[8], ((textBoxSize[0] - 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+        textbox.blit(textbox_tile_list[6], ((textBoxSize[0] - 1) * tileSize,0))
+        textbox.blit(textbox_tile_list[2], (0, (textBoxSize[1] - 1) * tileSize))
+        if textBoxSize[0] > 2:
+            if textBoxSize[1] > 2:
+                for x in range(textBoxSize[0] - 2):
+                    textbox.blit(textbox_tile_list[3], ((x + 1) * tileSize,0))
+                for y in range(textBoxSize[1] - 2):
+                    textbox.blit(textbox_tile_list[1], (0,(y + 1) * tileSize))
+                for x in range(textBoxSize[0] - 2):
+                    textbox.blit(textbox_tile_list[5], ((x + 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+                for y in range(textBoxSize[1] - 2):
+                    textbox.blit(textbox_tile_list[7], ((textBoxSize[0] - 1) * tileSize,(y + 1) * tileSize))
+                for x in range(textBoxSize[0] - 2):
+                    for y in range(textBoxSize[1] - 2):
+                        textbox.blit(textbox_tile_list[4], ((x + 1) * tileSize,(y + 1) * tileSize))
+        return textbox

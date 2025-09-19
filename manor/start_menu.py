@@ -39,6 +39,8 @@ class startMenu():
                         nextFunc = "player_selector"
                     elif self.loadGameButton.check_click(mousePosition):
                         nextFunc = None
+                    elif self.infoButton.check_click(mousePosition):
+                        nextFunc = "info_menu"
         return (nextFunc, None, None)
         '''
         settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])
