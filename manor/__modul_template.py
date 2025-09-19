@@ -9,6 +9,7 @@ class modulName:
         self.debug = container.debugMode
         self.window = container.window
         self.font = container.font
+        self.lastFunction = None
         self.setup()
         
     def setup(self):

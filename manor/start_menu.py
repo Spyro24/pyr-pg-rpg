@@ -10,6 +10,7 @@ class startMenu():
         self.debug = container.debugMode
         self.window = container.window
         self.font = container.font
+        self.lastFunction = None
         self.setup()
     
     def setup(self):
@@ -34,7 +35,6 @@ class startMenu():
                 mouseButton = p.mouse.get_pressed()
                 mousePosition = p.mouse.get_pos()
                 if mouseButton[0]:
-                    print("clicked")
                     if self.newGameButton.check_click(mousePosition):
                         nextFunc = "player_selector"
                     elif self.loadGameButton.check_click(mousePosition):

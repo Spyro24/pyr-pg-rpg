@@ -6,7 +6,7 @@ import pygame as p
 
 class button:
     """Creates a simple UI button"""
-    def __init__(self, window, pos: tuple, uiTileSize: int ,sizeInUiTiles: tuple, pathToButtonImage: str, fontSystem=None, text=None, alignment=4, zeroPos=(0, 0), fontSize=0.5, iconScale=1, icon: p.Surface or str=None):
+    def __init__(self, window, pos: tuple, uiTileSize: int, sizeInUiTiles: tuple, pathToButtonImage: [str | p.Surface], fontSystem=None, text=None, alignment=4, zeroPos=(0, 0), fontSize=0.5, iconScale=1, icon: [p.Surface | str]=None):
         if type(pathToButtonImage) == p.surface.Surface:
             self.buttonTexture = pathToButtonImage
         else:

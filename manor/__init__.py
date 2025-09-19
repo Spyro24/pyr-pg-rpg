@@ -66,7 +66,9 @@ def game_loop(game_content)->None:
         frameTime = time.time()
         cur_states = cur_function.main_loop()
         if cur_states[0] != None:
+            lastFunction = cur_function.modul_name
             cur_function = game_content[cur_states[0]]
+            cur_function.lastFunction = lastFunction
         if cur_states[1] == 1:
             window.windowResize()
             for obj in game_content.values():

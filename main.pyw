@@ -343,7 +343,7 @@ class main_class():
     
     #----Helper Functions
     def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
-        return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y), alignment=alignment, icon=icon, iconScale=icon_scale)
+        return pyr_pg.ui.button(self.game_win, pos, self.menuSize, size, self.cache["buttons"]["defaultBackground"], fontSystem=self.font, text=text, zeroPos=(self.b_pos_x, self.b_pos_y), icon=icon, iconScale=icon_scale)
 
 if __name__ == "__main__":
     logsys = pyr_pg.log_system.log()
