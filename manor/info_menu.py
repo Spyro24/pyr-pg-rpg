@@ -18,7 +18,7 @@ class infoMenu:
         self.fontSize = self.menuSize * 0.8
         self.backGround = p.transform.scale(self.cache["mainMenu/bg"], (self.lowestSize, self.lowestSize))
         self.textBackground = pyr_pg.ui.create_textbox((10,9), self.menuSize, self.cache["textbox/background/menu"])
-        self.backButton = pyr_pg.ui.button(self.window, (5, 5), self.menuSize, (3, 1), self.cache["buttons/defaultBackground"], fontSystem=self.font, text="Back", fontSize=self.fontSize)
+        self.backButton = pyr_pg.ui.button(self.window, (5, 9.25), self.menuSize, (3, 1), self.cache["buttons/defaultBackground"], fontSystem=self.font, text="Back")
 
     def main_loop(self) -> tuple[None | str, None | int, None]:
         '''Creating and handling of the main menu'''

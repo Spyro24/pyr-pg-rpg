@@ -25,17 +25,6 @@ import manor.info_menu
 
 container = pyr_pg.container.container()
 
-def on_init(container_var):
-    modules = (manor.start_menu.startMenu,
-               manor.player_selector.playerSelector,
-               manor.info_menu.infoMenu,
-               )
-    moduleAllocation = {}
-    for modul in modules:
-        cur_init = modul(container_var)
-        moduleAllocation[cur_init.modul_name] = cur_init
-    return moduleAllocation
-
 def start(log=print)->None:
     log(f"[manor] Log method is {log.__module__}")
     container.window = pyr_pg.displayManager.displayManager((1080,720),(1,1))
@@ -50,6 +39,17 @@ def start(log=print)->None:
     if not container.debugMode or flags.__contains__("--splash"):
         pyr_pg.splash(window, container.splashDuration)
     game_loop(on_init(container))
+
+def on_init(container_var):
+    modules = (manor.start_menu.startMenu,
+               manor.player_selector.playerSelector,
+               manor.info_menu.infoMenu,
+               )
+    moduleAllocation = {}
+    for modul in modules:
+        cur_init = modul(container_var)
+        moduleAllocation[cur_init.modul_name] = cur_init
+    return moduleAllocation
         
 def game_loop(game_content)->None:
     container.logSystem("[manor] starting main_loop")
