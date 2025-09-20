@@ -43,3 +43,15 @@ class infoMenu:
     
     def debug_render(self):
         self.backButton.draw_debug()
+    
+    #---Internal helper functions---
+    def __read_info(self):
+        infoFile = open("./info.txt", "r")
+        info = []
+        for line in infoFile.readlines():
+            info.append(line.strip())
+        infoFile.close()
+        return 
+        
+    def __renderTextToTextbox(self):
+        pass
