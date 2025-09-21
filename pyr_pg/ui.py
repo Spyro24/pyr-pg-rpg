@@ -90,24 +90,36 @@ def create_textbox(sizeInTiles: tuple[int, int], tileSize: int, image: p.surface
             for y_tile in range(3):
                 cur_tile = p.surface.Surface((box_tilesize,box_tilesize), flags=p.SRCALPHA)
                 cur_tile.blit(box_tilesheet,(-(x_tile * box_tilesize), -(y_tile * box_tilesize)))
-                textbox_tile_list.append(p.transform.scale(cur_tile, (tileSize, tileSize)))
+                textbox_tile_list.append(cur_tile)
+                #textbox_tile_list.append(p.transform.scale(cur_tile, (tileSize, tileSize)))
                 
-        textbox = p.surface.Surface((textBoxSize[0] * tileSize, textBoxSize[1] * tileSize), flags=p.SRCALPHA)
+        textbox = p.surface.Surface((textBoxSize[0] * box_tilesize, textBoxSize[1] * box_tilesize), flags=p.SRCALPHA)
         textbox.blit(textbox_tile_list[0], (0, 0))
-        textbox.blit(textbox_tile_list[8], ((textBoxSize[0] - 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
-        textbox.blit(textbox_tile_list[6], ((textBoxSize[0] - 1) * tileSize,0))
-        textbox.blit(textbox_tile_list[2], (0, (textBoxSize[1] - 1) * tileSize))
+        textbox.blit(textbox_tile_list[8], ((textBoxSize[0] - 1) * box_tilesize,(textBoxSize[1] - 1) * box_tilesize))
+        textbox.blit(textbox_tile_list[6], ((textBoxSize[0] - 1) * box_tilesize,0))
+        textbox.blit(textbox_tile_list[2], (0, (textBoxSize[1] - 1) * box_tilesize))
         if textBoxSize[0] > 2:
             if textBoxSize[1] > 2:
                 for x in range(textBoxSize[0] - 2):
-                    textbox.blit(textbox_tile_list[3], ((x + 1) * tileSize,0))
+                    textbox.blit(textbox_tile_list[3], ((x + 1) * box_tilesize,0))
                 for y in range(textBoxSize[1] - 2):
-                    textbox.blit(textbox_tile_list[1], (0,(y + 1) * tileSize))
+                    textbox.blit(textbox_tile_list[1], (0,(y + 1) * box_tilesize))
                 for x in range(textBoxSize[0] - 2):
-                    textbox.blit(textbox_tile_list[5], ((x + 1) * tileSize,(textBoxSize[1] - 1) * tileSize))
+                    textbox.blit(textbox_tile_list[5], ((x + 1) * box_tilesize,(textBoxSize[1] - 1) * box_tilesize))
                 for y in range(textBoxSize[1] - 2):
-                    textbox.blit(textbox_tile_list[7], ((textBoxSize[0] - 1) * tileSize,(y + 1) * tileSize))
+                    textbox.blit(textbox_tile_list[7], ((textBoxSize[0] - 1) * box_tilesize,(y + 1) * box_tilesize))
                 for x in range(textBoxSize[0] - 2):
                     for y in range(textBoxSize[1] - 2):
-                        textbox.blit(textbox_tile_list[4], ((x + 1) * tileSize,(y + 1) * tileSize))
-        return textbox
+                        textbox.blit(textbox_tile_list[4], ((x + 1) * box_tilesize,(y + 1) * box_tilesize))
+        return p.transform.scale(textbox, (tileSize * textBoxSize[0], tileSize * textBoxSize[1]))
+
+class plotter:
+    def __init__(self, steps: int, min_max: tuple[int, int], color: tuple[tuple[int, int, int, int], tuple[int, int, int, int]]=((255, 0, 0, 0), (0, 255, 0, 0))):
+        self.cur_step = 0
+        self.cycle = False
+        self.colors = color
+        self.ixels = []
+        self.steps = steps
+        for step in range(self.steps):
+            self.pixels.append(0)
+        
