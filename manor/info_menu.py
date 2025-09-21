@@ -9,6 +9,7 @@ class infoMenu:
         self.debug = container.debugMode
         self.window = container.window
         self.font: pyr_pg.font.font = container.font
+        self.windowHasResized = False
         self.lastFunction = None
         self.textList = self.__read_info()
         self.setup()
@@ -45,6 +46,10 @@ class infoMenu:
     
     def debug_render(self):
         self.backButton.draw_debug()
+        
+    def on_window_update(self):
+        self.setup()
+        self.windowHasResized = False
     
     #---Internal helper functions---
     def __read_info(self):

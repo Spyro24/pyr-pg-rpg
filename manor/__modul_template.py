@@ -10,6 +10,7 @@ class modulName:
         self.window = container.window
         self.font = container.font
         self.lastFunction = None
+        self.windowHasResized = False
         self.setup()
         
     def setup(self):
@@ -28,3 +29,6 @@ class modulName:
     
     def debug_render(self):
         pass
+    
+    def on_window_update(self):
+        self.windowHasResized = False

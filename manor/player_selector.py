@@ -10,6 +10,7 @@ class playerSelector:
         self.debug = container.debugMode
         self.window = container.window
         self.font = container.font
+        self.windowHasResized = False
         self.lastFunction = None
         self.setup()
     
@@ -95,6 +96,7 @@ class playerSelector:
     
     def on_window_update(self):
         self.setup()
+        self.windowHasResized = False
     
     #----Helper Functions
     def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):

@@ -69,10 +69,13 @@ def game_loop(game_content)->None:
             lastFunction = cur_function.modul_name
             cur_function = game_content[cur_states[0]]
             cur_function.lastFunction = lastFunction
+            if cur_function.windowHasResized:
+                cur_function.on_window_update()
         if cur_states[1] == 1:
             window.windowResize()
             for obj in game_content.values():
-                obj.setup()
+                obj.windowHasResized = True
+            cur_function.on_window_update()
         if lastRendereFrame + FPS < frameTime:
             lastRendereFrame = frameTime
             window.window.fill((0, 0, 0))
