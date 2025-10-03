@@ -1,5 +1,6 @@
 import pygame as p
 import pyr_pg
+import os
 
 class playerSelector:
     def __init__(self, container: pyr_pg.container.container):
@@ -12,6 +13,9 @@ class playerSelector:
         self.font = container.font
         self.windowHasResized = False
         self.lastFunction = None
+        self.maxAvailableCharacters = 0
+        self.availablePlayers = []
+        self.prepare_players()
         self.setup()
     
     def setup(self):
@@ -101,6 +105,19 @@ class playerSelector:
     #----Helper Functions
     def createButton(self, pos: tuple[int, int], size: tuple[int, int], text: str, alignment=4, icon=None, icon_scale=0.7):
         return pyr_pg.ui.button(self.window, pos, self.menuSize, size, self.cache["buttons/defaultBackground"], fontSystem=self.font, text=text, alignment=alignment, icon=icon, iconScale=icon_scale)
+    
+    def prepare_players(self):
+        players = []
+        for file in os.listdir("./res/characters/"):
+            if file.endswith(".desc"):
+                players.append(file)
+        for player in players:
+            self.availablePlayers.append({"Name": None, "Desc": None, "cutingEdge": None, "charDescFile": player[0:-5]})
+            descContent = descFile.read().splitlines()
+            descFile.close()
+            self.availablePlayers[-1]["Name"] = descContent[0]
+            self.availablePlayers[-1]["Desc"] = descContent[1]
+        print(players)
 
 def scaleImageLowest(container: pyr_pg.container.container, image):
     return p.transform.scale(image, (container.window.lowestSize, container.window.lowestSize))

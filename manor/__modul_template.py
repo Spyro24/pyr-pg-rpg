@@ -20,7 +20,9 @@ class modulName:
     def main_loop(self) -> tuple[None | str, None | int, None]:
         '''Creating and handling of the main menu'''
         for event in p.event.get():
-            if event.type == p.WINDOWRESIZED:
+            if event.type == p.QUIT:
+                return ("QUIT", None, None)
+            elif event.type == p.WINDOWRESIZED:
                 return (None, 1, None)
         return (None, None, None)
     
