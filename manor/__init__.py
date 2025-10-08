@@ -21,9 +21,11 @@ print(f"[manor] import manor modules")
 import manor.cache
 import manor.start_menu
 import manor.player_selector
-import manor.info_menu 
+import manor.info_menu
+import manor.startscreen
 
 container = pyr_pg.container.container()
+container.splashDuration = 0.5
 
 def start(log=print)->None:
     log(f"[manor] Log method is {log.__module__}")
@@ -44,6 +46,7 @@ def on_init(container_var):
     modules = (manor.start_menu.startMenu,
                manor.player_selector.playerSelector,
                manor.info_menu.infoMenu,
+               manor.startscreen.startScreen,
                )
     moduleAllocation = {}
     for modul in modules:
@@ -54,7 +57,7 @@ def on_init(container_var):
 def game_loop(game_content)->None:
     container.logSystem("[manor] starting main_loop")
     run = True
-    cur_function = game_content["main_menu"]
+    cur_function = game_content["startScreen"] #entry Point
     window = container.window
     container.logSystem(f"[manor] lowest size is {window.lowestSize}px")
     is_debug_mode = container.debugMode

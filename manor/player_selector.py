@@ -107,6 +107,8 @@ class playerSelector:
         return pyr_pg.ui.button(self.window, pos, self.menuSize, size, self.cache["buttons/defaultBackground"], fontSystem=self.font, text=text, alignment=alignment, icon=icon, iconScale=icon_scale)
     
     def prepare_players(self):
+        pass
+    '''
         players = []
         for file in os.listdir("./res/characters/"):
             if file.endswith(".desc"):
@@ -118,6 +120,7 @@ class playerSelector:
             self.availablePlayers[-1]["Name"] = descContent[0]
             self.availablePlayers[-1]["Desc"] = descContent[1]
         print(players)
+    '''
 
 def scaleImageLowest(container: pyr_pg.container.container, image):
     return p.transform.scale(image, (container.window.lowestSize, container.window.lowestSize))
