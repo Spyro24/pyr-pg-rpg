@@ -19,8 +19,9 @@ import pyr_pg.inputSystem
 import pyr_pg.ui
 import pyr_pg.container
 import pyr_pg.displayManager
+import pyr_pg.sound
 
-version = "0.4.3"
+version = "0.4.4"
 
 #static constants for the input system
 QUIT = 1
