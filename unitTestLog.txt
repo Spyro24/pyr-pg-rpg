@@ -1,8 +1,7 @@
-[unitTest] DialogSystem unit test...
-[DialogHandler]The logger is working
-[DialogHandler]jmp is correct working
-[DialogHandler]dls execution works fine
-[DialogHandler]textboxes are working corectly
-[unitTest] DialogSystem unit test [PASS]
+[unitTest] DialogSystem unit test [....] (Test No. 1)
+[unitTest] DialogSystem unit test [FAIL]
+Failed with: 10
 [unitTest] Font unit test...
 [unitTest] Font unit test [PASS]
+[unitTest] PerlinNoise unit test [....] (Test No. 2)
+[unitTest] PerlinNoise unit test [PASS]

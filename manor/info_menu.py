@@ -12,6 +12,7 @@ class infoMenu:
         self.windowHasResized = False
         self.lastFunction = None
         self.textList = self.__read_info()
+        self.textList.append(""); self.textList.append(f"PYR_PG VERSION {pyr_pg.version}")
         self.setup()
         
     def setup(self):

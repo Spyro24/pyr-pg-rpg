@@ -10,6 +10,7 @@ class startMenu():
         self.debug = container.debugMode
         self.window = container.window
         self.font = container.font
+        self.soundSystem = container.soundSystem
         self.windowHasResized = False
         self.lastFunction = None
         self.setup()
@@ -38,10 +39,13 @@ class startMenu():
                 if mouseButton[0]:
                     if self.newGameButton.check_click(mousePosition):
                         nextFunc = "player_selector"
+                        self.soundSystem.play("mouseClick")
                     elif self.loadGameButton.check_click(mousePosition):
                         nextFunc = None
+                        self.soundSystem.play("mouseClick")
                     elif self.infoButton.check_click(mousePosition):
                         nextFunc = "info_menu"
+                        self.soundSystem.play("mouseClick")
         return (nextFunc, None, None)
         '''
         settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])

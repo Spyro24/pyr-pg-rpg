@@ -33,6 +33,7 @@ def start(log=print)->None:
     container.cache = manor.cache.cacheStuff()
     container.logSystem = log
     container.font = pyr_pg.font.font(container.window, "./res/fonts/standard")
+    container.soundSystem = pyr_pg.sound.sound(container.window, "./res/audio/")
     window = container.window
     flags = sys.argv
     if flags.__contains__("-d"):
@@ -53,7 +54,11 @@ def on_init(container_var):
         cur_init = modul(container_var)
         moduleAllocation[cur_init.modul_name] = cur_init
     return moduleAllocation
-        
+
+def on_quit():
+    p.quit()
+    sys.exit()
+
 def game_loop(game_content)->None:
     container.logSystem("[manor] starting main_loop")
     run = True
@@ -69,6 +74,9 @@ def game_loop(game_content)->None:
         frameTime = time.time()
         cur_states = cur_function.main_loop()
         if cur_states[0] != None:
+            if cur_states[0] == "QUIT":
+                run = False
+                on_quit()
             lastFunction = cur_function.modul_name
             cur_function = game_content[cur_states[0]]
             cur_function.lastFunction = lastFunction

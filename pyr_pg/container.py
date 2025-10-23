@@ -14,3 +14,4 @@ class container:
         self.autoSave = False
         self.logSystem = None
         self.font = None
+        self.soundSystem: pyr_pg.sound.sound

@@ -21,7 +21,7 @@ class startScreen:
         self.ratio = self.logo.width / self.logo.height
         self.firstRenderTime = time.time()
         self.time = time.time()
-        self.runTime = 0.25
+        self.runTime = 0.35
     
     def main_loop(self) -> tuple[None | str, None | int, None]:
         '''Creating and handling of the main menu'''

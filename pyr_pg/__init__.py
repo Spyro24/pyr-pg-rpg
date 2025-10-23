@@ -20,8 +20,9 @@ import pyr_pg.ui
 import pyr_pg.container
 import pyr_pg.displayManager
 import pyr_pg.sound
+import pyr_pg.math_
 
-version = "0.4.4"
+version = "0.4.6"
 
 #static constants for the input system
 QUIT = 1
