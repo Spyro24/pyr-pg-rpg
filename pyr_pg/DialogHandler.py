@@ -31,6 +31,7 @@ class DialogScript():
                          "textbox":self.cTextbox,
                          "dialog":self.cDialog,
                          "env":self.cChangeEnv,
+                         "wait":self.cWait,
                          }
     
     def execDialogScript(self, diascript: str) -> None:
@@ -127,6 +128,12 @@ class DialogScript():
     
     def cExec(self, argList: list) -> tuple:
         self.execDialogScript(argList[1])
+        return (0, 0)
+    
+    def cWait(self, arglist: list): -> tuple:
+        """Makes the sleep() function availale to dialog scrpt (pauses execution)"""
+        ms = int(argList[1])
+        time.sleep((1/1000) * ms)
         return (0, 0)
     
     def cExcept(self, argList: list) -> None:

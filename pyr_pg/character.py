@@ -8,7 +8,6 @@ class character:
     def __init__(self):
         self.isPlayable = False
         self.sprites = {}
-        
 
 class player:
     def __init__(self):
