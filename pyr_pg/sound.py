@@ -21,12 +21,11 @@ import os
 p.mixer.init()
 
 class sound:
-    def __init__(self, window: p.Surface, audioPath: str):
+    def __init__(self, audioPath: str):
         self.volumes = {"main":100, "fx":100}
         self.channels = {"fx1":p.mixer.Channel(0)}
         self.audio = {}
         self.audioPath = audioPath.strip("/")
-        self.window = window
         self.load_audio()
         
     def load_audio(self):

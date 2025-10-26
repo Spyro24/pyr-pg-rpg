@@ -1,9 +1,10 @@
-log|1|The logger is working
+log|The logger is working
 jmp|3
 
-log|1|jmp is correct working
+log|jmp is correct working
 exec|./res/unitTests/testexec.dls
 exec|./res/unitTests/textboxAndDialogTest.dls
+exec|./res/unitTests/music.dls
 break
-log|1|break has failed
+log|break has failed
 killgame

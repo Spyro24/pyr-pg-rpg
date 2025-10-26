@@ -9,6 +9,11 @@ import runtime_store as rs
 
 class testing:
     def __init__(self, pygameWindow, logSystem, font):
+        self.dependencies = pyr_pg.dependecies.dependcies()
+        self.dependencies.add(font, "/system/font")
+        self.dependencies.add(logSystem, "/system/log")
+        self.dependencies.add(pygameWindow, "/window")
+        self.dependencies.add(pyr_pg.sound.sound("./res/audio/"), "/system/sound") 
         self.runtimeStore = {}
         self.runtimeStore[rs.FontSystem] = font
         self.runtimeStore[rs.LogSystem] = logSystem
@@ -36,7 +41,7 @@ class testing:
     def testDialogSystem(self) -> bool:
         self.self_onTestStartMessage("DialogSystem")
         try:
-            testElement = pyr_pg.DialogHandler.DialogScript(self.runtimeStore)
+            testElement = pyr_pg.DialogHandler.DialogScript(self.dependencies)
             testElement.execDialogScript("./res/unitTests/unitTest.dls")
         except BaseException as err:
             self.log("[unitTest] DialogSystem unit test [FAIL]", f"Failed with: {err}")
@@ -62,10 +67,10 @@ class testing:
         self.log(f"[unitTest] {testName} unit test [....] (Test No. {self.testCounter})")
 
 if __name__ == "__main__":
-    testWindow = p.display.set_mode((1080, 720))
+    window = p.display.set_mode((1080, 720))
     logSystem  = pyr_pg.log_system.log()
-    fontSystem = pyr_pg.font.font(testWindow, "./res/fonts/standard")
-    testSystem = testing(testWindow, logSystem.insert, fontSystem)
+    fontSystem = pyr_pg.font.font(window, "./res/fonts/standard")
+    testSystem = testing(window, logSystem.insert, fontSystem)
     testSystem.runTests()
     logSystem.WriteLog(name="unitTestLog.txt")
     p.display.flip()

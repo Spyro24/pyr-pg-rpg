@@ -4,15 +4,15 @@
 """
 import pygame as p
 import time
-import pygame as p
 
 class DialogScript():
-    def __init__(self, runtimeStore):
-        self.rs       = runtimeStore
+    def __init__(self, dependencies):
+        self.depend   = dependencies 
         self.vorbiden = {"or", "and", "xor"}
-        self.logsys   = self.rs[9]
-        self.font     = self.rs[15]
-        self.window   = self.rs[10][13]
+        self.logsys   = self.depend.get("/system/log")
+        self.font     = self.depend.get("/system/font")
+        self.window   = self.depend.get("/window")
+        self.sound    = self.depend.get("/system/sound")
         self.env      = {"waitEnter": True, "notWorking":()}
         self.config   = {"gridsize": (16, 16), "blit_pos": (0, 0), "tile_size":0}
         self.cache    = {"configData": {},
@@ -32,6 +32,7 @@ class DialogScript():
                          "dialog":self.cDialog,
                          "env":self.cChangeEnv,
                          "wait":self.cWait,
+                         "playsound":self.cPlaysound,
                          }
     
     def execDialogScript(self, diascript: str) -> None:
@@ -123,18 +124,22 @@ class DialogScript():
         return (2, 0)
     
     def cLog(self, argList: list) -> tuple:
-        self.logsys(int(argList[1]), "[DialogHandler]" + str(argList[2]))
+        self.logsys("[DialogHandler]" + str(argList[1]))
         return (0, 0)
     
     def cExec(self, argList: list) -> tuple:
         self.execDialogScript(argList[1])
         return (0, 0)
     
-    def cWait(self, arglist: list): -> tuple:
-        """Makes the sleep() function availale to dialog scrpt (pauses execution)"""
+    def cWait(self, argList: list) -> tuple:
+        """Makes the sleep() function availale to dialog script (pauses execution)"""
         ms = int(argList[1])
-        time.sleep((1/1000) * ms)
+        time.sleep(ms / 1000)
         return (0, 0)
+    
+    def cPlaysound(self, argList: list) -> tuple:
+        self.sound.play(argList[1])
+        return(0, 0)
     
     def cExcept(self, argList: list) -> None:
         """Never ever use this function! (its only for unit testing)"""
