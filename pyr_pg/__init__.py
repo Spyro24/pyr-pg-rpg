@@ -22,8 +22,9 @@ import pyr_pg.displayManager
 import pyr_pg.sound
 import pyr_pg.math_
 import pyr_pg.dependecies
+import pyr_pg.map_system
 
-version = "0.4.7"
+version = "0.4.8"
 
 #static constants for the input system
 QUIT = 1

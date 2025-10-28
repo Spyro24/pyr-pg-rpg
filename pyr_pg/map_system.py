@@ -5,7 +5,7 @@ class mapSystem:
     def __init__(self):
         self.tileSize = 64
         self.mapSize = (16, 16)
-        self.tileSheetSize = (6,, 12)
+        self.tileSheetSize = (6, 12)
         self.tiles = {"ground": [],
                       "groundOverlay": [],
                       "playerOverlay": [],

@@ -1,14 +1,15 @@
 import pygame as p
 import pyr_pg
 
-class modulName:
-    def __init__(self, container: pyr_pg.dependecies.dependcies):
+class game:
+    def __init__(self, container: pyr_pg.container.container):
         self.modul_name = "main_game"
         self.container = container
         self.cache = container.cache
         self.debug = container.debugMode
         self.window = container.window
         self.font = container.font
+        self.mapSystem = container.mapSystem
         self.lastFunction = None
         self.windowHasResized = False
         self.setup()

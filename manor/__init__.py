@@ -23,6 +23,7 @@ import manor.start_menu
 import manor.player_selector
 import manor.info_menu
 import manor.startscreen
+import manor.main_game
 
 container = pyr_pg.container.container()
 container.splashDuration = 0.5
@@ -36,7 +37,9 @@ def start(log=print)->None:
     container.cache = manor.cache.cacheStuff()
     container.logSystem = log
     container.font = pyr_pg.font.font(container.window, "./res/fonts/standard")
-    container.soundSystem = pyr_pg.sound.sound(container.window, "./res/audio/")
+    container.soundSystem = pyr_pg.sound.sound("./res/audio/")
+    container.mapSystem = pyr_pg.map_system.mapSystem()
+    container.mapSystem.load_tiles()
     window = container.window
     flags = sys.argv
     if flags.__contains__("-d"):
@@ -51,6 +54,7 @@ def on_init(container_var):
                manor.player_selector.playerSelector,
                manor.info_menu.infoMenu,
                manor.startscreen.startScreen,
+               manor.main_game.game,
                )
     moduleAllocation = {}
     for modul in modules:
@@ -65,7 +69,7 @@ def on_quit():
 def game_loop(game_content)->None:
     container.logSystem("[manor] starting main_loop")
     run = True
-    cur_function = game_content["startScreen"] #entry Point
+    cur_function = game_content["main_game"] #entry Point
     window = container.window
     container.logSystem(f"[manor] lowest size is {window.lowestSize}px")
     is_debug_mode = container.debugMode
