@@ -27,9 +27,12 @@ import manor.startscreen
 container = pyr_pg.container.container()
 container.splashDuration = 0.5
 
+dependencies = pyr_pg.dependecies.dependcies()
+
 def start(log=print)->None:
     log(f"[manor] Log method is {log.__module__}")
-    container.window = pyr_pg.displayManager.displayManager((1080,720),(1,1))
+    dependencies.add(pyr_pg.displayManager.displayManager((1080,720),(1,1)), "/window")
+    container.window = dependencies.get("/window")
     container.cache = manor.cache.cacheStuff()
     container.logSystem = log
     container.font = pyr_pg.font.font(container.window, "./res/fonts/standard")

@@ -23,6 +23,7 @@ PYR_PG is a game making system based on pygame and python focused on creating go
 ## Current Progress
 
 - [ ] pyr_pg [>_________]
+- [ ] DialogScriptV5 [>>________]
 - [ ] Save File System [>_________]
 - [ ] Multi editor system [>_________]
       (its curently WIP and not included)
