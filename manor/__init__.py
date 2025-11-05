@@ -27,10 +27,11 @@ import manor.main_game
 
 container = pyr_pg.container.container()
 container.splashDuration = 0.5
+startEntry = "startScreen"
 
 dependencies = pyr_pg.dependecies.dependcies()
 
-def start(log=print)->None:
+def start(log=print, entry="startScreen")->None:
     log(f"[manor] Log method is {log.__module__}")
     dependencies.add(pyr_pg.displayManager.displayManager((1080,720),(1,1)), "/window")
     container.window = dependencies.get("/window")
@@ -45,6 +46,8 @@ def start(log=print)->None:
     if flags.__contains__("-d"):
         container.debugMode = True
         log(f"[manor] Programm is running in debug/developer mode")
+        manor.startEntry = entry
+        log(f"[manor] main loop entry is '{startEntry}'")
     if not container.debugMode or flags.__contains__("--splash"):
         pyr_pg.splash(window, container.splashDuration)
     game_loop(on_init(container))
@@ -69,7 +72,7 @@ def on_quit():
 def game_loop(game_content)->None:
     container.logSystem("[manor] starting main_loop")
     run = True
-    cur_function = game_content["main_game"] #entry Point
+    cur_function = game_content[startEntry] #entry Point
     window = container.window
     container.logSystem(f"[manor] lowest size is {window.lowestSize}px")
     is_debug_mode = container.debugMode

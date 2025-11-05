@@ -36,8 +36,8 @@ if __name__ == "__main__":
         logsys.printOut = True
     if runner == "User":
         try:
-            game = main_class(LogSystem=logsys.insert)
-            game.play()
+            manor.start(log=logsys.insert)
+            p.quit()
         except BaseException as err:
             try:
                 import datetime
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         p.quit()
         sys.exit(1)
     elif runner == "Dev":
-        manor.start(log=logsys.insert)
+        manor.start(log=logsys.insert, entry="main_game")
         p.quit()
     else:
         print("Your are not a valid user for this programm")
