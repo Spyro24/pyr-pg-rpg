@@ -25,12 +25,15 @@ class game:
                 return ("QUIT", None, None)
             elif event.type == p.WINDOWRESIZED:
                 return (None, 1, None)
+            elif event.type == p.KEYDOWN:
+                if event.key == p.K_d:
+                    self.mapSystem.mapXPos += 1
         return (None, None, None)
     
     def render(self):
         for y in range(16):
             for x in range(16):
-                noise = self.perlinNoise.noise(x*0.1, y*0.1)
+                noise = self.perlinNoise.noise((x + (self.mapSystem.mapXPos))*0.1, y*0.1)
                 if noise < 0.4:
                     self.mapSystem.blit_tile("ground", 5, (x,y))
                 elif noise < 0.6:

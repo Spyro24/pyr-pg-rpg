@@ -13,10 +13,12 @@ class mapSystem:
                       "shadows": [],
                       }
         self.ground = p.Surface((self.mapSize[0] * self.tileSize, self.mapSize[1] * self.tileSize))
+        self.groundOverlay = p.Surface((self.mapSize[0] * self.tileSize, self.mapSize[1] * self.tileSize), flags=p.SRCALPHA)
         self.mapLayers = {"ground": self.ground,
+                          "groundOverlay": self.groundOverlay,
                           }
         self.mapXPos = 0
-        self.mapXPos = 0
+        self.mapYPos = 0
         
     def load_tiles(self, paths={"ground": "./res/tiles/ground"}):
         """Load Every tile in the tile paths"""
@@ -37,3 +39,7 @@ class mapSystem:
         if tileId > 0:
             tileId = tileId - 1
             self.mapLayers[layer].blit(self.tiles[layer][tileId], (pos[0] * self.tileSize, pos[1] * self.tileSize))
+            
+    def clear_all(self):
+        self.ground.fill((0, 0, 0))
+        self.groundOverlay.fill((0, 0, 0, 0))
