@@ -11,6 +11,7 @@ class startMenu():
         self.window = container.window
         self.font = container.font
         self.soundSystem = container.soundSystem
+        self.mouseHandler = container.mousHandler
         self.windowHasResized = False
         self.lastFunction = None
         self.setup()
@@ -24,10 +25,12 @@ class startMenu():
         self.loadGameButton = self.createButton((5, 8), (4, 1), "Load Game")
         self.settingsButton = self.createButton((9, 9), (1, 1), "", alignment=0, icon=self.cache["icons/settings"])
         self.infoButton = self.createButton((0, 9), (1, 1), "", alignment=0, icon=self.cache["icons/info"])
+        self.buttons = (self.infoButton, self.settingsButton, self.loadGameButton, self.newGameButton)
     
     def main_loop(self) -> None:
         '''Creating and handling of the main menu'''
         nextFunc = None
+        self.mousePos = p.mouse.get_pos()
         for event in p.event.get():
             if event.type == p.QUIT:
                 return ("QUIT", None, None)
@@ -35,7 +38,7 @@ class startMenu():
                 return (None, 1, None)
             elif event.type == p.MOUSEBUTTONDOWN:
                 mouseButton = p.mouse.get_pressed()
-                mousePosition = p.mouse.get_pos()
+                mousePosition = self.mousePos
                 if mouseButton[0]:
                     if self.newGameButton.check_click(mousePosition):
                         nextFunc = "player_selector"
@@ -104,6 +107,10 @@ class startMenu():
         self.loadGameButton.show_button()
         self.settingsButton.show_button()
         self.infoButton.show_button()
+        self.mouseHandler.set_cursor("normal")
+        for button in self.buttons:
+            if button.check_hover(self.mousePos):
+                self.mouseHandler.set_cursor("clickable")
     
     def debug_render(self):
         self.newGameButton.draw_debug()

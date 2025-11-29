@@ -17,3 +17,4 @@ class container:
         self.soundSystem: pyr_pg.sound.sound
         self.playerSystem: None
         self.mapSystem: None
+        self.mousHandler = pyr_pg.mouse.mouse

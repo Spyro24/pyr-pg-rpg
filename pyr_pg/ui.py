@@ -73,6 +73,10 @@ class button:
         """Check if the button gets chovered with the mouse"""
         return self.recRect.collidepoint(mousePos)
     
+    def check_hover(self, mousePos: tuple):
+        """Alias for check_click"""
+        return self.check_click(mousePos)
+    
     def show_button(self):
         """Shows the button on screen"""
         self.window.blit(self.buttonTexture, (self.zeroPos[0] + self.blitPos[0], self.zeroPos[1] + self.blitPos[1]))

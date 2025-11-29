@@ -55,10 +55,10 @@ if __name__ == "__main__":
                    f"------Error end------",
                    "\nplease report this to the developers if this is not a filepath error")
             logsys.WriteLog(path="./logs/")
-        p.quit()
-        sys.exit(1)
+            p.quit()
+            sys.exit(1)
     elif runner == "Dev":
-        manor.start(log=logsys.insert, entry="main_game")
+        manor.start(log=logsys.insert)
         p.quit()
     else:
         print("Your are not a valid user for this programm")

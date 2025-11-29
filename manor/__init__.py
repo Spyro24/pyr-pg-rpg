@@ -41,6 +41,7 @@ def start(log=print, entry="startScreen")->None:
     container.soundSystem = pyr_pg.sound.sound("./res/audio/")
     container.mapSystem = pyr_pg.map_system.mapSystem()
     container.mapSystem.load_tiles()
+    container.mousHandler = pyr_pg.mouse.mouse("./res/misc/mouse.cfg", "./res/misc/mouse.png")
     window = container.window
     flags = sys.argv
     if flags.__contains__("-d"):
@@ -80,6 +81,7 @@ def game_loop(game_content)->None:
     lastSecond = time.time()
     FPS = 1/60
     lastRendereFrame = 0
+    container.mousHandler.set_cursor("normal")
     while run:
         frameTime = time.time()
         cur_states = cur_function.main_loop()
@@ -103,6 +105,7 @@ def game_loop(game_content)->None:
             cur_function.render()
             if is_debug_mode:
                 cur_function.debug_render()
+            container.mousHandler.updateCursor()
             window.flip()
         frameCounter += 1
         if frameTime - 1 > lastSecond:

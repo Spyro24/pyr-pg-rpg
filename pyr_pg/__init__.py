@@ -23,8 +23,9 @@ import pyr_pg.sound
 import pyr_pg.math_
 import pyr_pg.dependecies
 import pyr_pg.map_system
+import pyr_pg.mouse
 
-version = "0.4.8"
+version = "0.4.9"
 
 #static constants for the input system
 QUIT = 1
