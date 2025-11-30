@@ -8,17 +8,21 @@ PYR_PG is a game making system based on pygame and python focused on creating go
 2. [Game Options](#set-options)
 3. [Progress](#current-progress)
 
+## Dependencies
+
+This programm requieres `pygame-ce` which you can directly install with `pip3 install pygame-ce`
+
+## Standard controls
+
+* WASD controls to move the player (GamePad control will coming soon)
+* ESC to open the options menu
+
 ## Maptool controls:
 
 (The Maptool curently dont work)
 * CTRL + R = Reload the UI (you need this)
 * Arrow Up or Down = Change Edit layer
 * WASD = Move to the next map
-
-## Standard controls
-
-* WASD controls to move the player (GamePad control will coming soon)
-* ESC to open the options menu
 
 ## Current Progress
 

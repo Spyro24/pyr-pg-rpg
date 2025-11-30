@@ -13,7 +13,10 @@ class infoMenu:
         self.lastFunction = None
         self.textList = self.__read_info()
         self.textList.append(""); self.textList.append(f"PYR_PG VERSION {pyr_pg.version}")
+        self.mouseHandler = container.mousHandler
         self.setup()
+        self.mousePos = (-1, -1)
+        self.soundSystem = container.soundSystem
         
     def setup(self):
         self.lowestSize = self.window.lowestSize
@@ -27,6 +30,7 @@ class infoMenu:
     def main_loop(self) -> tuple[None | str, None | int, None]:
         '''Creating and handling of the main menu'''
         nextFuction = None
+        self.mousePos = p.mouse.get_pos()
         for event in p.event.get():
             if event.type == p.QUIT:
                 return ("QUIT", None, None)
@@ -34,9 +38,10 @@ class infoMenu:
                 return (None, 1, None)
             elif event.type == p.MOUSEBUTTONDOWN:
                 mouseButton = p.mouse.get_pressed()
-                mousePosition = p.mouse.get_pos()
+                mousePosition = self.mousePos
                 if mouseButton[0]:
                     if self.backButton.check_click(mousePosition):
+                        self.soundSystem.play("mouseClick")
                         nextFuction = self.lastFunction
         return (nextFuction, None, None)
     
@@ -44,6 +49,9 @@ class infoMenu:
         self.window.blit(self.backGround, (0, 0))
         self.window.blit(self.textBackground, (0, 0))
         self.backButton.show_button()
+        self.mouseHandler.set_cursor("normal")
+        if self.backButton.check_hover(self.mousePos):
+            self.mouseHandler.set_cursor("clickable")
     
     def debug_render(self):
         self.backButton.draw_debug()
