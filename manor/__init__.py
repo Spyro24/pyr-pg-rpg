@@ -1,6 +1,7 @@
 import sys
 import pygame as p
 import time
+import random
 
 version = "0.0.0"
 
@@ -31,9 +32,18 @@ startEntry = "startScreen"
 
 dependencies = pyr_pg.dependecies.dependcies()
 
+#loading of the splashtexts
+splashTextFile = open("./res/misc/random_tittle_texts", "r")
+splashTexts = splashTextFile.readlines()
+splashTextFile.close
+del splashTextFile
+chosenSplash = splashTexts[random.randint(0, len(splashTexts) - 1)]
+del splashTexts
+
 def start(log=print, entry="startScreen")->None:
     log(f"[manor] Log method is {log.__module__}")
     dependencies.add(pyr_pg.displayManager.displayManager((1080,720),(1,1)), "/window")
+    p.display.set_caption(f"Makend: {chosenSplash.strip()}")
     container.window = dependencies.get("/window")
     container.cache = manor.cache.cacheStuff()
     container.logSystem = log
@@ -68,7 +78,7 @@ def on_init(container_var):
 
 def on_quit():
     p.quit()
-    sys.exit()
+    sys.exit(0)
 
 def game_loop(game_content)->None:
     container.logSystem("[manor] starting main_loop")

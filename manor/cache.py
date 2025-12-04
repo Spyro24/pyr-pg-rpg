@@ -8,4 +8,5 @@ def cacheStuff():
     cache["icons/settings"] = p.image.load("./res/icons/settings.png").convert_alpha()
     cache["icons/info"] = p.image.load("./res/icons/info.png").convert_alpha()
     cache["textbox/background/menu"] = p.image.load("./res/textboxes/gray_rounded_playerSelectort.png").convert_alpha()
+    cache["info/is_pb_pygame-ce"] = p.image.load("./res/misc/powered_by_pygame-ce.png").convert_alpha()
     return cache

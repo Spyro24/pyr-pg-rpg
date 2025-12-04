@@ -14,6 +14,7 @@ class infoMenu:
         self.textList = self.__read_info()
         self.textList.append(""); self.textList.append(f"PYR_PG VERSION {pyr_pg.version}")
         self.mouseHandler = container.mousHandler
+        self.uses_pygame_ce = getattr(p, "IS_CE", False)
         self.setup()
         self.mousePos = (-1, -1)
         self.soundSystem = container.soundSystem
@@ -25,6 +26,8 @@ class infoMenu:
         self.backGround = p.transform.scale(self.cache["mainMenu/bg"], (self.lowestSize, self.lowestSize))
         self.textBackground = pyr_pg.ui.create_textbox((10,9), self.menuSize, self.cache["textbox/background/menu"])
         self.backButton = pyr_pg.ui.button(self.window, (5, 9.25), self.menuSize, (3, 1), self.cache["buttons/defaultBackground"], fontSystem=self.font, text="Back")
+        if self.uses_pygame_ce:
+            self.pygame_ce_pb_logo = self.__scale_image_by_h(self.cache["info/is_pb_pygame-ce"], self.menuSize * 1.5)
         self.__renderTextToTextbox()
 
     def main_loop(self) -> tuple[None | str, None | int, None]:
@@ -52,6 +55,9 @@ class infoMenu:
         self.mouseHandler.set_cursor("normal")
         if self.backButton.check_hover(self.mousePos):
             self.mouseHandler.set_cursor("clickable")
+        if self.uses_pygame_ce:
+            mid_x, mid_y = self.pygame_ce_pb_logo.get_rect().center
+            self.window.blit(self.pygame_ce_pb_logo, (self.menuSize * 5 - mid_x, self.menuSize * 6.5 - mid_y))
     
     def debug_render(self):
         self.backButton.draw_debug()
@@ -61,6 +67,11 @@ class infoMenu:
         self.windowHasResized = False
     
     #---Internal helper functions---
+    def __scale_image_by_h(self, image: p.Surface, high: int):
+        w, h = image.get_size()
+        width = w / h * high
+        return p.transform.scale(image, (width, high))
+    
     def __read_info(self):
         infoFile = open("./info.txt", "r")
         info = []

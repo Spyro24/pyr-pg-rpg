@@ -2,6 +2,8 @@ class saveFileHandler:
     def __init__(self):
         self.version = 1
         self.playerName: str = ""
+        self.mapPos = (0, 0)
+        self.posOnMap = (0, 0)
     
     def readFile(self, file):
         pass

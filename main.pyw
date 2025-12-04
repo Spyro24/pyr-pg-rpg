@@ -37,7 +37,8 @@ if __name__ == "__main__":
     if runner == "User":
         try:
             manor.start(log=logsys.insert)
-            p.quit()
+        except SystemExit as err:
+            pass
         except BaseException as err:
             try:
                 import datetime

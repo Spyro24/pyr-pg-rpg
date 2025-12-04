@@ -24,6 +24,7 @@ import pyr_pg.math_
 import pyr_pg.dependecies
 import pyr_pg.map_system
 import pyr_pg.mouse
+import pyr_pg.mapSystem
 
 version = "0.4.9"
 
