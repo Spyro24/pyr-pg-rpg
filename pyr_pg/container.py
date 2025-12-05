@@ -18,3 +18,4 @@ class container:
         self.playerSystem: None
         self.mapSystem: None
         self.mousHandler = pyr_pg.mouse.mouse
+        self.characterManager = pyr_pg.characterManager
