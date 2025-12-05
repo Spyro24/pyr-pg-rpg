@@ -36,6 +36,7 @@ if __name__ == "__main__":
         logsys.printOut = True
     if runner == "User":
         try:
+            raise BaseException
             manor.start(log=logsys.insert)
         except SystemExit as err:
             pass
@@ -45,16 +46,16 @@ if __name__ == "__main__":
                 log_time = datetime.datetime.now()
             except ImportError as errTime:
                 log_time = errTime
-            log = game.runtimeStore[rs.LogSystem]
-            log(1, "-----Fatal Error-----",
-                   f"Crash Time: {str(log_time)}",
-                   f"Operating System: {str(os.name)}",
-                   f"Game Name: {str(game.game_name)}",
-                   f"Game Version: {str(game.game_version)}",
-                   f"pyr_pg Version: {str(pyr_pg.version)}",
-                   f"Error: {str(err)}",
-                   f"------Error end------",
-                   "\nplease report this to the developers if this is not a filepath error")
+            log = logsys.insert
+            log("-----Fatal Error-----",
+                f"Crash Time: {str(log_time)}",
+                f"Operating System: {str(os.name)}",
+                #f"Game Name: {str(game.game_name)}",
+                #f"Game Version: {str(game.game_version)}",
+                f"pyr_pg Version: {str(pyr_pg.version)}",
+                f"Error: {str(err)}",
+                f"------Error end------",
+                "\nplease report this to the developers if this is not a filepath error")
             logsys.WriteLog(path="./logs/")
             p.quit()
             sys.exit(1)
