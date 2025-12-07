@@ -31,19 +31,26 @@ container.splashDuration = 0.5
 startEntry = "startScreen"
 
 dependencies = pyr_pg.dependecies.dependcies()
+container.gameConfig = pyr_pg.configParse.parse_config("./game.conf")
+rtt = container.gameConfig["main"]["random_caption_text"] == "True"
+gameName = container.gameConfig["main"]["display_name"]
 
 #loading of the splashtexts
-splashTextFile = open("./res/misc/random_tittle_texts", "r")
-splashTexts = splashTextFile.readlines()
-splashTextFile.close
-del splashTextFile
-chosenSplash = splashTexts[random.randint(0, len(splashTexts) - 1)]
-del splashTexts
+if rtt:
+    splashTextFile = open("./res/misc/random_tittle_texts", "r")
+    splashTexts = splashTextFile.readlines()
+    splashTextFile.close
+    del splashTextFile
+    chosenSplash = splashTexts[random.randint(0, len(splashTexts) - 1)]
+    del splashTexts
 
 def start(log=print, entry="startScreen")->None:
     log(f"[manor] Log method is {log.__module__}")
+    if rtt:
+        p.display.set_caption(f"{gameName}: {chosenSplash.strip()}")
+    else:
+        p.display.set_caption(f"{gameName}")
     dependencies.add(pyr_pg.displayManager.displayManager((1080,720),(1,1)), "/window")
-    p.display.set_caption(f"Makend: {chosenSplash.strip()}")
     container.window = dependencies.get("/window")
     container.cache = manor.cache.cacheStuff()
     container.logSystem = log

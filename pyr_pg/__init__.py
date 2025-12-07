@@ -26,8 +26,9 @@ import pyr_pg.map_system
 import pyr_pg.mouse
 import pyr_pg.mapSystem
 import pyr_pg.characterManager
+import pyr_pg.configParse
 
-version = "0.5.0"
+version = "0.5.1"
 
 #static constants for the input system
 QUIT = 1

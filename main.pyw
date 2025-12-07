@@ -36,7 +36,6 @@ if __name__ == "__main__":
         logsys.printOut = True
     if runner == "User":
         try:
-            raise BaseException
             manor.start(log=logsys.insert)
         except SystemExit as err:
             pass

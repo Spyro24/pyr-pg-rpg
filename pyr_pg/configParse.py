@@ -19,9 +19,5 @@ def parse_config(config_file: str):
                 config[curConfigEntry] = {}
             elif line[0] != "#":
                 element = line.split("=")
-                
-            lines.append(line)
+                config[curConfigEntry][element[0].strip()] = element[1].strip()
     return(config)
-
-if __name__ == "__main__":
-    print(parse_config("../game.conf"))
