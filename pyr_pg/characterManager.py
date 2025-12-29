@@ -3,24 +3,23 @@
     (c) 2025 Spyro24
 """
 
-import pygame as p
 import os
-import pyr_pg
 import pathlib
+import pygame as p
+import pyr_pg
 
-class characterManager:
+class CharacterManager:
     def __init__(self, image_path: str, config_path: str):
         self.configPath = config_path
         self.imagePath = image_path
-        self.allConfigs = []
-        self.characters: list[character] = []
+        self.allConfigs = [] #contains every character configuration
+        self.characters: list[Character] = []
         for file in os.listdir(self.configPath):
             if file.endswith(".conf"):
                 self.allConfigs.append(file)
-        print(self.allConfigs)
         for conf in self.allConfigs:
             curConfig = pyr_pg.configParse.parse_config(pathlib.Path(self.configPath, conf))
-            self.characters.append(character())
+            self.characters.append(Character())
             curCharacter = self.characters[-1]
             curCharacter.configTable = curConfig
             curCharacter.name = curConfig["main"]["name"]
@@ -28,9 +27,10 @@ class characterManager:
             print(curCharacter)
     
     def cut_spritesheets(self):
+        """Internal function"""
         pass
 
-class character:
+class Character:
     def __init__(self):
         self.is_playable = False
         self.name = ""
@@ -38,12 +38,12 @@ class character:
         self.configTable: dict = None
     
     def __repr__(self):
-        return f"pyr_pg.character<name: {self.name}, description: {self.description}>"
+        return f"pyr_pg.Character <name: {self.name}, description: {self.description}>"
 
-class player:
+class Player:
     def __init__(self):
         self.name: str = None
-        self.character: character = None
+        self.character: Character = None
     
     def check_ready(self) -> bool:
         pass

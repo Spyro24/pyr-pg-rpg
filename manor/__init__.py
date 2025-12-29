@@ -53,7 +53,7 @@ def start(log=print, entry="startScreen")->None:
         p.display.set_caption(f"{gameName}")
     dependencies.add(pyr_pg.displayManager.displayManager((1080,720),(1,1)), "/window")
     container.window = dependencies.get("/window")
-    container.characterManager = pyr_pg.characterManager.characterManager(gameConfig["path"]["character_images"], gameConfig["path"]["character_config"])
+    container.characterManager = pyr_pg.characterManager.CharacterManager(gameConfig["path"]["character_images"], gameConfig["path"]["character_config"])
     container.cache = manor.cache.cacheStuff()
     container.logSystem = log
     container.font = pyr_pg.font.font(container.window, "./res/fonts/standard")
