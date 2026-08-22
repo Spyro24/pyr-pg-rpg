@@ -1,6 +1,7 @@
 # The PYR_PG Project
 
 PYR_PG is a game making system based on pygame and python focused on creating good RPG games.
+(Its now discontinued and is archived now and will never receive updates again)
 
 ## Overview
 
